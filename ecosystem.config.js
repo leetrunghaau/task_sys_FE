@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'nextjs-app',
+      name: 'taskFE',
       script: 'node_modules/.bin/next',
       args: 'start',
       env: {
