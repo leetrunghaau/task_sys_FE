@@ -14,7 +14,6 @@ import { CalendarRange } from "lucide-react";
 export default function CalendarPage() {
   return (
     <Box minH="100vh" bg="gray.50" p={6}>
-      {/* Calendar Section */}
       <Box mb={6}>
         <Flex justify="space-between" align="center" mb={4}>
           <Heading as="h2" size="md">
@@ -24,13 +23,11 @@ export default function CalendarPage() {
             <CalendarRange /> New Event
           </Button>
         </Flex>
-        {/* Placeholder Calendar (You can replace this with a proper calendar component) */}
         <Box border="1px solid" borderColor="gray.200" p={4} borderRadius="md">
           <Image src="/calendar-placeholder.png" alt="Calendar" />
         </Box>
       </Box>
 
-      {/* Projects Section */}
       <Heading as="h2" size="md" mb={4}>
         Projects
       </Heading>
