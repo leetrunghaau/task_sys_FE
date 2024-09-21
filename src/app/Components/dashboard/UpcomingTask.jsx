@@ -22,7 +22,6 @@ import {
   Link,
   IconButton,
 } from "@chakra-ui/react";
-import { Ellipsis, Plus } from "lucide-react";
 export default function UpcomingTask() {
   return (
     <Box p="6">
