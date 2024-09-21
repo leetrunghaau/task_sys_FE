@@ -38,8 +38,13 @@ export default function FeaturesSection() {
         columns={{ base: 1, lg: 2 }}
         spacing={6}
         py={12}
+        px="8"
         alignItems="center">
-        <Image src="/placeholder.svg" alt="Image" borderRadius="xl" />
+        <Image
+          src="https://cdn.motor1.com/images/mgl/MkO9NN/s1/future-supercars.webp"
+          alt="Image"
+          borderRadius="xl"
+        />
         <VStack align="start" spacing={6}>
           <Box>
             <Heading as="h3" fontSize="xl" fontWeight="bold">

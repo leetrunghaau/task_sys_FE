@@ -7,6 +7,7 @@ export default function Contact() {
       as="section"
       w="full"
       py={{ base: 12, md: 24, lg: 32 }}
+      bg="gray.100"
       borderTop="1px solid"
       borderColor="gray.200">
       <Box className="container" px={{ base: 4, md: 6 }}>

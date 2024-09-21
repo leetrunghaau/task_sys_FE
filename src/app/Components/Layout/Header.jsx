@@ -1,10 +1,11 @@
 "use client";
-import { Box, Text, Link, HStack, Flex } from "@chakra-ui/react";
+import { Box, Text, HStack, Flex, Link } from "@chakra-ui/react";
 import { useRouter } from "next/navigation"; // For routing
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const router = useRouter();
-
+  const pathname = usePathname();
   const handleNavigation = (sectionId) => {
     if (router.pathname === "/") {
       document.getElementById(sectionId).scrollIntoView({ behavior: "smooth" });
@@ -36,6 +37,8 @@ export default function Header() {
           <Link onClick={() => handleNavigation("features")}>Features</Link>
           <Link onClick={() => handleNavigation("pricing")}>Pricing</Link>
           <Link onClick={() => handleNavigation("contact")}>Contact</Link>
+          <Link href="/dashboard">Dashboard</Link>
+
           <Link
             href="/logIn"
             _hover={{ textDecoration: "none", color: "gray.400" }}>
