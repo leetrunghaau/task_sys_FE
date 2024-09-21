@@ -24,7 +24,11 @@ export default function Header() {
       zIndex={30}
       opacity={"0.75"}
       borderBottom="1px solid"
-      borderBottomColor="gray">
+      borderBottomColor="gray"
+      bgSize="100vw"
+      bgGradient="linear(to-r, green.200, pink.500)"
+      bgPosition="center"
+      bgRepeat="no-repeat">
       <Flex mx="auto" px={4} justify="space-between" align="center">
         <Link href="/" _hover={{ textDecoration: "none", color: "red.400" }}>
           <Text fontSize="2xl" fontWeight="bold">
