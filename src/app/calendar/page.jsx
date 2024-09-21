@@ -5,27 +5,15 @@ import {
   Heading,
   SimpleGrid,
   Stat,
-  StatLabel,
   StatNumber,
-  Icon,
   Image,
 } from "@chakra-ui/react";
-import { CalendarRange, Plus } from "lucide-react";
+import { CalendarRange } from "lucide-react";
 
 // Dashboard Page Component
 export default function CalendarPage() {
   return (
     <Box minH="100vh" bg="gray.50" p={6}>
-      {/* Main Section */}
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading as="h1" size="lg">
-          Dashboard
-        </Heading>
-        <Button leftIcon={<Plus />} colorScheme="teal">
-          New Task
-        </Button>
-      </Flex>
-
       {/* Calendar Section */}
       <Box mb={6}>
         <Flex justify="space-between" align="center" mb={4}>
