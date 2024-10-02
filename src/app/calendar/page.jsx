@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -5,24 +7,28 @@ import {
   Heading,
   SimpleGrid,
   Stat,
-  StatLabel,
   StatNumber,
+  StatLabel,
   Icon,
-  Image,
+  Image
 } from "@chakra-ui/react";
 import { CalendarRange, Plus } from "lucide-react";
+import Calendar from "react-calendar"; // import Calendar
+import 'react-calendar/dist/Calendar.css'; // import CSS mặc định của Calendar
 
 // Dashboard Page Component
 export default function CalendarPage() {
+  const [date, setDate] = useState(new Date()); // quản lý trạng thái ngày
+
   return (
-    <Box minH="100vh" bg="gray.50" p={6}>
+    <Box minH="100vh"  p={6}>
       {/* Main Section */}
       <Flex justify="space-between" align="center" mb={6}>
         <Heading as="h1" size="lg">
-          Dashboard
+          Calendar
         </Heading>
         <Button leftIcon={<Plus />} colorScheme="teal">
-          New Task
+          New Event
         </Button>
       </Flex>
 
@@ -36,9 +42,10 @@ export default function CalendarPage() {
             <CalendarRange /> New Event
           </Button>
         </Flex>
-        {/* Placeholder Calendar (You can replace this with a proper calendar component) */}
-        <Box border="1px solid" borderColor="gray.200" p={4} borderRadius="md">
-          <Image src="/calendar-placeholder.png" alt="Calendar" />
+        {/* Calendar Component */}
+        <Box >
+          <Calendar onChange={setDate} value={date} /> {/* Calendar Component */}
+          
         </Box>
       </Box>
 
@@ -108,6 +115,7 @@ const projects = [
     number: 3,
   },
 ];
+
 
 // Clipboard Icon
 function ClipboardIcon(props) {
