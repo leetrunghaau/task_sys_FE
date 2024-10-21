@@ -14,12 +14,11 @@ import { Plus } from "lucide-react";
 export default function DashBoardStat() {
   return (
     <Box p={6}>
-      {/* Header Section */}
       <Flex justify="space-between" align="center" mb={6}>
         <Heading as="h1" size="xl">
           Dashboard
         </Heading>
-        <Button leftIcon={<Plus />} colorScheme="teal">
+        <Button leftIcon={<Plus />} colorScheme="red">
           New Task
         </Button>
       </Flex>
