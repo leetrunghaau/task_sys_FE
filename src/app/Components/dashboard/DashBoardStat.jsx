@@ -9,7 +9,6 @@ import {
   Text,
   Spacer,
 } from "@chakra-ui/react";
-import { Plus } from "lucide-react";
 
 export default function DashBoardStat() {
   return (
@@ -18,9 +17,6 @@ export default function DashBoardStat() {
         <Heading as="h1" size="xl">
           Dashboard
         </Heading>
-        <Button leftIcon={<Plus />} colorScheme="red">
-          New Task
-        </Button>
       </Flex>
       <Flex gap="6">
         <Box

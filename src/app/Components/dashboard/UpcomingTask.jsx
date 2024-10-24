@@ -1,27 +1,13 @@
 import {
   Box,
-  Button,
   Heading,
   SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
   Avatar,
   Badge,
-  Dropdown,
-  MenuButton,
-  Menu,
-  MenuList,
-  MenuItem,
   Link,
-  IconButton,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
+
 export default function UpcomingTask() {
   return (
     <Box p="6">
@@ -30,7 +16,10 @@ export default function UpcomingTask() {
           <Heading as="h2" size="lg">
             Upcoming Tasks
           </Heading>
-          <Link to="#" style={{ color: "teal", textDecoration: "underline" }}>
+          <Link
+            as={NextLink}
+            href="/calendar"
+            style={{ color: "teal", textDecoration: "underline" }}>
             View Calendar
           </Link>
         </Box>

@@ -9,12 +9,13 @@ import {
   Card,
   CardBody,
   CardFooter,
+  Link,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 
 export default function Register() {
   return (
     <Box spacing={4}>
-      {/* Header section */}
       <Box mb={6}>
         <Heading as="h1" size="2xl" fontWeight="bold" letterSpacing="tight">
           Register
@@ -45,7 +46,9 @@ export default function Register() {
 
         <CardFooter>
           <Button colorScheme="blue" width="full">
-            Sign up
+            <Link as={NextLink} href="/logIn">
+              Sign up
+            </Link>
           </Button>
         </CardFooter>
       </Card>

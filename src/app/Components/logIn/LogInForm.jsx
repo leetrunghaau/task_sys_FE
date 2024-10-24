@@ -12,6 +12,7 @@ import {
   Link,
   VStack,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 
 export default function LogInForm() {
   return (
@@ -46,7 +47,9 @@ export default function LogInForm() {
               </Link>
             </Text>
             <Button colorScheme="blue" width="full">
-              Sign in
+              <Link as={NextLink} href="/dashboard">
+                Sign in
+              </Link>
             </Button>
           </VStack>
         </CardFooter>

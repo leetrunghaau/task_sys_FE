@@ -9,7 +9,7 @@ import {
   Td,
   Avatar,
   Badge,
-  Dropdown,
+  Flex,
   MenuButton,
   Menu,
   MenuList,
@@ -17,6 +17,8 @@ import {
   Link,
   IconButton,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
+
 import { Ellipsis, Plus } from "lucide-react";
 export default function RecentTask() {
   return (
@@ -26,7 +28,10 @@ export default function RecentTask() {
           <Heading as="h2" size="lg">
             Recent Tasks
           </Heading>
-          <Link to="#" style={{ color: "teal", textDecoration: "underline" }}>
+          <Link
+            as={NextLink}
+            href="/kanban"
+            style={{ color: "teal", textDecoration: "underline" }}>
             View Kanban Board
           </Link>
         </Box>
@@ -49,8 +54,10 @@ export default function RecentTask() {
                 </Box>
               </Td>
               <Td>
-                <Avatar name="John Doe" />
-                <Box ml={2}>John Doe</Box>
+                <Flex gap="1" alignItems="center">
+                  <Avatar size="sm" name="John Doe" />
+                  <Box ml={2}>John Doe</Box>
+                </Flex>
               </Td>
               <Td>2023-06-30</Td>
               <Td>

@@ -1,6 +1,6 @@
 "use client";
 import { Box, Text, HStack, Flex, Link, Button } from "@chakra-ui/react";
-import { useRouter } from "next/navigation"; // For routing
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useBoolean } from "@chakra-ui/react";
 export default function Header() {
@@ -58,7 +58,6 @@ export default function Header() {
           <Link onClick={() => handleNavigation("features")}>Features</Link>
           <Link onClick={() => handleNavigation("pricing")}>Pricing</Link>
           <Link onClick={() => handleNavigation("contact")}>Contact</Link>
-          <Link href="/dashboard">Dashboard</Link>
 
           <Link
             href="/logIn"
