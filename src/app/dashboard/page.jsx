@@ -9,7 +9,7 @@ export default function DashBoardPage() {
     <Flex w="100vw" p={{ base: 2, md: 12 }} flexDir={"column"} gap="10">
       <DashBoardStat></DashBoardStat>
       <RecentTask></RecentTask>
-      <UpcomingTask></UpcomingTask>
+      <UpComingTask></UpComingTask>
       <Projects />
     </Flex>
   );
