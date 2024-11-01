@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import DashBoardStat from "../Components/dashboard/DashboardSummary/DashBoardStat";
-import UpComingTask from "../Components/dashboard/UpcomingTask/UpComingTask";
+import UpComingTask from "../Components/dashboard/UpComingTask/UpComingTask";
 import RecentTask from "../Components/dashboard/RecentTask/RecentTask";
 import Projects from "../Components/dashboard/Projects/Projects";
 

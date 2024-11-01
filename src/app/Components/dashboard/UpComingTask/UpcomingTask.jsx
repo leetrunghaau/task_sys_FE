@@ -1,7 +1,7 @@
-import UpComingTaskDesktop from "./UpcomingTaskDesktop";
+import UpComingTaskDesktop from "./UpComingTaskDesktop";
 import UpComingTaskMobile from "./UpComingTaskMobile";
 
-export default function UpcomingTask() {
+export default function UpComingTask() {
   return (
     <>
       {/* Desktop Layout
