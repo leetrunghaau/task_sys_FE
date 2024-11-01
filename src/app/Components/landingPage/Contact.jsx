@@ -2,8 +2,8 @@ import { Box, Heading, Text, VStack, Input, Button } from "@chakra-ui/react";
 
 export default function Contact() {
   return (
-    <Box as="section" py={{ base: 12, md: 24, lg: 32 }} bg="gray.100">
-      <VStack spacing={4} alignItems="left">
+    <Box as="section" py={{ base: 12, md: 24, lg: 32 }} bg="gray.100" w="100vw">
+      <VStack spacing={4} alignItems="center">
         <Text bg="gray.200" px={3} py={1} borderRadius="md" fontSize="sm">
           Contact
         </Text>
@@ -11,7 +11,7 @@ export default function Contact() {
           as="h2"
           fontSize={{ base: "2xl", md: "5xl" }}
           fontWeight="bold">
-          Get in Touch
+          Get In Touch
         </Heading>
         <Text
           textAlign={"left"}
