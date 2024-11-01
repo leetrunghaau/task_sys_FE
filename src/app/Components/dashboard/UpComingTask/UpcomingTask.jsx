@@ -1,5 +1,5 @@
-import UpComingTaskDesktop from "./UpDomingTaskDesktop";
-import UpComingTaskMobile from "./UpDomingTaskMobile";
+import UpComingTaskDesktop from "./UpComingTaskDesktop";
+import UpComingTaskMobile from "./UpComingTaskMobile";
 
 export default function UpComingTask() {
   return (
