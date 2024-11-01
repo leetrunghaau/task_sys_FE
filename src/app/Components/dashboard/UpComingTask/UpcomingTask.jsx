@@ -4,7 +4,7 @@ import UpComingTaskMobile from "./UpComingTaskMobile";
 export default function UpcomingTask() {
   return (
     <>
-      {/* Desktop Layout 
+      {/* Desktop Layout
        Show on screens larger than md */}
       <div className="hidden md:block">
         <UpComingTaskDesktop />
