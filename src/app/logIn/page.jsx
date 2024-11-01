@@ -1,5 +1,5 @@
-import LogInForm from "../Components/logIn/LogInForm";
+import ResponsiveLogInForm from "../Components/logIn/ResponsiveLogInForm";
 
 export default function LogInPage() {
-  return <LogInForm />;
+  return <ResponsiveLogInForm />;
 }

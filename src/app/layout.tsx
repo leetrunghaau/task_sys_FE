@@ -3,7 +3,9 @@ import React from "react";
 import { Providers } from "./providers";
 import Footer from "./Components/Layout/Footer";
 import Header from "./Components/Layout/Header";
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
+import "./globals.css";
+
 export default function RootLayout({
   children,
 }: {
@@ -13,16 +15,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <Header></Header>
           <Flex
-            minH="100vh"
             display="flex"
             flexDirection="column"
             alignItems="center"
             justifyContent="center">
-            {children}
+            <Header></Header>
+            <Box minH="100vh">{children}</Box>
+            <Footer></Footer>
           </Flex>
-          <Footer></Footer>
         </Providers>
       </body>
     </html>

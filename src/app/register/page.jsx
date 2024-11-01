@@ -1,5 +1,4 @@
-import RegisterForm from "../Components/register/RegisterForm";
-
+import ResponsiveRegisterForm from "../Components/register/ResponsiveRegisterForm";
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return <ResponsiveRegisterForm />;
 }
