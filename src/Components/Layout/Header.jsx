@@ -1,7 +1,20 @@
 "use client";
-import { Box, Text, Flex, Link, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Text,
+  Flex,
+  Link,
+  Button,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useBoolean } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import useAuthStore from "../../store/authStore";
 
 export default function Header() {
   const router = useRouter();
@@ -13,6 +26,25 @@ export default function Header() {
     }
   };
   const [flag, setFlag] = useBoolean();
+  const { isLoggedIn, admin, logout } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isLoading && isLoggedIn !== undefined) {
+      setIsLoading(false); // Stop loading once the state is determined
+    }
+  }, [isLoggedIn, isLoading]);
+
+  useEffect(() => {
+    if (!isLoading && !isLoggedIn && router.pathname !== "/") {
+      router.push("/logIn");
+    }
+  }, [isLoggedIn, router]);
+
+  const handleLogout = () => {
+    logout(); // Call the logout function from the store
+    router.push("/logIn"); // Redirect to the login page after logging out
+  };
 
   return (
     <Box
@@ -26,15 +58,13 @@ export default function Header() {
       borderBottomColor="gray"
       bgGradient="linear(to-r, green.200, pink.500)"
       bgPosition="center"
-      bgRepeat="no-repeat"
-    >
+      bgRepeat="no-repeat">
       <Flex mx="auto" px={4} justify="space-between" align="center">
         <Link
           href="/"
           _hover={{ textDecoration: "none", color: "red.400" }}
           onMouseEnter={setFlag.on}
-          onMouseLeave={setFlag.off}
-        >
+          onMouseLeave={setFlag.off}>
           {flag ? (
             <Button
               variant="ghost"
@@ -45,8 +75,7 @@ export default function Header() {
               _hover={{
                 transform: "rotate(10deg)",
                 bg: "transparent",
-              }}
-            >
+              }}>
               Acme
             </Button>
           ) : (
@@ -60,36 +89,42 @@ export default function Header() {
             variant="ghost"
             colorScheme="black"
             size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("features")}
-          >
+            onClick={() => handleNavigation("features")}>
             Features
           </Button>
           <Button
             variant="ghost"
             colorScheme="black"
             size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("pricing")}
-          >
+            onClick={() => handleNavigation("pricing")}>
             Pricing
           </Button>
           <Button
             variant="ghost"
             colorScheme="black"
             size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("contact")}
-          >
+            onClick={() => handleNavigation("contact")}>
             Contact
           </Button>
-
-          <Button
-            variant="ghost"
-            colorScheme="black"
-            size={{ base: "xs", md: "md" }}
-            onClick={() => router.push("/logIn")}
-            _hover={{ textDecoration: "none", color: "gray.400" }}
-          >
-            Log In
-          </Button>
+          {isLoggedIn ? (
+            <Menu>
+              <MenuButton as={Button}>
+                <Avatar name="Kent Dodds" size="sm" mr={4} />
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <Button
+              variant="ghost"
+              colorScheme="black"
+              size={{ base: "xs", md: "md" }}
+              onClick={() => router.push("/logIn")}
+              _hover={{ textDecoration: "none", color: "gray.400" }}>
+              Log In
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Box>

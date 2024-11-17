@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
-import FilterControls from "../Components/allProjects/FilterControls";
-import ProjectCard from "../Components/allProjects/ProjectCard";
+import FilterControls from "../../Components/allProjects/FilterControls";
+import ProjectCard from "../../Components/allProjects/ProjectCard";
 
 export default function DashBoardPage() {
   return (

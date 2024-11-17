@@ -1,7 +1,5 @@
 "use client";
-
 import {
-  Box,
   Heading,
   Text,
   FormControl,
@@ -13,7 +11,6 @@ import {
   CardFooter,
   VStack,
 } from "@chakra-ui/react";
-import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ResponsiveRegisterForm() {
@@ -22,7 +19,7 @@ export default function ResponsiveRegisterForm() {
   return (
     <VStack spacing={4} mt="10">
       <VStack mb={6}>
-        <Heading as="h1" size="2xl" fontWeight="bold" letterSpacing="tight">
+        <Heading size="2xl" fontWeight="bold" letterSpacing="tight">
           Register
         </Heading>
         <Text fontSize={{ base: "md", md: "lg" }} color="gray.600" mt={2}>
