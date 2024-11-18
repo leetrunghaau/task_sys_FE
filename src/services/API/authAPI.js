@@ -3,7 +3,7 @@ import { signUp, getProfile, signIn } from "../url";
 import useAuthStore from "../../store/authStore";
 
 // Example API request function
-export const createNewAccount = async (payload) => {
+export const signUpNew = async (payload) => {
   try {
     const response = await axiosInstance.post(signUp.URL, payload);
     return response.data;
@@ -25,9 +25,9 @@ export const getUserProfile = async () => {
   }
 };
 
-export const logIn = async (credentials) => {
+export const logIn = async (info) => {
   try {
-    const response = await axiosInstance.post(signIn.URL, credentials, {
+    const response = await axiosInstance.post(signIn.URL, info, {
       withCredentials: true, //included cookies
     });
 
@@ -36,7 +36,7 @@ export const logIn = async (credentials) => {
 
       // Update Zustand store
       const authStore = useAuthStore.getState();
-      authStore.logIn({ user: credentials.user, token, admin }); // Ensure 'user' is passed correctly
+      authStore.logIn({ user: info.user, token, admin }); // Ensure 'user' is passed correctly
 
       return response.data;
     }

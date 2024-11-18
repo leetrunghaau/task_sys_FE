@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useBoolean } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import useAuthStore from "../../store/authStore";
+import { SquareArrowRight } from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
@@ -108,11 +109,14 @@ export default function Header() {
           </Button>
           {isLoggedIn ? (
             <Menu>
-              <MenuButton as={Button}>
+              <MenuButton as={Button} bgColor="transparent">
                 <Avatar name="Kent Dodds" size="sm" mr={4} />
               </MenuButton>
-              <MenuList>
-                <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+              <MenuList p="4">
+                <MenuItem onClick={handleLogout} gap="4">
+                  Log Out
+                  <SquareArrowRight />
+                </MenuItem>
               </MenuList>
             </Menu>
           ) : (

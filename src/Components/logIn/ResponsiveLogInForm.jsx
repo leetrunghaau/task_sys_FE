@@ -62,7 +62,7 @@ export default function ResponsiveLogInForm() {
         <CardBody>
           {/* Wrap form elements in a form */}
           <form onSubmit={handleSubmit}>
-            <FormControl id="email" mb={4}>
+            <FormControl mb={4}>
               <FormLabel>Email</FormLabel>
               <Input
                 value={userInfo}
@@ -72,7 +72,7 @@ export default function ResponsiveLogInForm() {
                 onChange={(e) => setUserInfo(e.target.value)}
               />
             </FormControl>
-            <FormControl id="password" mb={4}>
+            <FormControl mb={4}>
               <FormLabel>Password</FormLabel>
               <Input
                 value={pass}
@@ -95,8 +95,9 @@ export default function ResponsiveLogInForm() {
 
         <CardFooter>
           <Text color="gray.600" mt={2}>
-            Start managing your project.{" "}
+            Start managing your project.
             <Link href="/register" color="red">
+              {" "}
               Create a new account now!
             </Link>
           </Text>
