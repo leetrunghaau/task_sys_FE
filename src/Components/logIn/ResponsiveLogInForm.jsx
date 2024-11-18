@@ -43,8 +43,8 @@ export default function ResponsiveLogInForm() {
         // Navigate to the dashboard or any other page
         router.push("/dashboard");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       setMessage("Failed to log in.");
     }
   };
@@ -94,13 +94,22 @@ export default function ResponsiveLogInForm() {
         </CardBody>
 
         <CardFooter>
-          <Text color="gray.600" mt={2}>
-            Start managing your project.
-            <Link href="/register" color="red">
-              {" "}
-              Create a new account now!
-            </Link>
-          </Text>
+          <VStack>
+            <Text color="gray.600" mt={2}>
+              Start managing your project.
+              <Link href="/register" color="red">
+                {" "}
+                Create a new account now!
+              </Link>
+            </Text>
+            <Text color="gray.600" mt={2}>
+              You forget your password?.
+              <Link href="/resetPassword" color="blue">
+                {" "}
+                Reset your password here!
+              </Link>
+            </Text>
+          </VStack>
         </CardFooter>
       </Card>
     </VStack>

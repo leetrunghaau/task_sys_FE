@@ -10,7 +10,7 @@ const useAuthStore = create(
       isLoggedIn: false,
       logIn: ({ user, token, admin }) =>
         set({ user, token, admin, isLoggedIn: true }),
-      logout: () =>
+      logOut: () =>
         set({ user: null, token: null, admin: false, isLoggedIn: false }),
     }),
     {

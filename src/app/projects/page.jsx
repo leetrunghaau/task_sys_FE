@@ -5,8 +5,10 @@ import ProjectCard from "../../Components/allProjects/ProjectCard";
 export default function DashBoardPage() {
   return (
     <Box minW="100vw">
-      <FilterControls />
-      <ProjectCard />
+      <Box px="8">
+        <FilterControls />
+        <ProjectCard />
+      </Box>
     </Box>
   );
 }

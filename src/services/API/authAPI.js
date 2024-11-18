@@ -1,8 +1,7 @@
 import axiosInstance from "../axios";
-import { signUp, getProfile, signIn } from "../url";
+import { signUp, getProfile, signIn, resetPass } from "../url";
 import useAuthStore from "../../store/authStore";
 
-// Example API request function
 export const signUpNew = async (payload) => {
   try {
     const response = await axiosInstance.post(signUp.URL, payload);
@@ -15,8 +14,16 @@ export const signUpNew = async (payload) => {
 
 export const getUserProfile = async () => {
   try {
-    const response = await axiosInstance.get(getProfile.URL);
-    console.log(getProfile.URL);
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const response = await axiosInstance.get(getProfile.URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -40,8 +47,29 @@ export const logIn = async (info) => {
 
       return response.data;
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    throw err;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+};
+
+export const changePassword = async (changeInfo) => {
+  try {
+    const token = useAuthStore.getState().token;
+    const { logOut } = useAuthStore.getState();
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const response = await axiosInstance.put(resetPass.URL, changeInfo, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    logOut();
+    return response.data;
+  } catch (error) {
+    console.error("Error changing your password:", error);
+    throw error;
   }
 };

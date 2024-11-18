@@ -8,11 +8,11 @@ import {
   Heading,
   Flex,
 } from "@chakra-ui/react";
-import ProjectOverview from "../../Components/project/ProjectOverview";
-import ProjectStats from "../../Components/project/ProjectStats";
-import TaskManagement from "../../Components/project/TaskManagement";
-import IssueTracking from "../../Components/project/IssueTracking";
-import ProjectSettings from "../../Components/project/ProjectSettings";
+import ProjectOverview from "../../../Components/project/ProjectOverview";
+import ProjectStats from "../../../Components/project/ProjectStats";
+import TaskManagement from "../../../Components/project/TaskManagement";
+import IssueTracking from "../../../Components/project/IssueTracking";
+import ProjectSettings from "../../../Components/project/ProjectSettings";
 
 export default function ProjectPage() {
   return (

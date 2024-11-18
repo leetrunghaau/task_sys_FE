@@ -9,3 +9,10 @@ export const signIn = {
 export const getProfile = {
   URL: "/info",
 };
+export const resetPass = {
+  URL: "/info/change-pass",
+};
+
+export const getAllProjects = {
+  URL: "/projects",
+};

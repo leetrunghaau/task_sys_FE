@@ -15,10 +15,17 @@ import { useRouter } from "next/navigation";
 import { useBoolean } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import useAuthStore from "../../store/authStore";
-import { SquareArrowRight } from "lucide-react";
+import { SquareArrowRight, CircleUserRound, ClipboardList } from "lucide-react";
+import { getUserProfile } from "../../services/API/authAPI";
 
 export default function Header() {
   const router = useRouter();
+  const [profile, setProfile] = useState(null);
+  const [flag, setFlag] = useBoolean();
+  const { isLoggedIn, admin, logOut } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+
   const handleNavigation = (sectionId) => {
     if (router.pathname === "/") {
       document.getElementById(sectionId).scrollIntoView({ behavior: "smooth" });
@@ -26,10 +33,6 @@ export default function Header() {
       router.push(`/#${sectionId}`);
     }
   };
-  const [flag, setFlag] = useBoolean();
-  const { isLoggedIn, admin, logout } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     if (isLoading && isLoggedIn !== undefined) {
       setIsLoading(false); // Stop loading once the state is determined
@@ -42,10 +45,25 @@ export default function Header() {
     }
   }, [isLoggedIn, router]);
 
-  const handleLogout = () => {
-    logout(); // Call the logout function from the store
+  const handleLogOut = () => {
+    logOut(); // Call the logout function from the store
     router.push("/logIn"); // Redirect to the login page after logging out
   };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await getUserProfile();
+        setProfile(response.data);
+      } catch (err) {
+        console.error("Failed to load profile", err);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchProfile();
+    }
+  }, [isLoggedIn]);
 
   return (
     <Box
@@ -57,9 +75,7 @@ export default function Header() {
       zIndex={30}
       borderBottom="1px solid"
       borderBottomColor="gray"
-      bgGradient="linear(to-r, green.200, pink.500)"
-      bgPosition="center"
-      bgRepeat="no-repeat">
+      bgPosition="center">
       <Flex mx="auto" px={4} justify="space-between" align="center">
         <Link
           href="/"
@@ -110,12 +126,20 @@ export default function Header() {
           {isLoggedIn ? (
             <Menu>
               <MenuButton as={Button} bgColor="transparent">
-                <Avatar name="Kent Dodds" size="sm" mr={4} />
+                <Avatar name={profile?.name} size="sm" mr={4} />
               </MenuButton>
               <MenuList p="4">
-                <MenuItem onClick={handleLogout} gap="4">
+                <MenuItem onClick={handleLogOut} gap="4">
                   Log Out
                   <SquareArrowRight />
+                </MenuItem>
+                <MenuItem onClick={() => router.push("/yourProfile")} gap="4">
+                  Your Profile
+                  <CircleUserRound />
+                </MenuItem>
+                <MenuItem onClick={() => router.push("/dashboard")} gap="4">
+                  Dash Board
+                  <ClipboardList />
                 </MenuItem>
               </MenuList>
             </Menu>
