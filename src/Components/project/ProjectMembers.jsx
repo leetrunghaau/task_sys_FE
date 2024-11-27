@@ -4,24 +4,66 @@ import {
   Stack,
   Input,
   Select,
-  Button,
   Avatar,
   Text,
+  Button,
+  useToast,
 } from "@chakra-ui/react";
+import { allProjectMembers } from "../../services/API/permissionAPI";
+import { useState, useEffect } from "react";
 
-import { CirclePlus } from "lucide-react";
+export default function ProjectMembers({ id }) {
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const toast = useToast();
 
-import { useState } from "react";
+  const [formData, setFormData] = useState({
+    name: "",
+    userName: "",
+    email: "",
+    password: "",
+  });
+  useEffect(() => {
+    if (!id) return;
 
-export default function ProjectMembers({
-  members,
-  updateMemberRole,
-  addMember,
-}) {
-  const [newMember, setNewMember] = useState({ name: "", role: "member" });
+    const fetchProjectMembers = async () => {
+      setLoading(true);
+      try {
+        const response = await allProjectMembers(id);
+        setMembers(response.data);
+        console.log(response);
+      } catch (error) {
+        setError("Failed to load project");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjectMembers();
+  }, [id]);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
+  if (error) {
+    return <div>{error}</div>;
+  }
   return (
     <Box>
+      <Stack mt={4} direction="row">
+        <Input placeholder="Member's name" />
+        <Select w="30%">
+          <option value="admin">Admin</option>
+          <option value="member">Member</option>
+        </Select>
+        <Button
+          type="submit"
+          colorScheme="orange"
+          _hover={{ textDecoration: "none", color: "gray.400" }}>
+          Add
+        </Button>
+      </Stack>
+
       <Stack spacing={4} maxH="200px" overflowY="auto">
         {members.map((member) => (
           <Box
@@ -36,44 +78,10 @@ export default function ProjectMembers({
               <Avatar name={member.name} src={member.avatar} size="sm" />
               <Text ml={2}>{member.name}</Text>
             </Box>
-            <Select
-              value={member.role}
-              onChange={(e) => updateMemberRole(member.id, e.target.value)}
-              width="100px">
-              <option value="admin">Admin</option>
-              <option value="member">Member</option>
-            </Select>
+            <Box>{member.role}</Box>
           </Box>
         ))}
       </Stack>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          addMember(newMember);
-        }}>
-        <Stack mt={4} direction="row">
-          <Input
-            placeholder="New member name"
-            value={newMember.name}
-            onChange={(e) =>
-              setNewMember({ ...newMember, name: e.target.value })
-            }
-          />
-          <Select
-            value={newMember.role}
-            onChange={(e) =>
-              setNewMember({ ...newMember, role: e.target.value })
-            }
-            width="100px">
-            <option value="admin">Admin</option>
-            <option value="member">Member</option>
-          </Select>
-          <Button type="submit" leftIcon={<CirclePlus />} colorScheme="green">
-            Add
-          </Button>
-        </Stack>
-      </form>
     </Box>
   );
 }

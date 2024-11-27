@@ -75,7 +75,7 @@ export default function Header() {
       zIndex={30}
       borderBottom="1px solid"
       borderBottomColor="gray"
-      bgPosition="center">
+      bg="white">
       <Flex mx="auto" px={4} justify="space-between" align="center">
         <Link
           href="/"

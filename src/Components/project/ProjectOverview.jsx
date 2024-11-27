@@ -29,7 +29,7 @@ export default function ProjectOverview() {
             Project Manager
           </Text>
           <Flex alignItems="center" gap="2">
-            <Avatar size="sm" src="/placeholder.svg" />
+            <Avatar size="sm" name="hh" />
             <Text fontSize="xs">John Doe</Text>
           </Flex>
         </Flex>

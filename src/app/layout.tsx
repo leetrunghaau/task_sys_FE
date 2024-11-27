@@ -6,7 +6,7 @@ import Header from "../Components/Layout/Header";
 import { Flex, Box } from "@chakra-ui/react";
 import "./globals.css";
 import { usePathname } from "next/navigation";
-import SideBarMenu from "../Components/Layout/SideBarMenu";
+// import SideBarMenu from "../Components/Layout/SideBarMenu";
 export default function RootLayout({
   children,
 }: {
@@ -26,7 +26,7 @@ export default function RootLayout({
             <Header></Header>
             {isDashboardPage ? (
               <Flex minW="100vw" py="12" px="6">
-                <SideBarMenu />
+                {/* <SideBarMenu /> */}
                 {children}
               </Flex>
             ) : (

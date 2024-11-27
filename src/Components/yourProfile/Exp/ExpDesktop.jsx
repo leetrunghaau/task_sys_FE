@@ -7,10 +7,45 @@ import {
   VStack,
   Heading,
   Grid,
+  useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 import { FileText } from "lucide-react";
-
+import { useState, useEffect } from "react";
+import { allProjects } from "../../../services/API/projectAPI";
 export default function ExpDesktop() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const toast = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchAllProjects = async () => {
+      try {
+        const response = await allProjects();
+        setProjects(response.data);
+      } catch (err) {
+        setError("Failed to load projects");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllProjects();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  const handleCardClick = (id) => {
+    router.push(`/projects/${id}`);
+  };
   return (
     <Flex p="6">
       <VStack spacing="8" align="start">
@@ -23,27 +58,23 @@ export default function ExpDesktop() {
             </Button>
           </Flex>
           <Grid gap="4">
-            {[
-              "Get the most out of your software project space",
-              "Template - Decision documentation",
-              "Template - Meeting notes",
-              "Template - Product requirements",
-              "Meeting notes",
-            ].map((item) => (
+            {projects.map((project) => (
               <Box
-                key={item}
+                key={project.id}
                 bg="white"
                 p="4"
                 rounded="md"
                 shadow="sm"
-                borderWidth="1px">
+                borderWidth="1px"
+                onClick={() => handleCardClick(project.id)}
+                _hover={{
+                  cursor: "pointer",
+                }}>
                 <Flex gap="4">
                   <FileText size="20" />
                   <Box>
-                    <Text fontWeight="medium">{item}</Text>
-                    <Text fontSize="sm">
-                      Software Development • Created on November 17, 2024
-                    </Text>
+                    <Text fontWeight="medium">{project.name}</Text>
+                    <Text fontSize="sm">{project.description}</Text>
                   </Box>
                 </Flex>
               </Box>

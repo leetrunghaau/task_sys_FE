@@ -18,7 +18,6 @@ import { useState } from "react";
 export default function ResponsiveRegisterForm() {
   const router = useRouter();
   const toast = useToast();
-
   const [isLoading, setIsLoading] = useState(false);
   // State for form inputs
   const [formData, setFormData] = useState({

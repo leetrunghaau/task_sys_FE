@@ -10,14 +10,39 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  useToast,
 } from "@chakra-ui/react";
 import { Trash2 } from "lucide-react";
 import { useRef } from "react";
+import { deleteProject } from "../../services/API/projectAPI";
 
-export default function DangerZone({ deleteProject }) {
+export default function DangerZone({ id }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
+  const toast = useToast(); // Initialize the toast hook
 
+  const handleDeleteProject = async (id) => {
+    try {
+      await deleteProject(id);
+      toast({
+        title: "Project Deleted",
+        description: `Project with ID ${id} has been successfully deleted.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      toast({
+        title: "Deletion Failed",
+        description:
+          error.response?.data?.message || "Unable to delete project.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
   return (
     <Box>
       <Text fontSize="lg" fontWeight="medium" mb={2}>
@@ -46,7 +71,10 @@ export default function DangerZone({ deleteProject }) {
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={deleteProject} ml={3}>
+              <Button
+                colorScheme="red"
+                onClick={() => handleDeleteProject(id)}
+                ml={3}>
                 Delete Project
               </Button>
             </AlertDialogFooter>

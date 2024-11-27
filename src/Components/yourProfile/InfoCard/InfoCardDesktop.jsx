@@ -3,14 +3,14 @@ import {
   Box,
   Flex,
   Avatar,
-  Button,
   Text,
   VStack,
   Heading,
   Divider,
 } from "@chakra-ui/react";
 import { FileText, Users, Building, MapPin, Clock, Mail } from "lucide-react";
-
+import UpdateProfile from "../UpdateProfile/UpdateProfile";
+import UpdatePassword from "../UpdatePassword/UpdatePassWord";
 export default function InfoCardDesktop({ profile }) {
   return (
     <Box borderRightWidth={{ base: "0", lg: "1px" }} bg="white" p="4">
@@ -20,10 +20,8 @@ export default function InfoCardDesktop({ profile }) {
           <Heading size="lg">{profile.name}</Heading>
           <Text>@{profile.userName}</Text>
         </Flex>
-
-        <Button variant="outline" w="full">
-          Manage your account
-        </Button>
+        <UpdatePassword profile={profile} />
+        <UpdateProfile profile={profile}></UpdateProfile>
       </VStack>
       <Divider my="4" />
       <VStack align="start" spacing="4">

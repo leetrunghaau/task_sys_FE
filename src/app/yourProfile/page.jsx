@@ -34,9 +34,21 @@ export default function YourProfilePage() {
   }
 
   return (
-    <Flex px={{ base: 2, md: 6 }} gap="10">
-      <InfoCard profile={profile} />
-      <Exp />
-    </Flex>
+    <>
+      <div className="hidden md:block">
+        <Flex>
+          <InfoCard profile={profile} />
+          <Exp />
+        </Flex>
+      </div>
+      {/* Mobile Layout 
+       Show on screens smaller than md */}
+      <div className="block md:hidden">
+        <Flex flexDir={"column"} align={"start"}>
+          <InfoCard profile={profile} />
+          <Exp />
+        </Flex>
+      </div>
+    </>
   );
 }
