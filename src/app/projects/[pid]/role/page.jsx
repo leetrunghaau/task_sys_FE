@@ -10,6 +10,7 @@ export default function RolePage() {
   return (
     <Box>
       <CreateRoleModal pid={pid} />
+      
       <RoleTable pid={pid} />
     </Box>
   );

@@ -16,13 +16,18 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
 import { allPermissions } from "../../../services/API/permissionAPI";
-export default function PermissionList() {
+export default function PermissionList({roleId}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
+
+  const permissionClick =(e, permId)=>{
+    console.log("e", e)
+    console.log("e1", permId)
+  }
   useEffect(() => {
     const fetchAllPermissions = async () => {
       try {
@@ -34,7 +39,6 @@ export default function PermissionList() {
         setLoading(false);
       }
     };
-
     fetchAllPermissions();
   }, []);
 
@@ -62,7 +66,7 @@ export default function PermissionList() {
           <DrawerBody>
             {permissions.map((permission) => (
               <Flex align={"center"} gap="4" mb="4">
-                <Checkbox size="lg" colorScheme="green"></Checkbox>
+                <Checkbox size="lg" colorScheme="green" onChange={(event) => permissionClick(event, permission.id)}></Checkbox>
                 <Flex flexDir="column">
                   <Text>{permission.name}</Text>
                   <Text fontSize={"sm"}>{permission.description}</Text>
@@ -70,12 +74,7 @@ export default function PermissionList() {
               </Flex>
             ))}
           </DrawerBody>
-          <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="blue">Save</Button>
-          </DrawerFooter>
+          
         </DrawerContent>
       </Drawer>
     </>

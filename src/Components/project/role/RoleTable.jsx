@@ -56,7 +56,7 @@ export default function RoleTable({ pid }) {
                 <Td>{role.id}</Td>
                 <Td>{role.name}</Td>
                 <Td>
-                  <PermissionList />
+                  <PermissionList roleId={role.id} />
                 </Td>
               </Tr>
             ))}
