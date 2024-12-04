@@ -114,9 +114,15 @@ export default function Header() {
             Features
           </Button>
           {isAdmin ? (
-            <p>You are an admin. You can access admin features.</p>
+            <Button
+              variant="ghost"
+              colorScheme="black"
+              size={{ base: "xs", md: "md" }}
+              onClick={() => handleNavigation("admin")}>
+              Admin Dashboard
+            </Button>
           ) : (
-            <p>You are not an admin.</p>
+            <></>
           )}
           <Button
             variant="ghost"
