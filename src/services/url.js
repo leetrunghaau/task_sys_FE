@@ -67,8 +67,8 @@ export const createNewStatus = (id) => `project/${id}/status`;
 export const editStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 export const delStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 
-//Status
-export const getAllIssues = (id) => `project/${id}/issues`;
+//Issue
+export const getAllIssues = (id) => `issuess?project=${id}`;
 export const createNewIssue = (id) => `project/${id}/issues`;
 export const editIssueContent = (id, issuesId) =>
   `project/${id}/issues/${issuesId}/content`;
@@ -110,7 +110,9 @@ export const deleteChecklist = (projectId, issueId, checklistId) =>
 
 //Admin
 export const getUser = (userId) => `/user/${userId}`;
-export const getUsers = () => `/users`;
+export const getUsers = {
+  URL: "/users",
+};
 export const createUser = () => `/user`;
 export const editUser = (userId) => `/user/${userId}`;
 export const resetUserPassword = (userId) => `/user/reset-pass/${userId}`;

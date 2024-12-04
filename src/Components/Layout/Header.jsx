@@ -124,6 +124,17 @@ export default function Header() {
           ) : (
             <></>
           )}
+          {isLoggedIn ? (
+            <Button
+              variant="ghost"
+              colorScheme="black"
+              size={{ base: "xs", md: "md" }}
+              onClick={() => router.push("/dashboard")}>
+              Dashboard
+            </Button>
+          ) : (
+            <></>
+          )}
           <Button
             variant="ghost"
             colorScheme="black"
