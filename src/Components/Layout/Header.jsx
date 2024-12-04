@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import useAuthStore from "../../store/authStore";
 import { SquareArrowRight, CircleUserRound, ClipboardList } from "lucide-react";
 import { getUserProfile } from "../../services/API/authAPI";
-
+import { checkIfAdmin } from "../../utils/checkAdmin";
 export default function Header() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
@@ -25,6 +25,7 @@ export default function Header() {
   const { isLoggedIn, admin, logOut } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleNavigation = (sectionId) => {
     if (router.pathname === "/") {
@@ -34,6 +35,9 @@ export default function Header() {
     }
   };
   useEffect(() => {
+    const adminStatus = checkIfAdmin(); // Check if the user is an admin
+    setIsAdmin(adminStatus);
+
     if (isLoading && isLoggedIn !== undefined) {
       setIsLoading(false); // Stop loading once the state is determined
     }
@@ -109,6 +113,11 @@ export default function Header() {
             onClick={() => handleNavigation("features")}>
             Features
           </Button>
+          {isAdmin ? (
+            <p>You are an admin. You can access admin features.</p>
+          ) : (
+            <p>You are not an admin.</p>
+          )}
           <Button
             variant="ghost"
             colorScheme="black"

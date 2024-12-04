@@ -119,3 +119,11 @@ export const updateChecklist = (projectId, issueId, checklistId) =>
 
 export const deleteChecklist = (projectId, issueId, checklistId) =>
   `project/${projectId}/issues/${issueId}/check-list/${checklistId}`;
+
+//Admin
+export const getUser = (userId) => `/user/${userId}`;
+export const getUsers = () => `/users`;
+export const createUser = () => `/user`;
+export const editUser = (userId) => `/user/${userId}`;
+export const resetUserPassword = (userId) => `/user/reset-pass/${userId}`;
+export const deleteUser = (userId) => `/user/${userId}`;
