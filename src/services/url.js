@@ -1,6 +1,6 @@
-// export const BASE_URL = "http://localhost:8080/api/v1";
+export const BASE_URL = "http://localhost:8080/api/v1";
 
-export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
+// export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
 
 //user URL
 
@@ -53,3 +53,8 @@ export const getAllPermissions = {
 
 //Tracker
 export const getAllTrackers = (id) => `project/${id}/trackers`;
+export const createNewTracker = (id) => `project/${id}/tracker`;
+export const editTracker = (id, trackerId) =>
+  `project/${id}/tracker/${trackerId}`;
+export const delTracker = (id, trackerId) =>
+  `project/${id}/tracker/${trackerId}`;

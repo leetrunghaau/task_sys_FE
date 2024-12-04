@@ -1,5 +1,5 @@
 import axiosInstance from "../axios";
-import { getAllRoles } from "../url";
+import { getAllRoles, createNewRole } from "../url";
 import useAuthStore from "../../store/authStore";
 
 export const allRoles = async (id) => {
@@ -29,6 +29,7 @@ export const addNewRole = async (id, payload) => {
     if (!token) {
       throw new Error("No authentication token found.");
     }
+    const url = createNewRole(id);
     const response = await axiosInstance.post(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,

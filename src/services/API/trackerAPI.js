@@ -1,8 +1,6 @@
 import axiosInstance from "../axios";
-import { getAllTrackers } from "../url";
+import { getAllTrackers, createNewTracker, delTracker } from "../url";
 import useAuthStore from "../../store/authStore";
-
-//member Permissions
 
 export const allTrackers = async (id) => {
   try {
@@ -21,6 +19,47 @@ export const allTrackers = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Connection test failed:", error);
+    throw error;
+  }
+};
+
+export const addNewTracker = async (id, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = createNewTracker(id);
+    const response = await axiosInstance.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update project:", error);
+    throw error;
+  }
+};
+export const deleteTracker = async (id, trackerId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = delTracker(id, trackerId);
+
+    const response = await axiosInstance.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update project:", error);
     throw error;
   }
 };
