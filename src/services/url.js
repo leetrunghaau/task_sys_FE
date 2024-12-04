@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:8080/api/v1";
-// export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
+// export const BASE_URL = "http://localhost:8080/api/v1";
+export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
 
 //user URL
 export const signUp = {
@@ -42,9 +42,14 @@ export const delRole = (id, roleId) => `project/${id}/role/${roleId}`;
 export const getAllPermissions = {
   URL: "/permissions",
 };
-export const editRolePermissions = (id, roleId) =>
+export const createRolePermissions = (id, roleId) =>
   `project/${id}/role/${roleId}/permission`;
 
+export const delRolePermissions = (id, roleId, permissionId) =>
+  `project/${id}/role/${roleId}/permission/${permissionId}`;
+
+export const getAllPermissionsByRole = (pid, rid) =>
+  `project/${pid}/role/${rid}/permissions`;
 //Tracker
 export const getAllTrackers = (id) => `project/${id}/trackers`;
 export const createNewTracker = (id) => `project/${id}/tracker`;
