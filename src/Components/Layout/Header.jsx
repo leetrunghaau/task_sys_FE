@@ -118,7 +118,7 @@ export default function Header() {
               variant="ghost"
               colorScheme="black"
               size={{ base: "xs", md: "md" }}
-              onClick={() => handleNavigation("admin")}>
+              onClick={() => router.push("/admin")}>
               Admin Dashboard
             </Button>
           ) : (

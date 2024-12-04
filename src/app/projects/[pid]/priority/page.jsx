@@ -1,5 +1,5 @@
 "use client";
-import { Box } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import CreatePriorityModal from "../../../../Components/project/priority/CreatePriorityModal";
 import PriorityTable from "../../../../Components/project/priority/PriorityTable";
 
@@ -9,9 +9,12 @@ export default function PriorityPage() {
   const params = useParams();
   const { pid } = params;
   return (
-    <Box>
-      <CreatePriorityModal pid={pid} />
+    <Flex flexDir={"column"} mx="8">
+      <Flex align={"center"} gap="52" mb="8">
+        <Heading>Manage Priority</Heading>
+        <CreatePriorityModal pid={pid} />
+      </Flex>
       <PriorityTable pid={pid} />
-    </Box>
+    </Flex>
   );
 }

@@ -1,4 +1,3 @@
-"use client";
 import {
   Box,
   Stack,
@@ -9,8 +8,15 @@ import {
   Button,
   useToast,
   Flex,
+  Spinner,
 } from "@chakra-ui/react";
-import { allProjectMembers } from "../../services/API/permissionAPI";
+import {
+  allProjectMembers,
+  addNewMember,
+  deleteAMember,
+} from "../../services/API/permissionAPI";
+import LoadingSpinner from "../Layout/Loading";
+import { checkUserName } from "../../services/API/checkAPI";
 import { useState, useEffect } from "react";
 
 export default function ProjectMembers({ id }) {
@@ -19,12 +25,11 @@ export default function ProjectMembers({ id }) {
   const [error, setError] = useState(null);
   const toast = useToast();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    userName: "",
-    email: "",
-    password: "",
-  });
+  const [username, setUsername] = useState("");
+  const [isChecking, setIsChecking] = useState(false);
+  const [userResults, setUserResults] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("member");
+
   useEffect(() => {
     if (!id) return;
 
@@ -33,44 +38,171 @@ export default function ProjectMembers({ id }) {
       try {
         const response = await allProjectMembers(id);
         setMembers(response.data);
-        console.log(response.data);
       } catch (error) {
-        setError("Failed to load project");
+        setError("Failed to load project members");
       } finally {
         setLoading(false);
       }
     };
+
     fetchProjectMembers();
   }, [id]);
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+
+  useEffect(() => {
+    if (!username.trim()) {
+      setUserResults([]);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsChecking(true);
+      try {
+        setLoading(true);
+
+        const result = await checkUserName(username);
+        setUserResults(result.data || []);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1100);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch users.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setIsChecking(false);
+        setLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [username]);
+
+  const handleAddMember = async (userId) => {
+    setLoading(true);
+    try {
+      const payload = { userId };
+      await addNewMember(id, payload);
+      const response = await allProjectMembers(id);
+      setMembers(response.data);
+      setUsername("");
+      toast({
+        title: "Success",
+        description: `User added as ${selectedRole}.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add member.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteMember = async (id, memId) => {
+    setLoading(true);
+
+    try {
+      await deleteAMember(id, memId);
+
+      const response = await allProjectMembers(id);
+      setMembers(response.data);
+
+      toast({
+        title: "Success",
+        description: `User deleted.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete member.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (error) {
     return <div>{error}</div>;
   }
+
   return (
-    <Box>
-      <Stack mt={4} direction="row">
-        <Input placeholder="Member's name" />
-        <Select w="30%">
+    <Flex flexDir={"column"} gap="4">
+      <Stack mt={4} direction="row" alignItems="center">
+        <Input
+          placeholder="Member's name"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        {isChecking && <Spinner size="sm" ml={2} />}
+        <Select
+          w="15vw"
+          value={selectedRole}
+          onChange={(e) => setSelectedRole(e.target.value)}>
           <option value="admin">Admin</option>
           <option value="member">Member</option>
         </Select>
-        <Button
-          type="submit"
-          colorScheme="orange"
-          _hover={{ textDecoration: "none", color: "gray.400" }}>
-          Add
-        </Button>
       </Stack>
-      <Stack spacing={4} maxH="200px" overflowY="auto">
+      <Stack spacing={4} overflowY="auto">
+        {userResults.length > 0 ? (
+          userResults.map((user) => (
+            <Box
+              key={user.id}
+              p={2}
+              bg="gray.100"
+              borderRadius="md"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center">
+              <Box display="flex" alignItems="center">
+                <Avatar name={user.name} size="sm" />
+                <Flex flexDir={"column"}>
+                  <Text ml={2}>{user.name}</Text>
+                  <Text ml={2}>{user.email}</Text>
+                </Flex>
+              </Box>
+              <Button
+                size="sm"
+                colorScheme="green"
+                onClick={() => handleAddMember(user.id)}>
+                Add
+              </Button>
+            </Box>
+          ))
+        ) : (
+          <></>
+        )}
+      </Stack>
+      <Stack spacing={4} mt={4}>
+        <Text fontWeight="bold">Existing Members</Text>
         {members.map((member) => (
           <Box
             key={member.id}
             p={2}
-            bg="gray.100"
             borderRadius="md"
+            borderWidth="1px"
             display="flex"
             justifyContent="space-between"
             alignItems="center">
@@ -81,10 +213,16 @@ export default function ProjectMembers({ id }) {
                 <Text ml={2}>{member.User.email}</Text>
               </Flex>
             </Box>
-            <Button colorScheme={"red"}>Delete Member</Button>
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={() => handleDeleteMember(id, member.id)}>
+              Delete Member
+            </Button>
           </Box>
         ))}
       </Stack>
-    </Box>
+      {loading ? <LoadingSpinner /> : <></>}
+    </Flex>
   );
 }

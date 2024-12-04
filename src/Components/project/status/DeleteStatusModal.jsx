@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { deleteStatus } from "../../../services/API/statusAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function DeleteStatusModal({ pid, statusId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +33,9 @@ export default function DeleteStatusModal({ pid, statusId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during deleting this Status:", error);
       toast({
@@ -74,6 +77,7 @@ export default function DeleteStatusModal({ pid, statusId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

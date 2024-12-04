@@ -23,7 +23,6 @@ export default function ResponsiveLogInForm() {
   const [pass, setPass] = useState("");
   const [message, setMessage] = useState("");
 
-  // Zustand store
   const login = useAuthStore((state) => state.login);
 
   const handleSubmit = async (event) => {
@@ -32,15 +31,10 @@ export default function ResponsiveLogInForm() {
     try {
       const payload = { user: userInfo, pass: pass };
       const response = await logIn(payload);
-
       if (response.data) {
         const { admin, token } = response.data;
-
-        // Update Zustand store with user and token
         logIn({ user: userInfo, pass: pass, admin, token });
-
         setMessage("Logged in successfully!");
-        // Navigate to the dashboard or any other page
         router.push("/dashboard");
       }
     } catch (error) {
@@ -60,7 +54,6 @@ export default function ResponsiveLogInForm() {
       </VStack>
       <Card>
         <CardBody>
-          {/* Wrap form elements in a form */}
           <form onSubmit={handleSubmit}>
             <FormControl mb={4}>
               <FormLabel>Email</FormLabel>

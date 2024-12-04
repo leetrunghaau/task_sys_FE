@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -18,6 +17,8 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import LoadingSpinner from "../../Layout/Loading";
 import { addNewRole } from "../../../services/API/roleAPI";
 
 export default function CreateRoleModal({ pid }) {
@@ -44,8 +45,11 @@ export default function CreateRoleModal({ pid }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
-      console.error("Error during Create new role:", error);
+      console.error("Error during create new role:", error);
       toast({
         title: "Create new role Failed",
         description: error.response?.data?.message || "Something went wrong.",
@@ -125,6 +129,7 @@ export default function CreateRoleModal({ pid }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

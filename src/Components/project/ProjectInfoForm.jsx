@@ -7,7 +7,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { updateProject } from "../../services/API/projectAPI";
-
+import LoadingSpinner from "../Layout/Loading";
 import { useState } from "react";
 import { Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -44,6 +44,9 @@ export default function ProjectInfoForm({ id }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during Update Project:", error);
       toast({
@@ -90,6 +93,7 @@ export default function ProjectInfoForm({ id }) {
           Update Project Settings
         </Button>
       </form>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </Box>
   );
 }

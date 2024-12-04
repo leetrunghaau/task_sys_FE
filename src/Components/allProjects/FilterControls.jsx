@@ -55,6 +55,9 @@ export default function FilterControls() {
       });
       // Close modal after project created successfully
       onClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during creating new project:", error);
 

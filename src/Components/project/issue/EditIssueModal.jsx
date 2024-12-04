@@ -43,6 +43,9 @@ export default function EditPriorityModal({ pid, priorityId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during edit Priority:", error);
       toast({

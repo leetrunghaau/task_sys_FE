@@ -41,8 +41,6 @@ export default function YourProfilePage() {
           <Exp />
         </Flex>
       </div>
-      {/* Mobile Layout 
-       Show on screens smaller than md */}
       <div className="block md:hidden">
         <Flex flexDir={"column"} align={"start"}>
           <InfoCard profile={profile} />

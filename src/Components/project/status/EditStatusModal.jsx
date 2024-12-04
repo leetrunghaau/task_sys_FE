@@ -18,7 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { updateStatus } from "../../../services/API/statusAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function EditStatusModal({ pid, statusId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +43,9 @@ export default function EditStatusModal({ pid, statusId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during edit Status:", error);
       toast({
@@ -98,6 +101,7 @@ export default function EditStatusModal({ pid, statusId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

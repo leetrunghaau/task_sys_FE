@@ -18,7 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { addNewTracker } from "../../../services/API/trackerAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function CreateTrackerModal({ pid }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +43,9 @@ export default function CreateTrackerModal({ pid }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during Create new tracker:", error);
       toast({
@@ -101,6 +104,7 @@ export default function CreateTrackerModal({ pid }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }
