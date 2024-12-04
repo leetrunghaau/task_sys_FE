@@ -1,14 +1,5 @@
 "use client";
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  Heading,
-  VStack,
-  Text,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, VStack, Text } from "@chakra-ui/react";
 import {
   Archive,
   Code2,
@@ -21,21 +12,18 @@ import {
   Settings,
   Timer,
 } from "lucide-react";
-
-export default function Sidebar() {
+import Link from "next/link";
+export default function Sidebar({ project }) {
   return (
     <Box as="aside" w="64" bg="white" borderRightWidth="4px" h="h-screen">
       {/* Header */}
       <Flex gap="2">
-        <Image
-          boxSize="40px"
-          src="https://giabao23479-1731322934268.atlassian.net/secure/viewavatar?size=xxxlarge@2x&avatarId=10408&avatarType=project"></Image>
         <Flex flexDir={"column"}>
           <Heading noOfLines={1} fontSize="md" fontWeight="semibold">
-            Subscription Management
+            {project.project.name}
           </Heading>
           <Text noOfLines={1} fontSize="sm" color="gray.500">
-            Software project
+            {project.project.description}
           </Text>
         </Flex>
       </Flex>
@@ -91,7 +79,6 @@ export default function Sidebar() {
             </Button>
           </VStack>
         </Box>
-
         <Box>
           <Heading
             as="h2"
@@ -99,36 +86,57 @@ export default function Sidebar() {
             fontWeight="semibold"
             color="gray.500"
             mb="2">
-            DEVELOPMENT
+            SETTINGS
           </Heading>
           <VStack spacing="1" align="stretch">
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Code2 size="16px" />}>
-              Code
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<FileCode size="16px" />}>
-              Project pages
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Settings size="16px" />}>
-              Project settings
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Archive size="16px" />}>
-              Archived issues
-              <Badge ml="auto" colorScheme="purple">
-                NEW
-              </Badge>
-            </Button>
+            <Link href={`/projects/${project.project.id}/role`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Code2 size="16px" />}>
+                Role
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/members`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<FileCode size="16px" />}>
+                Members
+              </Button>
+            </Link>
+            <Link href="priority">
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Settings size="16px" />}>
+                Priority
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/tracker`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Archive size="16px" />}>
+                Tracker
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/status`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Archive size="16px" />}>
+                Status
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/project-info`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Archive size="16px" />}>
+                Project Info
+              </Button>
+            </Link>
           </VStack>
         </Box>
       </VStack>

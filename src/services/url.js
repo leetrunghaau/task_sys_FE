@@ -2,6 +2,8 @@
 
 export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
 
+//user URL
+
 export const signUp = {
   URL: "/sign/up",
 };
@@ -19,6 +21,8 @@ export const resetPass = {
   URL: "/info/change-pass",
 };
 
+//Project URL
+
 export const getAllProjects = {
   URL: "/projects",
 };
@@ -33,3 +37,19 @@ export const updateSingleProject = (id) => `/project/${id}`;
 
 export const getProjectMembers = (id) => `project/${id}/members`;
 export const addProjectNewMember = (id) => `project/${id}/member`;
+
+export const deleteProjectMember = (id, memId) =>
+  `project/${id}/member/${memId}`;
+
+//Project Role URL
+
+export const getAllRoles = (id) => `project/${id}/roles`;
+export const createNewRole = (id) => `project/${id}/role`;
+
+//Permissions URL
+export const getAllPermissions = {
+  URL: "/permissions",
+};
+
+//Tracker
+export const getAllTrackers = (id) => `project/${id}/trackers`;

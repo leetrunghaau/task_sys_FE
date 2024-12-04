@@ -8,6 +8,7 @@ import {
   Text,
   Button,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { allProjectMembers } from "../../services/API/permissionAPI";
 import { useState, useEffect } from "react";
@@ -32,7 +33,7 @@ export default function ProjectMembers({ id }) {
       try {
         const response = await allProjectMembers(id);
         setMembers(response.data);
-        console.log(response);
+        console.log(response.data);
       } catch (error) {
         setError("Failed to load project");
       } finally {
@@ -63,7 +64,6 @@ export default function ProjectMembers({ id }) {
           Add
         </Button>
       </Stack>
-
       <Stack spacing={4} maxH="200px" overflowY="auto">
         {members.map((member) => (
           <Box
@@ -75,10 +75,13 @@ export default function ProjectMembers({ id }) {
             justifyContent="space-between"
             alignItems="center">
             <Box display="flex" alignItems="center">
-              <Avatar name={member.name} src={member.avatar} size="sm" />
-              <Text ml={2}>{member.name}</Text>
+              <Avatar name={member.User.name} size="sm" />
+              <Flex flexDir={"column"}>
+                <Text ml={2}>{member.User.name}</Text>
+                <Text ml={2}>{member.User.email}</Text>
+              </Flex>
             </Box>
-            <Box>{member.role}</Box>
+            <Button colorScheme={"red"}>Delete Member</Button>
           </Box>
         ))}
       </Stack>

@@ -3,7 +3,6 @@ import DashBoardStat from "../../Components/dashboard/DashboardSummary/DashBoard
 import UpComingTask from "../../Components/dashboard/UpComingTask/UpComingTask";
 import RecentTask from "../../Components/dashboard/RecentTask/RecentTask";
 import Projects from "../../Components/dashboard/Projects/Projects";
-
 export default function DashBoardPage() {
   return (
     <Flex px={{ base: 2, md: 6 }} flexDir={"column"} gap="10">
