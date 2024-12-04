@@ -12,31 +12,31 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { deleteTracker } from "../../../services/API/trackerAPI";
+import { deleteStatus } from "../../../services/API/statusAPI";
 
-export default function DeleteTrackerModal({ pid, trackerId }) {
+export default function DeleteStatusModal({ pid, statusId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleDeleteTracker = async (e) => {
+  const handleDeleteStatus = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      await deleteTracker(pid, trackerId);
+      await deleteStatus(pid, statusId);
 
       toast({
-        title: "Delete tracker Successfully!",
-        description: "This tracker has been deleted successfully.",
+        title: "Delete Status Successfully!",
+        description: "This Status has been deleted successfully.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error during deleting this tracker:", error);
+      console.error("Error during deleting this Status:", error);
       toast({
-        title: "Delete tracker Failed",
+        title: "Delete Status Failed",
         description: error.response?.data?.message || "Something went wrong.",
         status: "error",
         duration: 3000,
@@ -55,15 +55,15 @@ export default function DeleteTrackerModal({ pid, trackerId }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete This Tracker?</ModalHeader>
+          <ModalHeader>Delete This Status?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleDeleteTracker}>
+            <form onSubmit={handleDeleteStatus}>
               <Button
                 type="submit"
                 colorScheme="red"
-                onClick={handleDeleteTracker}>
-                Yes, delete this tracker
+                onClick={handleDeleteStatus}>
+                Yes, delete this Status
               </Button>
             </form>
           </ModalBody>

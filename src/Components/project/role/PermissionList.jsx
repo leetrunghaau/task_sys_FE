@@ -70,7 +70,6 @@ export default function PermissionList() {
               </Flex>
             ))}
           </DrawerBody>
-
           <DrawerFooter>
             <Button variant="outline" mr={3} onClick={onClose}>
               Cancel

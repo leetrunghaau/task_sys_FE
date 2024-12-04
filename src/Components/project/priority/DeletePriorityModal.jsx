@@ -12,19 +12,19 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { deleteTracker } from "../../../services/API/trackerAPI";
+import { deletePriority } from "../../../services/API/priorityAPI";
 
-export default function DeleteTrackerModal({ pid, trackerId }) {
+export default function DeletePriorityModal({ pid, priorityId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleDeleteTracker = async (e) => {
+  const handleDeletePriority = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      await deleteTracker(pid, trackerId);
+      await deletePriority(pid, priorityId);
 
       toast({
         title: "Delete tracker Successfully!",
@@ -55,15 +55,15 @@ export default function DeleteTrackerModal({ pid, trackerId }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete This Tracker?</ModalHeader>
+          <ModalHeader>Delete This Priority?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleDeleteTracker}>
+            <form onSubmit={handleDeletePriority}>
               <Button
                 type="submit"
                 colorScheme="red"
-                onClick={handleDeleteTracker}>
-                Yes, delete this tracker
+                onClick={handleDeletePriority}>
+                Yes, delete this priority
               </Button>
             </form>
           </ModalBody>
