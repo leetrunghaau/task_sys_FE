@@ -51,6 +51,9 @@ export default function UpdatePassword({ profile }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during updating your password:", error);
       toast({

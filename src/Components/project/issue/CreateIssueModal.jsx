@@ -43,6 +43,9 @@ export default function CreatePriorityModal({ pid }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during Create new Priority:", error);
       toast({

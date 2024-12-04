@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { allRoles } from "../../../services/API/roleAPI";
 import PermissionList from "./PermissionList";
+import DeleteRoleModal from "./DeleteRoleModal";
 export default function RoleTable({ pid }) {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,9 @@ export default function RoleTable({ pid }) {
                 <Td>{role.name}</Td>
                 <Td>
                   <PermissionList roleId={role.id} />
+                </Td>
+                <Td>
+                  <DeleteRoleModal pid={pid} roleId={role.id} />
                 </Td>
               </Tr>
             ))}

@@ -37,7 +37,7 @@ export default function ProjectLayout({ children }) {
     return <div>{error}</div>;
   }
   return (
-    <Flex minW="100vw">
+    <Flex minH={"100vh"}>
       <SideBar project={info} />
       {children}
     </Flex>

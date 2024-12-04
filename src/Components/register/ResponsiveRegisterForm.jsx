@@ -19,7 +19,6 @@ export default function ResponsiveRegisterForm() {
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  // State for form inputs
   const [formData, setFormData] = useState({
     name: "",
     userName: "",
@@ -46,8 +45,9 @@ export default function ResponsiveRegisterForm() {
         duration: 3000,
         isClosable: true,
       });
-      // Redirect to login page after successful registration
-      router.push("/logIn");
+      setTimeout(() => {
+        router.push("/logIn");
+      }, 1100);
     } catch (error) {
       console.error("Error during registration:", error);
       toast({

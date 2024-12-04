@@ -12,9 +12,10 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { deletePriority } from "../../../services/API/priorityAPI";
+import LoadingSpinner from "../../Layout/Loading";
+import { deleteRole } from "../../../services/API/roleAPI";
 
-export default function DeletePriorityModal({ pid, priorityId }) {
+export default function DeleteRoleModal({ pid, roleId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -24,11 +25,10 @@ export default function DeletePriorityModal({ pid, priorityId }) {
     setIsLoading(true);
 
     try {
-      await deletePriority(pid, priorityId);
-
+      await deleteRole(pid, roleId);
       toast({
-        title: "Delete tracker Successfully!",
-        description: "This tracker has been deleted successfully.",
+        title: "Delete Role Successfully!",
+        description: "This Role has been deleted successfully.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -37,9 +37,9 @@ export default function DeletePriorityModal({ pid, priorityId }) {
         window.location.reload();
       }, 1100);
     } catch (error) {
-      console.error("Error during deleting this tracker:", error);
+      console.error("Error during deleting this Role:", error);
       toast({
-        title: "Delete tracker Failed",
+        title: "Delete Role Failed",
         description: error.response?.data?.message || "Something went wrong.",
         status: "error",
         duration: 3000,
@@ -58,7 +58,7 @@ export default function DeletePriorityModal({ pid, priorityId }) {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete This Priority?</ModalHeader>
+          <ModalHeader>Delete This Role?</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleDeletePriority}>
@@ -66,7 +66,7 @@ export default function DeletePriorityModal({ pid, priorityId }) {
                 type="submit"
                 colorScheme="red"
                 onClick={handleDeletePriority}>
-                Yes, delete this priority
+                Yes, delete this role
               </Button>
             </form>
           </ModalBody>
@@ -77,6 +77,7 @@ export default function DeletePriorityModal({ pid, priorityId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

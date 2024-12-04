@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { deleteTracker } from "../../../services/API/trackerAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function DeleteTrackerModal({ pid, trackerId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +33,9 @@ export default function DeleteTrackerModal({ pid, trackerId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during deleting this tracker:", error);
       toast({
@@ -74,6 +77,7 @@ export default function DeleteTrackerModal({ pid, trackerId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

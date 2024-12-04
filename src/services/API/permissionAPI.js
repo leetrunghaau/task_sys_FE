@@ -3,6 +3,7 @@ import {
   getProjectMembers,
   addProjectNewMember,
   getAllPermissions,
+  deleteProjectMember,
 } from "../url";
 import useAuthStore from "../../store/authStore";
 
@@ -36,7 +37,7 @@ export const addNewMember = async (id, payload) => {
       throw new Error("No authentication token found.");
     }
     const url = addProjectNewMember(id);
-    const response = await axiosInstance.put(url, payload, {
+    const response = await axiosInstance.post(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -55,8 +56,8 @@ export const deleteAMember = async (id, memId) => {
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = deleteProjectNewMember(id, memId);
-    const response = await axiosInstance.delete(url, memId, {
+    const url = deleteProjectMember(id, memId);
+    const response = await axiosInstance.delete(url, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

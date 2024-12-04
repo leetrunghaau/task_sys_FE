@@ -17,6 +17,7 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import LoadingSpinner from "../../Layout/Loading";
 import { updatePriority } from "../../../services/API/priorityAPI";
 
 export default function EditPriorityModal({ pid, priorityId }) {
@@ -43,6 +44,9 @@ export default function EditPriorityModal({ pid, priorityId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during edit Priority:", error);
       toast({
@@ -98,6 +102,7 @@ export default function EditPriorityModal({ pid, priorityId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

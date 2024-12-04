@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { deletePriority } from "../../../services/API/priorityAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function DeletePriorityModal({ pid, priorityId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,6 @@ export default function DeletePriorityModal({ pid, priorityId }) {
   const handleDeletePriority = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       await deletePriority(pid, priorityId);
 
@@ -33,6 +32,9 @@ export default function DeletePriorityModal({ pid, priorityId }) {
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
       console.error("Error during deleting this tracker:", error);
       toast({
@@ -74,6 +76,7 @@ export default function DeletePriorityModal({ pid, priorityId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

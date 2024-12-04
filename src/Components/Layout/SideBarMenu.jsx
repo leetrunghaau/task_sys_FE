@@ -1,16 +1,13 @@
 "use client";
 import { Box, Button, Flex, Heading, VStack, Text } from "@chakra-ui/react";
 import {
-  Archive,
-  Code2,
-  FileCode,
-  Goal,
-  LayoutDashboard,
-  List,
-  Plus,
-  RocketIcon,
-  Settings,
-  Timer,
+  UserPen,
+  UserPlus,
+  ChartNoAxesColumnIncreasing,
+  ScanEye,
+  Lightbulb,
+  BadgeAlert,
+  MonitorCog,
 } from "lucide-react";
 import Link from "next/link";
 export default function Sidebar({ project }) {
@@ -19,66 +16,16 @@ export default function Sidebar({ project }) {
       {/* Header */}
       <Flex gap="2">
         <Flex flexDir={"column"}>
-          <Heading noOfLines={1} fontSize="md" fontWeight="semibold">
+          <Heading noOfLines={1} fontSize="xl" fontWeight="semibold">
             {project.project.name}
           </Heading>
-          <Text noOfLines={1} fontSize="sm" color="gray.500">
+          <Text noOfLines={1} fontSize="md" color="gray.500">
             {project.project.description}
           </Text>
         </Flex>
       </Flex>
-
       {/* Navigation */}
       <VStack align="stretch" spacing="4" p="4">
-        <Box>
-          <Heading
-            as="h2"
-            fontSize="xs"
-            fontWeight="semibold"
-            color="gray.500"
-            mb="2">
-            PLANNING
-          </Heading>
-          <VStack spacing="1" align="stretch">
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<RocketIcon size="16px" />}
-              colorScheme="blue">
-              Getting started
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Timer size="16px" />}>
-              Timeline
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<LayoutDashboard size="16px" />}>
-              Board
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<List size="16px" />}>
-              List
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Goal size="16px" />}>
-              Goals
-            </Button>
-            <Button
-              variant="ghost"
-              justifyContent="flex-start"
-              leftIcon={<Plus size="16px" />}>
-              Add view
-            </Button>
-          </VStack>
-        </Box>
         <Box>
           <Heading
             as="h2"
@@ -93,7 +40,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Code2 size="16px" />}>
+                leftIcon={<UserPen size="16px" />}>
                 Role
               </Button>
             </Link>
@@ -101,7 +48,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<FileCode size="16px" />}>
+                leftIcon={<UserPlus size="16px" />}>
                 Members
               </Button>
             </Link>
@@ -109,7 +56,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Settings size="16px" />}>
+                leftIcon={<ChartNoAxesColumnIncreasing size="16px" />}>
                 Priority
               </Button>
             </Link>
@@ -117,7 +64,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Archive size="16px" />}>
+                leftIcon={<ScanEye size="16px" />}>
                 Tracker
               </Button>
             </Link>
@@ -125,7 +72,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Archive size="16px" />}>
+                leftIcon={<Lightbulb size="16px" />}>
                 Status
               </Button>
             </Link>
@@ -133,15 +80,15 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Archive size="16px" />}>
+                leftIcon={<BadgeAlert size="16px" />}>
                 Issue
               </Button>
             </Link>
-            <Link href={`/projects/${project.project.id}/project-info`}>
+            <Link href={`/projects/${project.project.id}/info`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Archive size="16px" />}>
+                leftIcon={<MonitorCog size="16px" />}>
                 Project Info
               </Button>
             </Link>

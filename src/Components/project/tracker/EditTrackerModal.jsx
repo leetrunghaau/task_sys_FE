@@ -18,7 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { updateTracker } from "../../../services/API/trackerAPI";
-
+import LoadingSpinner from "../../Layout/Loading";
 export default function EditTrackerModal({ pid, trackerId }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -37,16 +37,19 @@ export default function EditTrackerModal({ pid, trackerId }) {
       });
 
       toast({
-        title: "Create new tracker Successfully!",
-        description: "This role has been updated successfully.",
+        title: "Edit tracker Successfully!",
+        description: "This tracker has been updated successfully.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1100);
     } catch (error) {
-      console.error("Error during Create new tracker:", error);
+      console.error("Error during editing tracker:", error);
       toast({
-        title: "Create new tracker Failed",
+        title: "Edit tracker Failed",
         description: error.response?.data?.message || "Something went wrong.",
         status: "error",
         duration: 3000,
@@ -98,6 +101,7 @@ export default function EditTrackerModal({ pid, trackerId }) {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isLoading ? <LoadingSpinner /> : <></>}
     </>
   );
 }

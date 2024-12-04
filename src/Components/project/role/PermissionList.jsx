@@ -2,7 +2,6 @@
 import {
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
@@ -16,7 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
 import { allPermissions } from "../../../services/API/permissionAPI";
-export default function PermissionList({roleId}) {
+import { updateRolePermissions } from "../../../services/API/roleAPI";
+export default function PermissionList({ roleId }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const [permissions, setPermissions] = useState([]);
@@ -24,23 +24,45 @@ export default function PermissionList({roleId}) {
   const [error, setError] = useState(null);
   const toast = useToast();
 
-  const permissionClick =(e, permId)=>{
-    console.log("e", e)
-    console.log("e1", permId)
-  }
+  // Fetch permissions on mount
   useEffect(() => {
     const fetchAllPermissions = async () => {
       try {
         const response = await allPermissions();
         setPermissions(response.data);
       } catch (err) {
-        setError("Failed to load projects");
+        setError("Failed to load permissions");
       } finally {
         setLoading(false);
       }
     };
     fetchAllPermissions();
   }, []);
+
+  const handleCheckboxChange = (permissionId, isChecked) => {
+    // Delay update to the server
+    setTimeout(async () => {
+      try {
+        // Call the update API
+        await updateRolePermissions(roleId, permissionId, isChecked);
+        toast({
+          title: "Permission updated",
+          description: `Permission has been ${isChecked ? "enabled" : "disabled"}.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        toast({
+          title: "Update failed",
+          description: "Failed to update permission. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }, 1000); // 1-second delay
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -49,10 +71,11 @@ export default function PermissionList({roleId}) {
   if (error) {
     return <div>{error}</div>;
   }
+
   return (
     <>
       <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-        Edit permission
+        Edit Permissions
       </Button>
       <Drawer
         isOpen={isOpen}
@@ -62,11 +85,17 @@ export default function PermissionList({roleId}) {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Edit Permission</DrawerHeader>
+          <DrawerHeader>Edit Permissions</DrawerHeader>
           <DrawerBody>
             {permissions.map((permission) => (
-              <Flex align={"center"} gap="4" mb="4">
-                <Checkbox size="lg" colorScheme="green" onChange={(event) => permissionClick(event, permission.id)}></Checkbox>
+              <Flex key={permission.id} align={"center"} gap="4" mb="4">
+                <Checkbox
+                  size="lg"
+                  colorScheme="green"
+                  isChecked={permission.isChecked}
+                  onChange={(e) =>
+                    handleCheckboxChange(permission.id, e.target.checked)
+                  }></Checkbox>
                 <Flex flexDir="column">
                   <Text>{permission.name}</Text>
                   <Text fontSize={"sm"}>{permission.description}</Text>
@@ -74,7 +103,6 @@ export default function PermissionList({roleId}) {
               </Flex>
             ))}
           </DrawerBody>
-          
         </DrawerContent>
       </Drawer>
     </>
