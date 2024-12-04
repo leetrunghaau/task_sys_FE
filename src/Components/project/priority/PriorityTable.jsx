@@ -48,7 +48,7 @@ export default function PriorityTable({ pid }) {
           <Thead>
             <Tr>
               <Th>#</Th>
-              <Th>Trackers</Th>
+              <Th>Priorities</Th>
             </Tr>
           </Thead>
           <Tbody>
