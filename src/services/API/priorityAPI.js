@@ -1,19 +1,19 @@
 import axiosInstance from "../axios";
 import {
-  getAllTrackers,
-  createNewTracker,
-  editTracker,
-  delTracker,
+  getAllPriorities,
+  createNewPriority,
+  delPriority,
+  editPriority,
 } from "../url";
 import useAuthStore from "../../store/authStore";
 
-export const allTrackers = async (id) => {
+export const allPriorities = async (id) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = getAllTrackers(id);
+    const url = getAllPriorities(id);
     const response = await axiosInstance.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -28,13 +28,13 @@ export const allTrackers = async (id) => {
   }
 };
 
-export const addNewTracker = async (id, payload) => {
+export const addNewPriority = async (id, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = createNewTracker(id);
+    const url = createNewPriority(id);
     const response = await axiosInstance.post(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -47,13 +47,13 @@ export const addNewTracker = async (id, payload) => {
     throw error;
   }
 };
-export const updateTracker = async (id, trackerId, payload) => {
+export const updatePriority = async (id, priorityId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = editTracker(id, trackerId);
+    const url = editPriority(id, priorityId);
 
     const response = await axiosInstance.put(url, payload, {
       headers: {
@@ -69,13 +69,13 @@ export const updateTracker = async (id, trackerId, payload) => {
   }
 };
 
-export const deleteTracker = async (id, trackerId) => {
+export const deletePriority = async (id, priorityId) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = delTracker(id, trackerId);
+    const url = delPriority(id, priorityId);
 
     const response = await axiosInstance.delete(url, {
       headers: {

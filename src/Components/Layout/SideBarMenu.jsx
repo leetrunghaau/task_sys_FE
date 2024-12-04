@@ -129,6 +129,14 @@ export default function Sidebar({ project }) {
                 Status
               </Button>
             </Link>
+            <Link href={`/projects/${project.project.id}/issue`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Archive size="16px" />}>
+                Issue
+              </Button>
+            </Link>
             <Link href={`/projects/${project.project.id}/project-info`}>
               <Button
                 variant="ghost"

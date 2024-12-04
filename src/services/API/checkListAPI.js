@@ -1,60 +1,72 @@
 import axiosInstance from "../axios";
-import {
-  getAllTrackers,
-  createNewTracker,
-  editTracker,
-  delTracker,
-} from "../url";
 import useAuthStore from "../../store/authStore";
+import {
+  addSingleChecklist,
+  addMultipleChecklists,
+  updateChecklist,
+  deleteChecklist,
+} from "../url";
 
-export const allTrackers = async (id) => {
+// Add a single checklist
+export const createSingleChecklist = async (projectId, issueId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = getAllTrackers(id);
-    const response = await axiosInstance.get(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
 
-    return response.data;
-  } catch (error) {
-    console.error("Connection test failed:", error);
-    throw error;
-  }
-};
-
-export const addNewTracker = async (id, payload) => {
-  try {
-    const token = useAuthStore.getState().token;
-    if (!token) {
-      throw new Error("No authentication token found.");
-    }
-    const url = createNewTracker(id);
+    const url = addSingleChecklist(projectId, issueId);
     const response = await axiosInstance.post(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
+
     return response.data;
   } catch (error) {
-    console.error("Failed to update project:", error);
+    console.error("Failed to add single checklist:", error);
     throw error;
   }
 };
-export const updateTracker = async (id, trackerId, payload) => {
+
+// Add multiple checklists
+export const createMultipleChecklists = async (projectId, issueId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = editTracker(id, trackerId);
 
+    const url = addMultipleChecklists(projectId, issueId);
+    const response = await axiosInstance.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add multiple checklists:", error);
+    throw error;
+  }
+};
+
+// Update a checklist
+export const updateChecklistItem = async (
+  projectId,
+  issueId,
+  checklistId,
+  payload
+) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = updateChecklist(projectId, issueId, checklistId);
     const response = await axiosInstance.put(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -64,19 +76,20 @@ export const updateTracker = async (id, trackerId, payload) => {
 
     return response.data;
   } catch (error) {
-    console.error("Failed to update project:", error);
+    console.error("Failed to update checklist:", error);
     throw error;
   }
 };
 
-export const deleteTracker = async (id, trackerId) => {
+// Delete a checklist
+export const deleteChecklistItem = async (projectId, issueId, checklistId) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = delTracker(id, trackerId);
 
+    const url = deleteChecklist(projectId, issueId, checklistId);
     const response = await axiosInstance.delete(url, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -86,7 +99,7 @@ export const deleteTracker = async (id, trackerId) => {
 
     return response.data;
   } catch (error) {
-    console.error("Failed to update project:", error);
+    console.error("Failed to delete checklist:", error);
     throw error;
   }
 };
