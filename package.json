@@ -22,6 +22,7 @@
     "node": "^22.9.0",
     "react": "^18",
     "react-calendar": "^5.0.0",
+    "react-custom-kanban-board": "^1.0.2",
     "react-dom": "^18",
     "task_sys": "file:",
     "zustand": "^5.0.1"
