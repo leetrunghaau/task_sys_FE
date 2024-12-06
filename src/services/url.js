@@ -72,7 +72,7 @@ export const createNewStatus = (id) => `project/${id}/status`;
 export const editStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 export const delStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 
-//Issue
+//Status
 export const getAllIssues = (id) => `issuess?project=${id}`;
 export const createNewIssue = (id) => `project/${id}/issues`;
 export const editIssueContent = (id, issuesId) =>

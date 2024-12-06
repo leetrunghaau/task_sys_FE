@@ -20,12 +20,12 @@ import {
 import LoadingSpinner from "../../Layout/Loading";
 import { updatePriority } from "../../../services/API/priorityAPI";
 
-export default function EditPriorityModal({ pid, priorityId }) {
+export default function EditPriorityModal({ pid, priority, onSubmitModel }) {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formData, setFormData] = useState({
-    name: "",
+    name: priority.name,
   });
 
   const handleUpdatePriority = async (e) => {
@@ -33,7 +33,7 @@ export default function EditPriorityModal({ pid, priorityId }) {
     setIsLoading(true);
 
     try {
-      await updatePriority(pid, priorityId, {
+      await updatePriority(pid, priority.id, {
         name: formData.name,
       });
 
@@ -44,9 +44,8 @@ export default function EditPriorityModal({ pid, priorityId }) {
         duration: 3000,
         isClosable: true,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1100);
+      onSubmitModel()
+      onClose()
     } catch (error) {
       console.error("Error during edit Priority:", error);
       toast({
@@ -90,7 +89,7 @@ export default function EditPriorityModal({ pid, priorityId }) {
                   type="submit"
                   colorScheme="blue"
                   onClick={handleUpdatePriority}>
-                  Create
+                  Save
                 </Button>
               </Stack>
             </form>
