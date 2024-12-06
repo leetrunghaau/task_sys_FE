@@ -86,17 +86,7 @@ export default function EditIssueModal({ pid, issueId }) {
                   placeholder="Issue name"
                 />
               </FormControl>
-              {/* <FormControl mt={4} isRequired>
-                <FormLabel>Status</FormLabel>
-                <Input
-                  id="status"
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, status: e.target.value }))
-                  }
-                  placeholder="Issue status"
-                />
-              </FormControl> */}
+              
               <FormControl mt={4} isRequired>
                 <FormLabel>Due Date</FormLabel>
                 <Input
@@ -111,20 +101,7 @@ export default function EditIssueModal({ pid, issueId }) {
                   }
                 />
               </FormControl>
-              {/* <FormControl mt={4}>
-                <FormLabel>Assignee</FormLabel>
-                <Input
-                  id="assignee"
-                  value={formData.assignee}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      assignee: e.target.value,
-                    }))
-                  }
-                  placeholder="Assignee name"
-                />
-              </FormControl> */}
+
               <Divider mb={4} />
               <Stack spacing={4}>
                 <Button type="submit" colorScheme="blue" isLoading={isLoading}>

@@ -1,6 +1,7 @@
 "use client";
 import { Box, Heading, Text, Flex, Badge, Button, VStack, HStack, Divider, Avatar, Input, Textarea, Progress, Checkbox, CheckboxGroup, Spacer, Select, Editable, EditableInput, EditablePreview, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
 import { useState } from 'react';
+import IssuceProgress from '../../../../../Components/project/issue/detail/Progress'
 
 export default function IssueDetailPage() {
     const [comment, setComment] = useState('');
@@ -35,34 +36,29 @@ export default function IssueDetailPage() {
             <VStack align="start" spacing={4} mb={6}>
                 <HStack>
                     <Text fontWeight="bold">Assigned to:</Text>
-                    <Menu>
-                        <MenuButton as={Button} bgColor="transparent" size="sm">
-                            <Avatar name="John a Doe" size="sm" mr={4} />
-                        </MenuButton>
-                        <MenuList>
-                            <MenuItem>Download</MenuItem>
-                            <MenuItem>Create a Copy</MenuItem>
-                            <MenuItem>Mark as Draft</MenuItem>
-                            <MenuItem>Delete</MenuItem>
-                            <MenuItem>Attend a Workshop</MenuItem>
-                        </MenuList>
-                    </Menu>
-                </HStack>
-                <HStack>
-                    <Text fontWeight="bold">Assigned to:</Text>
                     <HStack spacing={2}>
                         <Menu>
-                            <MenuButton as={Avatar} size="sm" name="John a Doe">
+                            <MenuButton as={Avatar} bgColor="transparent" size="sm" mr={4}>
+                                <Avatar name="John a Doe" size="sm" mr={4} />
                             </MenuButton>
+                            <Text>John Doe</Text>
                             <MenuList>
-                                <MenuItem>Download</MenuItem>
-                                <MenuItem>Create a Copy</MenuItem>
-                                <MenuItem>Mark as Draft</MenuItem>
-                                <MenuItem>Delete</MenuItem>
-                                <MenuItem>Attend a Workshop</MenuItem>
+                                <MenuItem>
+                                    <Avatar name='t1' size="sm" mr={4} />
+                                    <Text>t2</Text>
+                                </MenuItem>
+                                <MenuItem>
+                                    <Avatar name='t1' size="sm" mr={4} />
+                                    <Text>t2</Text>
+                                </MenuItem>
+                                <MenuItem>
+                                    <Avatar name='t1' size="sm" mr={4} />
+                                    <Text>t2</Text>
+                                </MenuItem>
                             </MenuList>
+
                         </Menu>
-                        <Text>John Doe</Text>
+                        
                     </HStack>
                 </HStack>
                 <HStack>
@@ -92,8 +88,7 @@ export default function IssueDetailPage() {
             </VStack>
 
             {/* Progress Bar */}
-            {/* <IssuceProgress percent={40} /> */}
-
+            <IssuceProgress percent={40} />
             {/* Issue Description */}
             <Box mt={6}>
                 <Heading size="md" mb={2}>Description</Heading>

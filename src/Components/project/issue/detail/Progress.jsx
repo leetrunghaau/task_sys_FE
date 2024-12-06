@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Heading, HStack, Progress, Text } from "@chakra-ui/react";
+import { Box, Divider, Heading, HStack, Progress, Text } from "@chakra-ui/react";
 
 export default function IssuceProgress({percent}) {
     return (
