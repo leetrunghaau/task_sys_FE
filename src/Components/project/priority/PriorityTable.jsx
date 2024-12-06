@@ -8,39 +8,10 @@ import {
   Td,
   TableContainer,
   Box,
-  useToast,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import { allPriorities } from "../../../services/API/priorityAPI";
 import EditPriorityModal from "./EditPriorityModal";
 import DeletePriorityModal from "./DeletePriorityModal";
-export default function PriorityTable({ pid }) {
-  const [priorities, setPriorities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const toast = useToast();
-
-  const fetchAllPriorities = async () => {
-    try {
-      const response = await allPriorities(pid);
-      setPriorities(response.data);
-    } catch (err) {
-      setError("Failed to load projects");
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchAllPriorities();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+export default function PriorityTable({ priorities, fetchAllPriorities }) {
   return (
     <Box w="100%">
       <TableContainer>
@@ -57,10 +28,19 @@ export default function PriorityTable({ pid }) {
                 <Td>{priority.id}</Td>
                 <Td>{priority.name}</Td>
                 <Td>
-                  <EditPriorityModal pid={pid} priority={priority} onSubmitModel={()=>{fetchAllPriorities()}}/>
+                  <EditPriorityModal
+                    pid={priority.projectId}
+                    priority={priority}
+                    onSubmitModel={() => {
+                      fetchAllPriorities();
+                    }}
+                  />
                 </Td>
                 <Td>
-                  <DeletePriorityModal pid={pid} priorityId={priority.id} />
+                  <DeletePriorityModal
+                    pid={priority.projectId}
+                    priorityId={priority.id}
+                  />
                 </Td>
               </Tr>
             ))}

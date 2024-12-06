@@ -1,12 +1,18 @@
 import { Box, Heading, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import CardDesktop from "./CardDesktop";
-export default function ProjectsDesktop() {
+
+export default function ProjectsDesktop({ projects }) {
+  // Sort projects by creation date, most recent first
+  const sortedProjects = projects
+    .sort((a, b) => new Date(b.created) - new Date(a.created))
+    .slice(0, 5);
+
   return (
     <Box>
       <Flex justify="space-between" align="center" mb={4}>
         <Heading as="h2" size="lg">
-          Projects
+          Recent Projects
         </Heading>
         <Link
           as={NextLink}
@@ -16,9 +22,9 @@ export default function ProjectsDesktop() {
         </Link>
       </Flex>
       <Flex flexDir={"column"} gap="8">
-        <CardDesktop />
-        <CardDesktop />
-        <CardDesktop />
+        {sortedProjects.map((project) => (
+          <CardDesktop key={project.id} project={project} />
+        ))}
       </Flex>
     </Box>
   );

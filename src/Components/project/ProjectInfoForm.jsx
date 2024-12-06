@@ -1,10 +1,10 @@
 import {
-  Box,
   Button,
   FormControl,
   FormLabel,
   Input,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { updateProject } from "../../services/API/projectAPI";
 import LoadingSpinner from "../Layout/Loading";
@@ -61,7 +61,7 @@ export default function ProjectInfoForm({ id }) {
     }
   };
   return (
-    <Box mb={4}>
+    <Flex mb={4} w="100%">
       <form onSubmit={handleUpdateProject}>
         <FormControl mb={4}>
           <FormLabel>Project Name</FormLabel>
@@ -85,15 +85,11 @@ export default function ProjectInfoForm({ id }) {
             required
           />
         </FormControl>
-        <Button
-          type="submit"
-          w="full"
-          leftIcon={<Settings />}
-          colorScheme="blue">
+        <Button type="submit" leftIcon={<Settings />} colorScheme="blue">
           Update Project Settings
         </Button>
       </form>
       {isLoading ? <LoadingSpinner /> : <></>}
-    </Box>
+    </Flex>
   );
 }

@@ -26,6 +26,9 @@ import {
 import { useEffect, useState } from "react";
 import LoadingSpinner from "../../Components/Layout/Loading";
 import ResetPass from "../../Components/admin/ResetPass";
+import { useRouter } from "next/navigation"; // For redirecting
+import { checkIfAdmin } from "../../utils/checkAdmin"; // Ensure correct path
+
 export default function UserTable() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedUserId, setSelectedUserId] = useState("");
@@ -33,10 +36,26 @@ export default function UserTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
+  const router = useRouter(); // To handle redirection
 
+  // Check if the user is an admin on page load
   useEffect(() => {
-    fetchAllUsers();
-  }, []);
+    const isAdmin = checkIfAdmin();
+    if (!isAdmin) {
+      // Redirect to /dashboard if not an admin
+      toast({
+        title: "Permission Denied",
+        description: "You don't have permission to access this page.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      router.push("/dashboard"); // Redirect to dashboard
+    } else {
+      fetchAllUsers(); // Fetch users only if the user is an admin
+    }
+  }, [router, toast]);
+
   const fetchAllUsers = async () => {
     try {
       const response = await fetchUsers();
@@ -56,8 +75,8 @@ export default function UserTable() {
         admin: payload,
       });
       toast({
-        title: `User ${isAdmin ? "promoted to" : "demoted from"} admin successfully!`,
-        description: `The user has been ${isAdmin ? "promoted" : "demoted"} to admin successfully.`,
+        title: `User ${payload ? "promoted to" : "demoted from"} admin successfully!`,
+        description: `The user has been ${payload ? "promoted" : "demoted"} to admin successfully.`,
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -77,35 +96,7 @@ export default function UserTable() {
       setLoading(false);
     }
   };
-  const handleResetPassword = async (userId, payload) => {
-    setLoading(true);
 
-    try {
-      await updateUserAdmin(userId, {
-        admin: payload,
-      });
-      toast({
-        title: `User ${isAdmin ? "promoted to" : "demoted from"} admin successfully!`,
-        description: `The user has been ${isAdmin ? "promoted" : "demoted"} to admin successfully.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      fetchAllUsers();
-    } catch (error) {
-      console.error("Error during update admin for user:", error);
-      toast({
-        title: "Update Failed",
-        description: error.response?.data?.message || "Something went wrong.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleDeleteUser = async (userId) => {
     setLoading(true);
 
@@ -133,6 +124,7 @@ export default function UserTable() {
       setLoading(false);
     }
   };
+
   if (loading) {
     return <LoadingSpinner />;
   }

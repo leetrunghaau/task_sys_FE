@@ -1,7 +1,5 @@
 "use client";
-import {
-  useToast,
-} from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { Flex, Heading } from "@chakra-ui/react";
 import IssueTable from "../../../../Components/project/issue/IssueTable";
 import CreateIssueModal from "../../../../Components/project/issue/CreateIssueModal";
@@ -17,11 +15,9 @@ export default function IssucesPage() {
   const params = useParams();
   const { pid } = params;
 
-  
   const fetchAllIssues = async () => {
     try {
       const response = await allIssues(pid);
-      console.log("issuce ===>", response.data)
       setIssues(response.data);
     } catch (err) {
       setError("Failed to load all Issues");

@@ -5,6 +5,8 @@ import {
   createRolePermissions,
   delRolePermissions,
   delRole,
+  addRoleToUserById,
+  delRoleToUserById,
 } from "../url";
 import useAuthStore from "../../store/authStore";
 
@@ -61,7 +63,6 @@ export const addRolePermissions = async (id, roleId, payload) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      
     });
 
     return response.data;
@@ -110,6 +111,49 @@ export const deleteRole = async (id, roleId) => {
     return response.data;
   } catch (error) {
     console.error("Failed to delete Role:", error);
+    throw error;
+  }
+};
+
+export const addRoleToUser = async (id, memId, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = addRoleToUserById(id, memId);
+
+    const response = await axiosInstance.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add role for this user:", error);
+    throw error;
+  }
+};
+export const delRoleToUser = async (id, memId, roleId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = delRoleToUserById(id, memId, roleId);
+
+    const response = await axiosInstance.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to del role for this user:", error);
     throw error;
   }
 };

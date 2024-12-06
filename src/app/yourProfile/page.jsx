@@ -4,12 +4,13 @@ import InfoCard from "../../Components/yourProfile/InfoCard/InfoCard";
 import Exp from "../../Components/yourProfile/Exp/Exp";
 import { useState, useEffect } from "react";
 import { getUserProfile } from "../../services/API/authAPI";
+import { useAuthRedirect } from "../../utils/useAuthRedirect";
 
 export default function YourProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  useAuthRedirect();
   useEffect(() => {
     const fetchProfile = async () => {
       try {

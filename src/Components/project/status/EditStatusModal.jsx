@@ -5,17 +5,16 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Stack,
   Divider,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import { updateStatus } from "../../../services/API/statusAPI";
 import LoadingSpinner from "../../Layout/Loading";
@@ -62,7 +61,7 @@ export default function EditStatusModal({ pid, statusId }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"blue"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"blue"}>
         Edit Status
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -84,21 +83,17 @@ export default function EditStatusModal({ pid, statusId }) {
                 />
               </FormControl>
               <Divider mb={4} />
-              <Stack spacing={4}>
+
+              <Flex justifyContent={"end"}>
                 <Button
                   type="submit"
                   colorScheme="blue"
                   onClick={handleUpdateStatus}>
                   Create
                 </Button>
-              </Stack>
+              </Flex>
             </form>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       {isLoading ? <LoadingSpinner /> : <></>}

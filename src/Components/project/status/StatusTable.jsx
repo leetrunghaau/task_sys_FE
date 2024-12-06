@@ -8,39 +8,11 @@ import {
   Td,
   TableContainer,
   Box,
-  useToast,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import { allStatuses } from "../../../services/API/statusAPI";
+
 import EditStatusModal from "./EditStatusModal";
 import DeleteStatusModal from "./DeleteStatusModal";
-export default function StatusTable({ pid }) {
-  const [statuses, setStatuses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const toast = useToast();
-  useEffect(() => {
-    const fetchAllStatuses = async () => {
-      try {
-        const response = await allStatuses(pid);
-        setStatuses(response.data);
-      } catch (err) {
-        setError("Failed to load Status");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllStatuses();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+export default function StatusTable({ pid, statuses }) {
   return (
     <Box w="100%">
       <TableContainer>
@@ -49,6 +21,8 @@ export default function StatusTable({ pid }) {
             <Tr>
               <Th>#</Th>
               <Th>Statuses</Th>
+              <Th>Edit Status</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>

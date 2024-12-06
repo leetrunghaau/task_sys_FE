@@ -2,33 +2,54 @@ import {
   Box,
   Stack,
   Input,
-  Select,
   Avatar,
   Text,
   Button,
   useToast,
   Flex,
   Spinner,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Switch,
 } from "@chakra-ui/react";
 import {
   allProjectMembers,
   addNewMember,
   deleteAMember,
 } from "../../services/API/permissionAPI";
-import LoadingSpinner from "../Layout/Loading";
+import { delRoleToUser, addRoleToUser } from "../../services/API/roleAPI";
 import { checkUserName } from "../../services/API/checkAPI";
 import { useState, useEffect } from "react";
 
-export default function ProjectMembers({ id }) {
+export default function ProjectMembers({ id, roles }) {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
+  const [isRoleChanging, setIsRoleChanging] = useState({});
 
   const [username, setUsername] = useState("");
   const [isChecking, setIsChecking] = useState(false);
   const [userResults, setUserResults] = useState([]);
   const [selectedRole, setSelectedRole] = useState("member");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [roleStatus, setRoleStatus] = useState({}); // Manage the role state
 
   const fetchProjectMembers = async () => {
     setLoading(true);
@@ -56,11 +77,8 @@ export default function ProjectMembers({ id }) {
     const timeoutId = setTimeout(async () => {
       setIsChecking(true);
       try {
-        setLoading(true);
-
         const result = await checkUserName(username);
         setUserResults(result.data || []);
-        
       } catch (error) {
         toast({
           title: "Error",
@@ -71,7 +89,6 @@ export default function ProjectMembers({ id }) {
         });
       } finally {
         setIsChecking(false);
-        setLoading(false);
       }
     }, 500);
 
@@ -93,9 +110,9 @@ export default function ProjectMembers({ id }) {
         duration: 3000,
         isClosable: true,
       });
-      fetchProjectMembers()
+      fetchProjectMembers();
     } catch (error) {
-      console.log("errr ===>", error)
+      console.log("errr ===>", error);
       toast({
         title: "Error",
         description: error.response.data.message,
@@ -110,13 +127,10 @@ export default function ProjectMembers({ id }) {
 
   const handleDeleteMember = async (id, memId) => {
     setLoading(true);
-
     try {
       await deleteAMember(id, memId);
-
       const response = await allProjectMembers(id);
       setMembers(response.data);
-
       toast({
         title: "Success",
         description: `User deleted.`,
@@ -124,7 +138,7 @@ export default function ProjectMembers({ id }) {
         duration: 3000,
         isClosable: true,
       });
-      fetchProjectMembers()
+      fetchProjectMembers();
     } catch (error) {
       toast({
         title: "Error",
@@ -138,15 +152,75 @@ export default function ProjectMembers({ id }) {
     }
   };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  const handleRoleChange = async (memberId, roleId, addRole) => {
+    const payload = { roleId };
+
+    try {
+      if (addRole) {
+        await addRoleToUser(id, memberId, payload);
+        toast({
+          title: "Role Added",
+          description: "Role has been added to the user successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        fetchProjectMembers();
+      } else {
+        await delRoleToUser(id, memberId, roleId);
+        toast({
+          title: "Role Removed",
+          description: "Role has been removed from the user successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+      fetchProjectMembers();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `Failed to update role: ${error.message}`,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleSwitchChange = (roleName, isChecked) => {
+    setRoleStatus((prevState) => ({
+      ...prevState,
+      [roleName]: isChecked,
+    }));
+
+    handleRoleChange(selectedMemberId, roleName, isChecked);
+  };
+
+  const setInitialRoleStatus = (roles) => {
+    const initialStatus = {};
+    roles.forEach((role) => {
+      initialStatus[role.name] = true;
+    });
+    setRoleStatus(initialStatus);
+  };
+
+  useEffect(() => {
+    if (selectedMemberId) {
+      const selectedMember = members.find(
+        (member) => member.id === selectedMemberId
+      );
+      if (selectedMember) {
+        setInitialRoleStatus(selectedMember.Roles);
+      }
+    }
+  }, [selectedMemberId, members]);
 
   return (
     <Flex flexDir={"column"} gap="4">
       <Stack mt={4} direction="row" alignItems="center">
         <Input
-          placeholder="Member's name"
+          placeholder="e.g.. Maria"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -154,62 +228,135 @@ export default function ProjectMembers({ id }) {
       </Stack>
       <Stack spacing={4} overflowY="auto">
         {userResults.length > 0 ? (
-          userResults.map((user) => (
-            <Box
-              key={user.id}
-              p={2}
-              bg="gray.100"
-              borderRadius="md"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center">
-              <Box display="flex" alignItems="center">
-                <Avatar name={user.name} size="sm" />
-                <Flex flexDir={"column"}>
-                  <Text ml={2}>{user.name}</Text>
-                  <Text ml={2}>{user.email}</Text>
-                </Flex>
+          userResults.map((user) => {
+            const isAlreadyMember = members.some(
+              (member) => member.User.id === user.id
+            );
+            return (
+              <Box
+                key={user.id}
+                p={2}
+                bg="gray.100"
+                borderRadius="md"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center">
+                <Box display="flex" alignItems="center">
+                  <Avatar name={user.name} size="sm" />
+                  <Flex flexDir={"column"}>
+                    <Text ml={2}>{user.name}</Text>
+                    <Text ml={2}>{user.email}</Text>
+                  </Flex>
+                </Box>
+                {!isAlreadyMember && (
+                  <Button
+                    size="sm"
+                    colorScheme="green"
+                    onClick={() => handleAddMember(user.id)}>
+                    Add
+                  </Button>
+                )}
               </Box>
-              <Button
-                size="sm"
-                colorScheme="green"
-                onClick={() => handleAddMember(user.id)}>
-                Add
-              </Button>
-            </Box>
-          ))
+            );
+          })
         ) : (
           <></>
         )}
       </Stack>
+
       <Stack spacing={4} mt={4}>
         <Text fontWeight="bold">Existing Members</Text>
-        {members.map((member) => (
-          <Box
-            key={member.id}
-            p={2}
-            borderRadius="md"
-            borderWidth="1px"
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center">
-            <Box display="flex" alignItems="center">
-              <Avatar name={member.User.name} size="sm" />
-              <Flex flexDir={"column"}>
-                <Text ml={2}>{member.User.name}</Text>
-                <Text ml={2}>{member.User.email}</Text>
-              </Flex>
-            </Box>
-            <Button
-              size="sm"
-              colorScheme="red"
-              onClick={() => handleDeleteMember(id, member.id)}>
-              Delete Member
-            </Button>
-          </Box>
-        ))}
+        <TableContainer>
+          <Table variant="simple">
+            <TableCaption></TableCaption>
+            <Thead>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Email</Th>
+                <Th>Role</Th>
+                <Th>Edit Role</Th>
+                <Th>Action</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {members.map((member) => (
+                <Tr key={member.id}>
+                  <Td>
+                    <Avatar name={member.User.name} size="sm" />
+                    <Text ml={2}>
+                      {member.User.name}
+                      {member.User.id}
+                    </Text>
+                  </Td>
+                  <Td>{member.User.email}</Td>
+                  <Td>
+                    {member.Roles.length > 0 ? (
+                      member.Roles.map((role) => (
+                        <Text key={role.id}>{role.name}</Text>
+                      ))
+                    ) : (
+                      <Text>No roles assigned</Text>
+                    )}
+                  </Td>
+
+                  <Td>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        onOpen();
+                        setSelectedMemberId(member.id);
+                      }}>
+                      Edit Member Roles
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button
+                      size="sm"
+                      onClick={() => handleDeleteMember(id, member.id)}
+                      colorScheme="red">
+                      Remove
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       </Stack>
-      {loading ? <LoadingSpinner /> : <></>}
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Member Roles</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {roles && Array.isArray(roles) ? (
+              roles.map((role) => (
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  key={role.id}
+                  justifyContent={"space-between"}>
+                  <Text>{role.name}</Text>
+                  <Switch
+                    isChecked={roleStatus[role.name]}
+                    onChange={(e) =>
+                      handleSwitchChange(role.id, e.target.checked)
+                    }
+                  />
+                </Stack>
+              ))
+            ) : (
+              <Text>No roles available</Text> // Fallback message if roles is not an array
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

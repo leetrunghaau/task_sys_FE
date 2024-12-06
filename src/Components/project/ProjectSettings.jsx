@@ -8,6 +8,7 @@ export default function ProjectSettings({ id }) {
 
   return (
     <Flex
+      w="100%"
       shadow="xl"
       flexDir="column"
       p="4"

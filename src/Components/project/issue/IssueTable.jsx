@@ -8,16 +8,12 @@ import {
   Td,
   TableContainer,
   Box,
-  useToast,
-  Link
+  Link,
 } from "@chakra-ui/react";
 
-import { useState, useEffect } from "react";
 import moment from "moment";
 
 export default function IssueTable({ issues }) {
-  
-
   return (
     <Box w="100%">
       <TableContainer>
@@ -40,9 +36,11 @@ export default function IssueTable({ issues }) {
                 <Td>{issue.Tracker?.name ?? ""}</Td>
                 <Td>{issue.Status?.name ?? ""}</Td>
                 <Td>{issue.Priority?.name ?? ""}</Td>
-                <Td><Link href={`/projects/${issue.projectId}/issue/${issue.id}`}>
-                  {issue.name}
-                </Link></Td>
+                <Td>
+                  <Link href={`/projects/${issue.projectId}/issue/${issue.id}`}>
+                    {issue.name}
+                  </Link>
+                </Td>
                 <Td>{issue.Assignee?.name ?? ""}</Td>
                 <Td>{moment(issue.created).format("DD-MM-YYYY")}</Td>
               </Tr>

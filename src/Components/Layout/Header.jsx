@@ -1,15 +1,15 @@
 "use client";
 import {
   Box,
-  Text,
   Flex,
-  Link,
   Button,
   Avatar,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  Heading,
+  Link,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useBoolean } from "@chakra-ui/react";
@@ -18,13 +18,14 @@ import useAuthStore from "../../store/authStore";
 import { SquareArrowRight, CircleUserRound, ClipboardList } from "lucide-react";
 import { getUserProfile } from "../../services/API/authAPI";
 import { checkIfAdmin } from "../../utils/checkAdmin";
+import { LogIn } from "lucide-react";
+
 export default function Header() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
   const [flag, setFlag] = useBoolean();
   const { isLoggedIn, admin, logOut } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
-  const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleNavigation = (sectionId) => {
@@ -34,6 +35,7 @@ export default function Header() {
       router.push(`/#${sectionId}`);
     }
   };
+
   useEffect(() => {
     const adminStatus = checkIfAdmin(); // Check if the user is an admin
     setIsAdmin(adminStatus);
@@ -72,47 +74,24 @@ export default function Header() {
   return (
     <Box
       as="header"
-      py={4}
-      minW="100%"
+      py={6}
       position="sticky"
       top={0}
       zIndex={30}
       borderBottom="1px solid"
       borderBottomColor="gray"
-      bg="white">
-      <Flex mx="auto" px={4} justify="space-between" align="center">
-        <Link
-          href="/"
-          _hover={{ textDecoration: "none", color: "red.400" }}
-          onMouseEnter={setFlag.on}
-          onMouseLeave={setFlag.off}>
-          {flag ? (
-            <Button
-              variant="ghost"
-              bg="transparent"
-              transform="rotate(10deg)"
-              transition="transform 0.3s ease"
-              size={{ base: "xs", md: "xl" }}
-              _hover={{
-                transform: "rotate(10deg)",
-                bg: "transparent",
-              }}>
-              Acme
-            </Button>
-          ) : (
-            <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
-              Acme
-            </Text>
-          )}
-        </Link>
+      bg="white"
+      minW="100vw">
+      <Flex justify="space-between" align="center" maxW="7xl" mx="auto" px={4}>
+        {/* Logo */}
+        <Heading size="lg" color="gray.700">
+          <Link href="/" _hover={{ textDecoration: "none" }}>
+            Grow.co
+          </Link>
+        </Heading>
+
+        {/* Right side buttons and profile */}
         <Flex justify={"space-between"} align={"center"}>
-          <Button
-            variant="ghost"
-            colorScheme="black"
-            size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("features")}>
-            Features
-          </Button>
           {isAdmin ? (
             <Button
               variant="ghost"
@@ -121,9 +100,8 @@ export default function Header() {
               onClick={() => router.push("/admin")}>
               Admin Dashboard
             </Button>
-          ) : (
-            <></>
-          )}
+          ) : null}
+
           {isLoggedIn ? (
             <Button
               variant="ghost"
@@ -132,23 +110,9 @@ export default function Header() {
               onClick={() => router.push("/dashboard")}>
               Dashboard
             </Button>
-          ) : (
-            <></>
-          )}
-          <Button
-            variant="ghost"
-            colorScheme="black"
-            size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("pricing")}>
-            Pricing
-          </Button>
-          <Button
-            variant="ghost"
-            colorScheme="black"
-            size={{ base: "xs", md: "md" }}
-            onClick={() => handleNavigation("contact")}>
-            Contact
-          </Button>
+          ) : null}
+
+          {/* Profile Menu */}
           {isLoggedIn ? (
             <Menu>
               <MenuButton as={Button} bgColor="transparent">
@@ -171,6 +135,7 @@ export default function Header() {
             </Menu>
           ) : (
             <Button
+              leftIcon={<LogIn size={18} />}
               variant="ghost"
               colorScheme="black"
               size={{ base: "xs", md: "md" }}

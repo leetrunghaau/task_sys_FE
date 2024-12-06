@@ -7,9 +7,9 @@ import {
   ScanEye,
   Lightbulb,
   BadgeAlert,
-  MonitorCog,
 } from "lucide-react";
 import Link from "next/link";
+
 export default function Sidebar({ project }) {
   return (
     <Box as="aside" w="64" bg="white" borderRightWidth="4px" h="h-screen">
@@ -27,7 +27,7 @@ export default function Sidebar({ project }) {
       {/* Navigation */}
       <VStack align="stretch" spacing="4" p="4">
         <Box>
-        <Heading
+          <Heading
             as="h2"
             fontSize="xs"
             fontWeight="semibold"
@@ -36,7 +36,7 @@ export default function Sidebar({ project }) {
             PLANNING
           </Heading>
           <VStack spacing="1" align="stretch">
-            <Link href={`/projects/${project.project.id}/issue`}>
+            <Link href={`/projects/${project.project.id}/timeline`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
@@ -52,7 +52,7 @@ export default function Sidebar({ project }) {
                 Issue
               </Button>
             </Link>
-            <Link href={`/projects/${project.project.id}/issue`}>
+            <Link href={`/projects/${project.project.id}/board`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
@@ -91,7 +91,7 @@ export default function Sidebar({ project }) {
                 Members
               </Button>
             </Link>
-            <Link href="priority">
+            <Link href={`/projects/${project.project.id}/priority`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
@@ -115,7 +115,14 @@ export default function Sidebar({ project }) {
                 Status
               </Button>
             </Link>
-            
+            <Link href={`/projects/${project.project.id}/settings`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Lightbulb size="16px" />}>
+                Project Settings
+              </Button>
+            </Link>
           </VStack>
         </Box>
       </VStack>

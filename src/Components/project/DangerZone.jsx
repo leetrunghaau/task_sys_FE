@@ -1,7 +1,7 @@
 "use client";
 import {
   Button,
-  Box,
+  Flex,
   Text,
   useDisclosure,
   AlertDialog,
@@ -44,11 +44,11 @@ export default function DangerZone({ id }) {
     }
   };
   return (
-    <Box>
+    <Flex flexDir={"column"} w="100%">
       <Text fontSize="lg" fontWeight="medium" mb={2}>
         Danger Zone
       </Text>
-      <Button colorScheme="red" onClick={onOpen} leftIcon={<Trash2 />} w="full">
+      <Button w="20%" colorScheme="red" onClick={onOpen} leftIcon={<Trash2 />}>
         Delete Project
       </Button>
 
@@ -81,6 +81,6 @@ export default function DangerZone({ id }) {
           </AlertDialogContent>
         </AlertDialogOverlay>
       </AlertDialog>
-    </Box>
+    </Flex>
   );
 }

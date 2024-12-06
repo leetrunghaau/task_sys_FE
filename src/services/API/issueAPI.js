@@ -8,6 +8,7 @@ import {
   editIssueStatus,
   editIssueDueDate,
   editAssignee,
+  getIssueById,
 } from "../url";
 
 export const allIssues = async (id) => {
@@ -17,6 +18,26 @@ export const allIssues = async (id) => {
       throw new Error("No authentication token found.");
     }
     const url = getAllIssues(id);
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Connection test failed:", error);
+    throw error;
+  }
+};
+export const getSingleIssueById = async (pid, issueId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = getIssueById(pid, issueId);
     const response = await axiosInstance.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,

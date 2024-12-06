@@ -11,7 +11,6 @@ export default function ProjectLayout({ children }) {
   const [error, setError] = useState(null);
   const params = useParams();
   const { pid } = params;
-
   useEffect(() => {
     if (!pid) return;
     const fetchProjectById = async () => {

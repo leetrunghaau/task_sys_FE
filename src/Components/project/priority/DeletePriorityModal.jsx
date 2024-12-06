@@ -51,7 +51,7 @@ export default function DeletePriorityModal({ pid, priorityId }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"red"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"red"}>
         Delete
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>

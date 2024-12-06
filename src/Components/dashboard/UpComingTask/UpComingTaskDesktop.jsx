@@ -4,7 +4,7 @@ export default function UpComingTaskDesktop() {
   return (
     <Flex flexDir={"column"} gap="4">
       <Heading as="h2" size="lg">
-        UpComing Tasks
+        UpComing Issues
       </Heading>
       <TaskCard />
       <TaskCard />

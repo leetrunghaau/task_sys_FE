@@ -5,17 +5,16 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Stack,
   Divider,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   useDisclosure,
   useToast,
+  Flex,
 } from "@chakra-ui/react";
 import LoadingSpinner from "../../Layout/Loading";
 import { updatePriority } from "../../../services/API/priorityAPI";
@@ -44,8 +43,8 @@ export default function EditPriorityModal({ pid, priority, onSubmitModel }) {
         duration: 3000,
         isClosable: true,
       });
-      onSubmitModel()
-      onClose()
+      onSubmitModel();
+      onClose();
     } catch (error) {
       console.error("Error during edit Priority:", error);
       toast({
@@ -62,8 +61,8 @@ export default function EditPriorityModal({ pid, priority, onSubmitModel }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"blue"}>
-        Edit Tracker
+      <Button size="sm" onClick={onOpen} colorScheme={"blue"}>
+        Edit Priority
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -84,21 +83,17 @@ export default function EditPriorityModal({ pid, priority, onSubmitModel }) {
                 />
               </FormControl>
               <Divider mb={4} />
-              <Stack spacing={4}>
+
+              <Flex justifyContent={"end"}>
                 <Button
                   type="submit"
                   colorScheme="blue"
                   onClick={handleUpdatePriority}>
                   Save
                 </Button>
-              </Stack>
+              </Flex>
             </form>
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       {isLoading ? <LoadingSpinner /> : <></>}

@@ -37,6 +37,10 @@ export const deleteProjectMember = (id, memId) =>
 export const getAllRoles = (id) => `project/${id}/roles`;
 export const createNewRole = (id) => `project/${id}/role`;
 export const delRole = (id, roleId) => `project/${id}/role/${roleId}`;
+export const addRoleToUserById = (id, memId) =>
+  `project/${id}/member/${memId}/role`;
+export const delRoleToUserById = (id, memId, roleId) =>
+  `project/${id}/member/${memId}/role/${roleId}`;
 
 //Permissions URL
 export const getAllPermissions = {
@@ -50,6 +54,7 @@ export const delRolePermissions = (id, roleId, permissionId) =>
 
 export const getAllPermissionsByRole = (pid, rid) =>
   `project/${pid}/role/${rid}/permissions`;
+
 //Tracker
 export const getAllTrackers = (id) => `project/${id}/trackers`;
 export const createNewTracker = (id) => `project/${id}/tracker`;
@@ -72,8 +77,10 @@ export const createNewStatus = (id) => `project/${id}/status`;
 export const editStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 export const delStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 
-//Status
+//Issue
 export const getAllIssues = (id) => `issuess?project=${id}`;
+export const getIssueById = (pid, issueId) =>
+  `project/${pid}/issues/${issueId}`;
 export const createNewIssue = (id) => `project/${id}/issues`;
 export const editIssueContent = (id, issuesId) =>
   `project/${id}/issues/${issuesId}/content`;
