@@ -1,5 +1,5 @@
-export const BASE_URL = "http://localhost:8080/api/v1";
-// export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
+// export const BASE_URL = "http://localhost:8080/api/v1";
+export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
 
 //user URL
 export const signUp = {
