@@ -30,21 +30,20 @@ export default function ProjectMembers({ id }) {
   const [userResults, setUserResults] = useState([]);
   const [selectedRole, setSelectedRole] = useState("member");
 
+  const fetchProjectMembers = async () => {
+    setLoading(true);
+    try {
+      const response = await allProjectMembers(id);
+      setMembers(response.data);
+    } catch (error) {
+      setError("Failed to load project members");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!id) return;
-
-    const fetchProjectMembers = async () => {
-      setLoading(true);
-      try {
-        const response = await allProjectMembers(id);
-        setMembers(response.data);
-      } catch (error) {
-        setError("Failed to load project members");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjectMembers();
   }, [id]);
 
@@ -61,9 +60,7 @@ export default function ProjectMembers({ id }) {
 
         const result = await checkUserName(username);
         setUserResults(result.data || []);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1100);
+        
       } catch (error) {
         toast({
           title: "Error",
@@ -96,13 +93,12 @@ export default function ProjectMembers({ id }) {
         duration: 3000,
         isClosable: true,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1100);
+      fetchProjectMembers()
     } catch (error) {
+      console.log("errr ===>", error)
       toast({
         title: "Error",
-        description: "Failed to add member.",
+        description: error.response.data.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -128,9 +124,7 @@ export default function ProjectMembers({ id }) {
         duration: 3000,
         isClosable: true,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1100);
+      fetchProjectMembers()
     } catch (error) {
       toast({
         title: "Error",
@@ -157,13 +151,6 @@ export default function ProjectMembers({ id }) {
           onChange={(e) => setUsername(e.target.value)}
         />
         {isChecking && <Spinner size="sm" ml={2} />}
-        <Select
-          w="15vw"
-          value={selectedRole}
-          onChange={(e) => setSelectedRole(e.target.value)}>
-          <option value="admin">Admin</option>
-          <option value="member">Member</option>
-        </Select>
       </Stack>
       <Stack spacing={4} overflowY="auto">
         {userResults.length > 0 ? (

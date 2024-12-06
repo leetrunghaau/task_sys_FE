@@ -2,7 +2,8 @@ import axiosInstance from "../axios";
 import {
   getAllRoles,
   createNewRole,
-  editRolePermissions,
+  createRolePermissions,
+  delRolePermissions,
   delRole,
 } from "../url";
 import useAuthStore from "../../store/authStore";
@@ -47,15 +48,37 @@ export const addNewRole = async (id, payload) => {
   }
 };
 
-export const updateRolePermissions = async (id, roleId) => {
+export const addRolePermissions = async (id, roleId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = editRolePermissions(id, roleId);
+    const url = createRolePermissions(id, roleId);
 
-    const response = await axiosInstance.put(url, {
+    const response = await axiosInstance.post(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update role permission:", error);
+    throw error;
+  }
+};
+export const deleteRolePermissions = async (id, roleId, permissionId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = delRolePermissions(id, roleId);
+
+    const response = await axiosInstance.delete(url, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
