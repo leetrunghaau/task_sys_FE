@@ -27,6 +27,45 @@ export default function Sidebar({ project }) {
       {/* Navigation */}
       <VStack align="stretch" spacing="4" p="4">
         <Box>
+        <Heading
+            as="h2"
+            fontSize="xs"
+            fontWeight="semibold"
+            color="gray.500"
+            mb="2">
+            PLANNING
+          </Heading>
+          <VStack spacing="1" align="stretch">
+            <Link href={`/projects/${project.project.id}/issue`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<BadgeAlert size="16px" />}>
+                Timeline
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/issue`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<BadgeAlert size="16px" />}>
+                Issue
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/issue`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<BadgeAlert size="16px" />}>
+                Board
+              </Button>
+            </Link>
+          </VStack>
+        </Box>
+      </VStack>
+      {/* Setting  */}
+      <VStack align="stretch" spacing="4" p="4">
+        <Box>
           <Heading
             as="h2"
             fontSize="xs"
@@ -76,22 +115,7 @@ export default function Sidebar({ project }) {
                 Status
               </Button>
             </Link>
-            <Link href={`/projects/${project.project.id}/issue`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<BadgeAlert size="16px" />}>
-                Issue
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/info`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<MonitorCog size="16px" />}>
-                Project Info
-              </Button>
-            </Link>
+            
           </VStack>
         </Box>
       </VStack>

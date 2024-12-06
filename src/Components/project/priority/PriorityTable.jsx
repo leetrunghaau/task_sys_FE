@@ -19,18 +19,18 @@ export default function PriorityTable({ pid }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
-  useEffect(() => {
-    const fetchAllPriorities = async () => {
-      try {
-        const response = await allPriorities(pid);
-        setPriorities(response.data);
-      } catch (err) {
-        setError("Failed to load projects");
-      } finally {
-        setLoading(false);
-      }
-    };
 
+  const fetchAllPriorities = async () => {
+    try {
+      const response = await allPriorities(pid);
+      setPriorities(response.data);
+    } catch (err) {
+      setError("Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchAllPriorities();
   }, []);
 
@@ -57,7 +57,7 @@ export default function PriorityTable({ pid }) {
                 <Td>{priority.id}</Td>
                 <Td>{priority.name}</Td>
                 <Td>
-                  <EditPriorityModal pid={pid} priorityId={priority.id} />
+                  <EditPriorityModal pid={pid} priority={priority} onSubmitModel={()=>{fetchAllPriorities()}}/>
                 </Td>
                 <Td>
                   <DeletePriorityModal pid={pid} priorityId={priority.id} />

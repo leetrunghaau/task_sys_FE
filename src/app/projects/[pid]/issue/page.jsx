@@ -4,7 +4,7 @@ import IssueTable from "../../../../Components/project/issue/IssueTable";
 
 import { useParams } from "next/navigation";
 
-export default function StatusPage() {
+export default function IssucesPage() {
   const params = useParams();
   const { pid } = params;
   return (
