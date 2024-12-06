@@ -14,9 +14,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
-import { allPermissions } from "../../../services/API/permissionAPI";
-import { updateRolePermissions } from "../../../services/API/roleAPI";
-export default function PermissionList({ roleId }) {
+import { allPermissionsByRole } from "../../../services/API/permissionAPI";
+import { addRolePermissions, deleteRolePermissions } from "../../../services/API/roleAPI";
+export default function PermissionList({ pid, roleId }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
   const [permissions, setPermissions] = useState([]);
@@ -24,44 +24,48 @@ export default function PermissionList({ roleId }) {
   const [error, setError] = useState(null);
   const toast = useToast();
 
-  // Fetch permissions on mount
+  const fetchAllPermissions = async () => {
+    try {
+      const response = await allPermissionsByRole(pid, roleId);
+      console.log("update per ===>",response.data)
+      setPermissions(response.data);
+    } catch (err) {
+      setError("Failed to load permissions");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchAllPermissions = async () => {
-      try {
-        const response = await allPermissions();
-        setPermissions(response.data);
-      } catch (err) {
-        setError("Failed to load permissions");
-      } finally {
-        setLoading(false);
-      }
-    };
+    
     fetchAllPermissions();
   }, []);
 
-  const handleCheckboxChange = (permissionId, isChecked) => {
+  const handleCheckboxChange = async (permissionId, isChecked) => {
     // Delay update to the server
-    setTimeout(async () => {
-      try {
-        // Call the update API
-        await updateRolePermissions(roleId, permissionId, isChecked);
-        toast({
-          title: "Permission updated",
-          description: `Permission has been ${isChecked ? "enabled" : "disabled"}.`,
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } catch (error) {
-        toast({
-          title: "Update failed",
-          description: "Failed to update permission. Please try again.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+    try {
+      // Call the update API
+      if (isChecked) {
+        await addRolePermissions(pid, roleId, {permissionId: permissionId});
+      }else{
+        await deleteRolePermissions(pid, roleId, permissionId);
       }
-    }, 1000); // 1-second delay
+      toast({
+        title: "Permission updated",
+        description: `Permission has been ${isChecked ? "enabled" : "disabled"}.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchAllPermissions();
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: "Failed to update permission. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   };
 
   if (loading) {
@@ -92,7 +96,7 @@ export default function PermissionList({ roleId }) {
                 <Checkbox
                   size="lg"
                   colorScheme="green"
-                  isChecked={permission.isChecked}
+                  isChecked={permission.checked}
                   onChange={(e) =>
                     handleCheckboxChange(permission.id, e.target.checked)
                   }></Checkbox>
