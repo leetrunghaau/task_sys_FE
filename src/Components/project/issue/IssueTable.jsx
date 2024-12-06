@@ -11,6 +11,7 @@ import {
   useToast,
   Link
 } from "@chakra-ui/react";
+
 import { useState, useEffect } from "react";
 import { allIssues } from "../../../services/API/issueAPI";
 import DeleteIssueModal from "./DeleteIssueModal";
@@ -42,7 +43,6 @@ export default function IssueTable({ pid }) {
   if (loading) {
     return <div>Loading...</div>;
   }
-
   if (error) {
     return <div>{error}</div>;
   }

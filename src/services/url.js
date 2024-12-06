@@ -1,5 +1,5 @@
-// export const BASE_URL = "http://localhost:8080/api/v1";
-export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
+export const BASE_URL = "http://localhost:8080/api/v1";
+// export const BASE_URL = "http://mathsolvervn.com:4003/api/v1";
 
 //user URL
 export const signUp = {
@@ -115,7 +115,9 @@ export const deleteChecklist = (projectId, issueId, checklistId) =>
 
 //Admin
 export const getUser = (userId) => `/user/${userId}`;
-export const getUsers = () => `/users`;
+export const getUsers = {
+  URL: "/users",
+};
 export const createUser = () => `/user`;
 export const editUser = (userId) => `/user/${userId}`;
 export const resetUserPassword = (userId) => `/user/reset-pass/${userId}`;

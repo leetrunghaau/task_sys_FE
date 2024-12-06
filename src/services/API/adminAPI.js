@@ -36,14 +36,12 @@ export const fetchUsers = async () => {
     const token = useAuthStore.getState().token;
     if (!token) throw new Error("No authentication token found.");
 
-    const url = getUsers();
-    const response = await axiosInstance.get(url, {
+    const response = await axiosInstance.get(getUsers.URL, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     });
-
     return response.data;
   } catch (error) {
     console.error("Failed to fetch users:", error);
@@ -73,7 +71,7 @@ export const createUserAccount = async (payload) => {
 };
 
 // Update user details
-export const updateUser = async (userId, payload) => {
+export const updateUserAdmin = async (userId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) throw new Error("No authentication token found.");

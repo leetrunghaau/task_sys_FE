@@ -21,7 +21,6 @@ export const allRoles = async (id) => {
         "Content-Type": "application/json",
       },
     });
-
     return response.data;
   } catch (error) {
     console.error("Connection test failed:", error);
