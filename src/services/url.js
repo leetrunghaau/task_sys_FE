@@ -28,6 +28,8 @@ export const createProject = {
 export const getSingleProject = (id) => `/project/${id}`;
 export const deleteSingleProject = (id) => `/project/${id}`;
 export const updateSingleProject = (id) => `/project/${id}`;
+
+// Member
 export const getProjectMembers = (id) => `project/${id}/members`;
 export const addProjectNewMember = (id) => `project/${id}/member`;
 export const deleteProjectMember = (id, memId) =>

@@ -1,75 +1,84 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Box, VStack, Text, Heading, Button, HStack } from "@chakra-ui/react";
+import {
+  Box,
+  VStack,
+  Text,
+  Heading,
+  HStack,
+  Flex,
+  Badge,
+  Tooltip,
+} from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-
-export default function KanbanBoard({ issues }) {
-  const [tasks, setTasks] = useState({
-    todo: [],
-    inProgress: [],
-    done: [],
-  });
+import DetailIssueModal from "../issue/detail/DetailIssueModal";
+export default function KanbanBoard({ pid, issues, statuses }) {
+  const [statusMap, setStatusMap] = useState({});
+  const [tasks, setTasks] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
 
   useEffect(() => {
-    console.log(issues);
+    const statusMapping = statuses.reduce((acc, status) => {
+      acc[status.name] = status.id;
+      return acc;
+    }, {});
+    setStatusMap(statusMapping);
 
-    const groupedTasks = issues.reduce(
-      (acc, issue) => {
-        const column = issue.status || "todo";
-        if (!acc[column]) {
-          acc[column] = [];
-        }
-        acc[column].push({
-          ...issue,
-          id: issue.id.toString(), // Ensure id is a string
-        });
-        return acc;
-      },
-      { todo: [], inProgress: [], done: [] } // Default structure
-    );
+    const initialTasks = statuses.reduce((acc, status) => {
+      acc[status.name] = [];
+      return acc;
+    }, {});
+
+    const groupedTasks = issues.reduce((acc, issue) => {
+      const columnName =
+        statuses.find((status) => status.id === issue.status)?.name || "To do";
+      if (!acc[columnName]) acc[columnName] = [];
+      acc[columnName].push({ ...issue, id: issue.id.toString() });
+      return acc;
+    }, initialTasks);
 
     setTasks(groupedTasks);
-  }, [issues]);
+  }, [issues, statuses]);
 
-  const handleAddTask = (column) => {
-    if (!newTaskContent.trim()) return;
-    const newTask = {
-      id: `${Date.now()}`, // Convert number to string using template literal
-      content: newTaskContent,
-    };
-    setTasks((prevTasks) => ({
-      ...prevTasks,
-      [column]: [...prevTasks[column], newTask],
-    }));
-    setNewTaskContent("");
+  const handleTaskClick = (task) => {
+    setSelectedIssue(task);
+    setIsModalOpen(true);
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedIssue(null);
+  };
+
+  // Handle drag end event
   const handleDragEnd = (result) => {
-    if (!result.destination) return;
+    const { source, destination, draggableId } = result;
 
-    const { source, destination } = result;
+    // If dropped outside the valid areas, do nothing
+    if (!destination) return;
 
-    if (source.droppableId === destination.droppableId) {
-      // Reordering within the same column
-      const columnTasks = Array.from(tasks[source.droppableId]);
-      const [movedTask] = columnTasks.splice(source.index, 1);
-      columnTasks.splice(destination.index, 0, movedTask);
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [source.droppableId]: columnTasks,
-      }));
-    } else {
-      // Moving to a different column
-      const sourceTasks = Array.from(tasks[source.droppableId]);
-      const destinationTasks = Array.from(tasks[destination.droppableId]);
-      const [movedTask] = sourceTasks.splice(source.index, 1);
-      destinationTasks.push(movedTask);
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [source.droppableId]: sourceTasks,
-        [destination.droppableId]: destinationTasks,
-      }));
+    // If dropped in the same position, do nothing
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
     }
+
+    // Reorder the tasks within the columns
+    const startColumn = tasks[source.droppableId];
+    const endColumn = tasks[destination.droppableId];
+
+    const [removedTask] = startColumn.splice(source.index, 1);
+    endColumn.splice(destination.index, 0, removedTask);
+
+    // Update state with the new task order
+    setTasks({
+      ...tasks,
+      [source.droppableId]: startColumn,
+      [destination.droppableId]: endColumn,
+    });
   };
 
   return (
@@ -94,36 +103,55 @@ export default function KanbanBoard({ issues }) {
                   </Heading>
                   {columnTasks.map((task, index) => (
                     <Draggable
-                      key={task.id} // Ensure task.id is a string
-                      draggableId={task.id.toString()} // Ensure draggableId is a string
+                      key={task.id}
+                      draggableId={task.id.toString()}
                       index={index}>
                       {(provided) => (
-                        <Box
+                        <Flex
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           bg="white"
                           borderWidth={1}
                           borderRadius="md"
-                          p={4}>
-                          <Text>{task.content}</Text>
-                        </Box>
+                          p={4}
+                          gap="2"
+                          flexDir={"column"}
+                          onClick={() => handleTaskClick(task)}>
+                          <Text>{task.name}</Text>
+                          <Flex
+                            gap="4"
+                            justifyContent="space-between"
+                            alignItems="center">
+                            <Tooltip label="Status">
+                              <Badge
+                                borderRadius="full"
+                                colorScheme="green"
+                                px={4}
+                                py={1}>
+                                {task.status || "To do"}
+                              </Badge>
+                            </Tooltip>
+                          </Flex>
+                        </Flex>
                       )}
                     </Draggable>
                   ))}
                   {provided.placeholder}
-                  <Button
-                    size="sm"
-                    colorScheme="green"
-                    onClick={() => handleAddTask(columnId)}>
-                    Add Task to {columnId}
-                  </Button>
                 </VStack>
               )}
             </Droppable>
           ))}
         </HStack>
       </DragDropContext>
+
+      {/* Detail Issue Modal */}
+      <DetailIssueModal
+        pid={pid}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        selectedIssue={selectedIssue}
+      />
     </Box>
   );
 }

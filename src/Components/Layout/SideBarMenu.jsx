@@ -60,6 +60,14 @@ export default function Sidebar({ project }) {
                 Board
               </Button>
             </Link>
+            <Link href={`/projects/${project.project.id}/list`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<BadgeAlert size="16px" />}>
+                List
+              </Button>
+            </Link>
           </VStack>
         </Box>
       </VStack>

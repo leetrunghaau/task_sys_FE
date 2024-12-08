@@ -134,3 +134,49 @@ export const updateIssue = async (id, issuesId, updateType, value) => {
     throw error;
   }
 };
+
+export const updateIssueStatus = async (id, issuesId, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = editIssueStatus(id, issuesId);
+
+    const response = await axiosInstance.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update issue status:", error);
+    throw error;
+  }
+};
+
+export const updateAssignee = async (id, issuesId, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = editAssignee(id, issuesId);
+
+    const response = await axiosInstance.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update issue assignee:", error);
+    throw error;
+  }
+};

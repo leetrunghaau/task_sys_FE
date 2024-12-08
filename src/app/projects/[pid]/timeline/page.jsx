@@ -1,44 +1,68 @@
 "use client";
-import {
-  Box,
-  Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-} from "@chakra-ui/react";
-import { useState } from "react";
+import { Box } from "@chakra-ui/react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import timeGridPlugin from "@fullcalendar/timegrid";
-
+import { allIssues } from "../../../../services/API/issueAPI";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import DetailIssueModal from "../../../../Components/project/issue/detail/DetailIssueModal";
 export default function GanttChartPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState(null);
+  const [events, setEvents] = useState([]);
 
-  const handleDateClick = (info) => {
-    setEventDetails({
-      title: "New Event",
-      date: info.dateStr,
-      description: "This is a new event. Add details here.",
-    });
+  const params = useParams();
+  const { pid } = params;
+
+  const fetchIssues = async () => {
+    try {
+      const response = await allIssues(pid);
+      const issues = response.data;
+
+      // Map issues to events for FullCalendar
+      const mappedEvents = issues.map((issue) => ({
+        id: issue.id,
+        name: issue.name,
+        start: issue.start || issue.created,
+        end: issue.end || undefined,
+        owner: issue.Owner?.name || "Unknown",
+        description: issue.description || "Unknown",
+        status: issue?.Status?.name || "Unknown",
+        priority: issue?.Priority?.name || "Unknown",
+        tracker: issue?.Tracker?.name || "Unknown",
+        assignee: issue.assignee,
+      }));
+      console.log(mappedEvents);
+
+      setEvents(mappedEvents);
+    } catch (err) {
+      console.error("Failed to fetch issues:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchIssues();
+  }, []);
+
+  const handleEventClick = (info) => {
+    const eventDetails = {
+      id: info.event.id,
+      name: info.event.extendedProps.name,
+      status: info.event.extendedProps.status || "Unknown",
+      priority: info.event.extendedProps.priority || "Unknown",
+      tracker: info.event.extendedProps.tracker || "Unknown",
+      owner: info.event.extendedProps.owner || "Unknown",
+      start: info.event.start,
+      end: info.event.end,
+    };
+
+    setEventDetails(eventDetails);
     setIsOpen(true);
   };
 
-  const handleEventClick = (info) => {
-    setEventDetails({
-      title: info.event.title,
-      date: info.event.start.toISOString().split("T")[0], // Format the date to YYYY-MM-DD
-      description: "Details for this event can be edited here.",
-    });
-    setIsOpen(true); // Open the modal
-  };
-
-  // Close the modal
   const closeModal = () => {
     setIsOpen(false);
     setEventDetails(null);
@@ -46,7 +70,6 @@ export default function GanttChartPage() {
 
   return (
     <Box w="100%" cursor={"pointer"}>
-      {/* FullCalendar Component */}
       <FullCalendar
         plugins={[
           resourceTimelinePlugin,
@@ -59,42 +82,53 @@ export default function GanttChartPage() {
           center: "title",
           right: "resourceTimelineWeek,dayGridMonth,timeGridWeek",
         }}
-        initialView="resourceTimelineWeek"
+        initialView="timeGridWeek"
         nowIndicator={true}
         editable={true}
         selectable={true}
         selectMirror={true}
-        resources={[
-          { id: "a", title: "Auditorium A", date: "2024-10-12" },
-          { id: "b", title: "Auditorium B", eventColor: "green" },
-          { id: "c", title: "Auditorium C", eventColor: "orange" },
-        ]}
-        initialEvents={[
-          { title: "nice event", start: new Date(), resourceId: "a" },
-        ]}
-        eventClick={handleEventClick} // Trigger the modal on event click
-        dateClick={handleDateClick} // Trigger the modal on date click (for new events)
+        events={events} // Use mapped events here
+        eventClick={handleEventClick}
       />
-
+      <DetailIssueModal
+        pid={pid}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        selectedIssue={eventDetails}
+      />
       {/* Modal for event details */}
-      <Modal isOpen={isOpen} onClose={closeModal}>
+      {/* <Modal isOpen={isOpen} onClose={closeModal}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Event Details</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text>
-              <strong>Title:</strong> {eventDetails?.title}
+              <strong>Name:</strong> {eventDetails?.name}
             </Text>
             <Text>
-              <strong>Date:</strong> {eventDetails?.date}
+              <strong>Status:</strong> {eventDetails?.status}
             </Text>
             <Text>
-              <strong>Description:</strong> {eventDetails?.description}
+              <strong>Priority:</strong> {eventDetails?.priority}
+            </Text>
+            <Text>
+              <strong>Tracker:</strong> {eventDetails?.tracker}
+            </Text>
+            <Text>
+              <strong>Owner:</strong> {eventDetails?.owner}
+            </Text>
+            <Text>
+              <strong>Start Date:</strong>{" "}
+              {eventDetails?.start?.toISOString().split("T")[0]}
+            </Text>
+            <Text>
+              <strong>End Date:</strong>{" "}
+              {eventDetails?.end?.toISOString().split("T")[0]}
             </Text>
           </ModalBody>
         </ModalContent>
-      </Modal>
+      </Modal> */}
     </Box>
   );
 }

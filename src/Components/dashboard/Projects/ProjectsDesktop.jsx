@@ -1,4 +1,4 @@
-import { Box, Heading, Flex, Link } from "@chakra-ui/react";
+import { Box, Heading, Flex, Link, Text } from "@chakra-ui/react";
 import NextLink from "next/link";
 import CardDesktop from "./CardDesktop";
 
@@ -21,11 +21,17 @@ export default function ProjectsDesktop({ projects }) {
           View All Projects
         </Link>
       </Flex>
-      <Flex flexDir={"column"} gap="8">
-        {sortedProjects.map((project) => (
-          <CardDesktop key={project.id} project={project} />
-        ))}
-      </Flex>
+
+      {/* Check if there are any projects, if not show a message */}
+      {sortedProjects.length > 0 ? (
+        <Flex flexDir={"column"} gap="8">
+          {sortedProjects.map((project) => (
+            <CardDesktop key={project.id} project={project} />
+          ))}
+        </Flex>
+      ) : (
+        <Text color="gray.500">No projects available.</Text>
+      )}
     </Box>
   );
 }

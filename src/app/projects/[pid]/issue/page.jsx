@@ -6,14 +6,15 @@ import CreateIssueModal from "../../../../Components/project/issue/CreateIssueMo
 import { useParams } from "next/navigation";
 import { allIssues } from "../../../../services/API/issueAPI";
 import { useState, useEffect } from "react";
-
-export default function IssucesPage() {
+import { allStatuses } from "../../../../services/API/statusAPI";
+export default function IssusesPage() {
   const [issues, setIssues] = useState([]);
+  const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
   const params = useParams();
-  const { pid } = params;
+  const { pid, id } = params;
 
   const fetchAllIssues = async () => {
     try {
@@ -25,7 +26,18 @@ export default function IssucesPage() {
       setLoading(false);
     }
   };
+  const fetchAllStatuses = async () => {
+    try {
+      const response = await allStatuses(pid);
+      setStatuses(response.data);
+    } catch (err) {
+      setError("Failed to load all Status");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
+    fetchAllStatuses();
     fetchAllIssues();
   }, []);
 
@@ -41,7 +53,7 @@ export default function IssucesPage() {
         <Heading>Manage Issues</Heading>
         <CreateIssueModal pid={pid} />
       </Flex>
-      <IssueTable issues={issues} />
+      <IssueTable pid={pid} issues={issues} statuses={statuses} />
     </Flex>
   );
 }

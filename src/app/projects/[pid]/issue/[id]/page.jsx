@@ -4,7 +4,6 @@ import {
   Heading,
   Text,
   Flex,
-  Badge,
   Button,
   VStack,
   HStack,
@@ -25,15 +24,16 @@ import {
   useEditableControls,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { updateIssue } from "../../../../../services/API/issueAPI";
 import { updateComment } from "../../../../../services/API/commentAPI";
 import { useState, useEffect } from "react";
 import IssuceProgress from "../../../../../Components/project/issue/detail/Progress";
 import { Pencil, Check, X } from "lucide-react";
 import { getSingleIssueById } from "../../../../../services/API/issueAPI";
+import StatusBadge from "../../../../../Components/project/issue/detail/StatusBadge";
 export default function IssueDetailPage() {
   const params = useParams();
   const { pid, id } = params;
+
   const [issue, setIssue] = useState({});
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
@@ -46,42 +46,35 @@ export default function IssueDetailPage() {
   const [dueDate, setDueDate] = useState(issue.end || "");
   const [priority, setPriority] = useState(issue.Priority?.name || "Medium");
   const [tracker, setTracker] = useState(issue.Tracker?.name || "Task");
-  const [status, setStatus] = useState(issue.Status || "Open");
+  const [status, setStatus] = useState([]);
+  useEffect(() => {
+    fetchIssueById();
+  }, []);
   const fetchIssueById = async () => {
     try {
       const response = await getSingleIssueById(pid, id);
-      const issueData = response.data.Issue;
+      // const issueData = response.data.Issue;
+      // const commentsData = response.data.Comment;
+      // const statusData = response.data.Status;
+      console.log(response.data);
+      const issue = response.data;
+      setIssue(issue);
+      console.log("issue=>>", issue);
 
-      const commentsData = response.data.Comment;
-      console.log(issueData);
-
-      setIssue(issueData);
-      setComments(commentsData);
-      setAssignedTo(issueData.Owner?.name || "Not assigned");
-      setStartDate(issueData.start || "");
-      setDueDate(issueData.end || "");
-      setPriority(issueData.Priority?.name || "Medium");
-      setTracker(issueData.Tracker?.name || "Task");
-      setStatus(issueData.Status || "Open");
-      setProgress(issueData.progress || 0);
+      // setIssue(issueData);
+      // setComments(commentsData);
+      // setAssignedTo(issueData.Owner?.name || "Not assigned");
+      // setStartDate(issueData.start || "");
+      // setDueDate(issueData.end || "");
+      // setPriority(issueData.Priority?.name || "Medium");
+      // setTracker(issueData.Tracker?.name || "Task");
+      // setStatus(issue.Status || "Open");
+      // setProgress(issueData.progress || 0);
     } catch (err) {
       console.error("Failed to fetch issue:", err);
     }
   };
 
-  useEffect(() => {
-    fetchIssueById();
-  }, []);
-
-  const handleStatusChange = async (newStatus) => {
-    try {
-      const updatedIssue = await updateIssue(pid, id, "status", newStatus);
-      console.log("Updated Issue:", updatedIssue);
-      setIssue(updatedIssue);
-    } catch (error) {
-      console.error("Error updating issue status:", error);
-    }
-  };
   const handleCommentChange = (e) => setComment(e.target.value);
 
   const handleAddComment = () => {
@@ -167,9 +160,14 @@ export default function IssueDetailPage() {
           <Input as={EditableInput} />
           <EditableControls />
         </Editable>
-        <Badge colorScheme={status === "Open" ? "green" : "red"}>
-          {status}
-        </Badge>
+        <StatusBadge
+          status={status.name || "Open"}
+          pid={pid}
+          issueId={id}
+          onUpdateStatus={(pid, updatedStatus) =>
+            console.log("name", issue.Status?.name)
+          }
+        />
       </Flex>
 
       {/* Issue Info */}
