@@ -12,15 +12,21 @@ import {
   CardFooter,
   Link,
   VStack,
+  InputGroup,
+  Flex,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { logIn } from "../../services/API/authAPI";
 import { useRouter } from "next/navigation";
 import useAuthStore from "../../store/authStore";
+import { Eye, EyeOff } from "lucide-react"; // Import icons from lucide-react
+
 export default function ResponsiveLogInForm() {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState("");
   const [pass, setPass] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
   const [message, setMessage] = useState("");
 
   const login = useAuthStore((state) => state.login);
@@ -42,67 +48,80 @@ export default function ResponsiveLogInForm() {
       setMessage("Failed to log in.");
     }
   };
+
   return (
     <VStack spacing={4}>
       <VStack mb={6}>
-        <Heading size="2xl" fontWeight="bold" letterSpacing="tight">
-          Login
+        <Heading
+          color={"#E38E49"}
+          size="2xl"
+          fontWeight="bold"
+          letterSpacing="tight">
+          Grow.co
         </Heading>
-        <Text fontSize={{ base: "md", md: "lg" }} color="gray.600" mt={2}>
-          Enter your credentials to access your account.
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight={"medium"} mt={2}>
+          Log in to continue
         </Text>
       </VStack>
-      <Card>
+      <Card boxShadow={"xl"}>
         <CardBody>
           <form onSubmit={handleSubmit}>
             <FormControl mb={4}>
-              <FormLabel>Email</FormLabel>
+              <FormLabel fontSize={"sm"}>Email</FormLabel>
               <Input
+                fontSize={"sm"}
                 value={userInfo}
                 type="email"
-                placeholder="m@example.com"
+                placeholder="Enter your email"
                 required
                 onChange={(e) => setUserInfo(e.target.value)}
               />
             </FormControl>
             <FormControl mb={4}>
-              <FormLabel>Password</FormLabel>
-              <Input
-                value={pass}
-                type="password"
-                required
-                onChange={(e) => setPass(e.target.value)}
-                placeholder="Enter your password"
-              />
+              <FormLabel fontSize={"sm"}>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  fontSize={"sm"}
+                  value={pass}
+                  type={showPassword ? "text" : "password"}
+                  required
+                  onChange={(e) => setPass(e.target.value)}
+                  placeholder="Enter your password"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    variant="link">
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
             <Button
-              type="submit" // Submit the form when this button is clicked
+              type="submit"
               w="100%"
-              colorScheme="blue"
               size={{ base: "md", sm: "lg" }}
-              _hover={{ textDecoration: "none", color: "gray.400" }}>
+              bg="#2668CA"
+              color="white"
+              _hover={{ bg: "#0A3981", color: "white" }}
+              fontWeight={"bold"}>
               Sign in
             </Button>
           </form>
         </CardBody>
 
         <CardFooter>
-          <VStack>
-            <Text color="gray.600" mt={2}>
-              Start managing your project.
-              <Link href="/register" color="red">
-                {" "}
-                Create a new account now!
-              </Link>
-            </Text>
-            <Text color="gray.600" mt={2}>
-              You forget your password?.
-              <Link href="/resetPassword" color="blue">
-                {" "}
-                Reset your password here!
-              </Link>
-            </Text>
-          </VStack>
+          <Flex gap="3" fontSize={"sm"}>
+            <Link href="/register" color="#E38E49">
+              Create an account
+            </Link>
+            •
+            <Link href="/resetPassword" color="#93032E">
+              Reset your password?
+            </Link>
+          </Flex>
         </CardFooter>
       </Card>
     </VStack>

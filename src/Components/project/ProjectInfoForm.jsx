@@ -61,11 +61,12 @@ export default function ProjectInfoForm({ id }) {
     }
   };
   return (
-    <Flex mb={4} w="100%">
-      <form onSubmit={handleUpdateProject}>
+    <Flex mb={4}>
+      <form onSubmit={handleUpdateProject} style={{ width: "70%" }}>
         <FormControl mb={4}>
           <FormLabel>Project Name</FormLabel>
           <Input
+            w="100%"
             id="name"
             value={formData.name}
             onInput={(e) =>
@@ -74,6 +75,7 @@ export default function ProjectInfoForm({ id }) {
             required
           />
         </FormControl>
+
         <FormControl mb={4}>
           <FormLabel>Project Description</FormLabel>
           <Input
@@ -85,7 +87,12 @@ export default function ProjectInfoForm({ id }) {
             required
           />
         </FormControl>
-        <Button type="submit" leftIcon={<Settings />} colorScheme="blue">
+        <Button
+          size="sm"
+          p="2"
+          type="submit"
+          leftIcon={<Settings />}
+          colorScheme="blue">
           Update Project Settings
         </Button>
       </form>

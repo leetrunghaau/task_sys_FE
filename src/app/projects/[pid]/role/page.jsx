@@ -38,7 +38,7 @@ export default function RolePage() {
   return (
     <Flex flexDir={"column"} mx="8">
       <Flex align={"center"} gap="52" mb="8">
-        <Heading>Manage Roles</Heading>
+        <Heading fontSize={"2xl"}>Manage Roles</Heading>
         <CreateRoleModal pid={pid} />
       </Flex>
       <RoleTable roles={roles} pid={pid} />

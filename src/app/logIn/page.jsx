@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { Box, useToast } from "@chakra-ui/react";
+import { Flex, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import useAuthStore from "../../store/authStore";
 import ResponsiveLogInForm from "../../Components/logIn/ResponsiveLogInForm";
@@ -24,8 +24,8 @@ export default function LogInPage() {
   }, [isLoggedIn, router, toast]);
 
   return (
-    <Box>
+    <Flex justifyContent={"center"} w="100%">
       <ResponsiveLogInForm />
-    </Box>
+    </Flex>
   );
 }

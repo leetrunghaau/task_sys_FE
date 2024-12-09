@@ -52,7 +52,7 @@ export default function DeleteRoleModal({ pid, roleId }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"red"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"red"}>
         Delete
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>

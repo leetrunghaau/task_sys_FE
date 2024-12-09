@@ -62,7 +62,7 @@ export default function CreatePriorityModal({ pid }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"blue"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"blue"}>
         Create New Priority
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>

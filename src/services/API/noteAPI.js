@@ -7,19 +7,19 @@ import {
   deleteNote,
 } from "../url";
 
-export const addNotes = async (projectId, issueId, notes) => {
+export const addNotes = async (projectId, issueId, payload) => {
   try {
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
 
-    const url = Array.isArray(notes)
+    const url = Array.isArray(payload)
       ? addMultipleNotes(projectId, issueId)
       : addSingleNote(projectId, issueId);
+    console.log("Payload:", payload);
 
-    // Make the POST request
-    const response = await axiosInstance.post(url, notes, {
+    const response = await axiosInstance.post(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -32,6 +32,7 @@ export const addNotes = async (projectId, issueId, notes) => {
     throw error;
   }
 };
+
 export const updateNoteContent = async (
   projectId,
   issueId,

@@ -62,7 +62,7 @@ export default function CreateTrackerModal({ pid }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"blue"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"blue"}>
         Create New Tracker
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>

@@ -1,5 +1,6 @@
 import { createNewComment, editComment, delComment } from "../url";
 import useAuthStore from "../../store/authStore";
+import axiosInstance from "../axios";
 
 // Add a new comment
 export const addNewComment = async (id, issuesId, commentPayload) => {
@@ -9,11 +10,18 @@ export const addNewComment = async (id, issuesId, commentPayload) => {
       throw new Error("No authentication token found.");
     }
 
-    const response = await createNewComment(id, issuesId, commentPayload);
-    return response;
+    const url = createNewComment(id, issuesId);
+
+    const response = await axiosInstance.post(url, commentPayload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
   } catch (error) {
     console.error("Failed to add comment:", error);
-    throw error;
+    throw error; // Throw the error to be handled by the caller
   }
 };
 
@@ -25,13 +33,21 @@ export const updateComment = async (
   updatedComment
 ) => {
   try {
+    console.log(updateComment);
+
     const token = useAuthStore.getState().token;
     if (!token) {
       throw new Error("No authentication token found.");
     }
 
-    const response = await editComment(id, issuesId, commentId, updatedComment);
-    return response;
+    const url = editComment(id, issuesId, commentId);
+    const response = await axiosInstance.put(url, updatedComment, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data; // Returning the response data
   } catch (error) {
     console.error("Failed to update comment:", error);
     throw error;
@@ -46,8 +62,14 @@ export const deleteComment = async (id, issuesId, commentId) => {
       throw new Error("No authentication token found.");
     }
 
-    const response = await delComment(id, issuesId, commentId);
-    return response;
+    const url = delComment(id, issuesId, commentId); // Assuming this returns the correct URL
+    const response = await axiosInstance.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data; // Returning the response data
   } catch (error) {
     console.error("Failed to delete comment:", error);
     throw error;

@@ -25,12 +25,12 @@ export default function RootLayout({
             justifyContent="center">
             <Header></Header>
             {isDashboardPage ? (
-              <Flex minW="100vw" py="12" px="6">
+              <Flex minW="100vw" py="12">
                 {/* <SideBarMenu /> */}
                 {children}
               </Flex>
             ) : (
-              <Box minW="100vw" py="12" px="12">
+              <Box minW="100vw" py="12" px="4">
                 {children}
               </Box>
             )}

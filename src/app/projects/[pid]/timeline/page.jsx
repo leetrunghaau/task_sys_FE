@@ -15,7 +15,7 @@ export default function GanttChartPage() {
   const [events, setEvents] = useState([]);
 
   const params = useParams();
-  const { pid } = params;
+  const { pid, id } = params;
 
   const fetchIssues = async () => {
     try {
@@ -33,9 +33,8 @@ export default function GanttChartPage() {
         status: issue?.Status?.name || "Unknown",
         priority: issue?.Priority?.name || "Unknown",
         tracker: issue?.Tracker?.name || "Unknown",
-        assignee: issue.assignee,
+        assignee: issue.Assignee?.name || "Unknown",
       }));
-      console.log(mappedEvents);
 
       setEvents(mappedEvents);
     } catch (err) {
@@ -55,6 +54,7 @@ export default function GanttChartPage() {
       priority: info.event.extendedProps.priority || "Unknown",
       tracker: info.event.extendedProps.tracker || "Unknown",
       owner: info.event.extendedProps.owner || "Unknown",
+      assignee: info.event.extendedProps.assignee || "Unknown",
       start: info.event.start,
       end: info.event.end,
     };
@@ -92,43 +92,45 @@ export default function GanttChartPage() {
       />
       <DetailIssueModal
         pid={pid}
+        id={id}
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={closeModal}
         selectedIssue={eventDetails}
+        fetchIssue={fetchIssues}
       />
       {/* Modal for event details */}
       {/* <Modal isOpen={isOpen} onClose={closeModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Event Details</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>
-              <strong>Name:</strong> {eventDetails?.name}
-            </Text>
-            <Text>
-              <strong>Status:</strong> {eventDetails?.status}
-            </Text>
-            <Text>
-              <strong>Priority:</strong> {eventDetails?.priority}
-            </Text>
-            <Text>
-              <strong>Tracker:</strong> {eventDetails?.tracker}
-            </Text>
-            <Text>
-              <strong>Owner:</strong> {eventDetails?.owner}
-            </Text>
-            <Text>
-              <strong>Start Date:</strong>{" "}
-              {eventDetails?.start?.toISOString().split("T")[0]}
-            </Text>
-            <Text>
-              <strong>End Date:</strong>{" "}
-              {eventDetails?.end?.toISOString().split("T")[0]}
-            </Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal> */}
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Event Details</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>
+                <strong>Name:</strong> {eventDetails?.name}
+              </Text>
+              <Text>
+                <strong>Status:</strong> {eventDetails?.status}
+              </Text>
+              <Text>
+                <strong>Priority:</strong> {eventDetails?.priority}
+              </Text>
+              <Text>
+                <strong>Tracker:</strong> {eventDetails?.tracker}
+              </Text>
+              <Text>
+                <strong>Owner:</strong> {eventDetails?.owner}
+              </Text>
+              <Text>
+                <strong>Start Date:</strong>{" "}
+                {eventDetails?.start?.toISOString().split("T")[0]}
+              </Text>
+              <Text>
+                <strong>End Date:</strong>{" "}
+                {eventDetails?.end?.toISOString().split("T")[0]}
+              </Text>
+            </ModalBody>
+          </ModalContent>
+        </Modal> */}
     </Box>
   );
 }

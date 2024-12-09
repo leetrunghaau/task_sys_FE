@@ -16,7 +16,7 @@ export default function StatusTable({ pid, statuses }) {
   return (
     <Box w="100%">
       <TableContainer>
-        <Table variant="simple">
+        <Table size="sm" variant="simple">
           <Thead>
             <Tr>
               <Th>#</Th>

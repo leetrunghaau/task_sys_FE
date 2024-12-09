@@ -11,7 +11,7 @@ import {
 
 export default function Footer() {
   return (
-    <Box bg="gray.100" mt={12}>
+    <Box mt={12}>
       <Container maxW="7xl" py={8}>
         <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={8}>
           <GridItem>

@@ -15,7 +15,7 @@ export default function PriorityTable({ priorities, fetchAllPriorities }) {
   return (
     <Box w="100%">
       <TableContainer>
-        <Table variant="simple">
+        <Table variant="simple" size="sm">
           <Thead>
             <Tr>
               <Th>#</Th>

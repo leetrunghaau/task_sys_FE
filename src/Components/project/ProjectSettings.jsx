@@ -15,22 +15,19 @@ export default function ProjectSettings({ id }) {
       borderColor="gray.200"
       borderWidth="1px"
       rounded="lg">
-      <Text fontSize="xl" fontWeight="bold">
-        Settings
-      </Text>
-
+      <Flex justifyContent={"space-between"}>
+        <Text fontSize="2xl" fontWeight="bold">
+          Project Settings
+        </Text>
+        <DangerZone id={id} />
+      </Flex>
       <ProjectInfoForm id={id} />
-
       <Divider my={4} />
 
       <Text fontSize="lg" fontWeight="medium">
         Project Members
       </Text>
       <ProjectMembers id={id} />
-
-      <Divider my={4} />
-
-      <DangerZone id={id} />
     </Flex>
   );
 }

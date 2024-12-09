@@ -15,7 +15,10 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState, useEffect } from "react";
 import { allPermissionsByRole } from "../../../services/API/permissionAPI";
-import { addRolePermissions, deleteRolePermissions } from "../../../services/API/roleAPI";
+import {
+  addRolePermissions,
+  deleteRolePermissions,
+} from "../../../services/API/roleAPI";
 export default function PermissionList({ pid, roleId }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
@@ -27,7 +30,7 @@ export default function PermissionList({ pid, roleId }) {
   const fetchAllPermissions = async () => {
     try {
       const response = await allPermissionsByRole(pid, roleId);
-      console.log("update per ===>",response.data)
+      console.log("update per ===>", response.data);
       setPermissions(response.data);
     } catch (err) {
       setError("Failed to load permissions");
@@ -36,7 +39,6 @@ export default function PermissionList({ pid, roleId }) {
     }
   };
   useEffect(() => {
-    
     fetchAllPermissions();
   }, []);
 
@@ -45,8 +47,8 @@ export default function PermissionList({ pid, roleId }) {
     try {
       // Call the update API
       if (isChecked) {
-        await addRolePermissions(pid, roleId, {permissionId: permissionId});
-      }else{
+        await addRolePermissions(pid, roleId, { permissionId: permissionId });
+      } else {
         await deleteRolePermissions(pid, roleId, permissionId);
       }
       toast({
@@ -78,7 +80,7 @@ export default function PermissionList({ pid, roleId }) {
 
   return (
     <>
-      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
+      <Button size="sm" ref={btnRef} colorScheme="teal" onClick={onOpen}>
         Edit Permissions
       </Button>
       <Drawer

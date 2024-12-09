@@ -37,7 +37,7 @@ export default function TrackerPage() {
   return (
     <Flex flexDir={"column"} mx="8">
       <Flex align={"center"} gap="52" mb="8">
-        <Heading>Manage Tracker</Heading>
+        <Heading fontSize={"2xl"}>Manage Tracker</Heading>
         <CreateTrackerModal pid={pid} />
       </Flex>
       <TrackerTable pid={pid} trackers={trackers} />

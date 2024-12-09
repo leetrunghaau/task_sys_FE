@@ -1,396 +1,500 @@
 "use client";
 import {
   Box,
-  Heading,
   Text,
   Flex,
-  Button,
   VStack,
   HStack,
   Divider,
-  Avatar,
+  Badge,
+  Heading,
   Input,
-  Textarea,
+  Button,
+  useToast,
   Checkbox,
-  CheckboxGroup,
-  Select,
-  Editable,
-  EditableInput,
-  EditablePreview,
-  ButtonGroup,
-  IconButton,
-  Menu,
-  MenuButton,
-  useEditableControls,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
-import { updateComment } from "../../../../../services/API/commentAPI";
 import { useState, useEffect } from "react";
-import IssuceProgress from "../../../../../Components/project/issue/detail/Progress";
-import { Pencil, Check, X } from "lucide-react";
+import { Trash2, Edit } from "lucide-react"; // Import Edit icon
 import { getSingleIssueById } from "../../../../../services/API/issueAPI";
+import IssuceProgress from "../../../../../Components/project/issue/detail/Progress";
 import StatusBadge from "../../../../../Components/project/issue/detail/StatusBadge";
+import AssigneeModal from "../../../../../Components/project/issue/detail/AssigneeModal";
+import DateUpdateForm from "../../../../../Components/project/issue/detail/DateUpdateForm";
+import {
+  addNewComment,
+  updateComment,
+  deleteComment,
+} from "../../../../../services/API/commentAPI";
+import {
+  addNotes,
+  deleteNoteContent,
+  updateNoteContent,
+} from "../../../../../services/API/noteAPI";
+import { createSingleChecklist } from "../../../../../services/API/checkListAPI";
+
 export default function IssueDetailPage() {
   const params = useParams();
   const { pid, id } = params;
-
-  const [issue, setIssue] = useState({});
+  const [issueData, setIssueData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [noteInput, setNoteInput] = useState("");
+  const [notes, setNotes] = useState([]);
+  const [editingNoteId, setEditingNoteId] = useState(null);
+  const [editingContent, setEditingContent] = useState("");
   const [comments, setComments] = useState([]);
-  const [comment, setComment] = useState("");
-  const [replyingTo, setReplyingTo] = useState(null);
-  const [progress, setProgress] = useState(issue.progress || 0);
-  const [assignedTo, setAssignedTo] = useState(
-    issue.Owner?.name || "Not assigned"
-  );
-  const [startDate, setStartDate] = useState(issue.start || "");
-  const [dueDate, setDueDate] = useState(issue.end || "");
-  const [priority, setPriority] = useState(issue.Priority?.name || "Medium");
-  const [tracker, setTracker] = useState(issue.Tracker?.name || "Task");
-  const [status, setStatus] = useState([]);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingComment, setEditingComment] = useState("");
+  const [commentInput, setCommentInput] = useState("");
+  const [replyInput, setReplyInput] = useState("");
+  const [repliedToCommentId, setRepliedToCommentId] = useState(null);
+  const [newChecklistInput, setNewChecklistInput] = useState("");
+  const [checklistItems, setChecklistItems] = useState([]);
+  const toast = useToast();
+
+  const fetchIssue = async () => {
+    try {
+      const data = await getSingleIssueById(pid, id);
+      setIssueData(data.data);
+      setNotes(data.data?.Note || []);
+      setChecklistItems(data.data?.Checklist || []);
+
+      setComments(data.data?.Comment || []);
+      console.log(data.data.CheckList);
+    } catch (err) {
+      console.error("Error fetching issue:", err);
+      setError(err.message || "Failed to fetch issue");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchIssueById();
-  }, []);
-  const fetchIssueById = async () => {
-    try {
-      const response = await getSingleIssueById(pid, id);
-      // const issueData = response.data.Issue;
-      // const commentsData = response.data.Comment;
-      // const statusData = response.data.Status;
-      console.log(response.data);
-      const issue = response.data;
-      setIssue(issue);
-      console.log("issue=>>", issue);
+    fetchIssue();
+  }, [pid, id]);
 
-      // setIssue(issueData);
-      // setComments(commentsData);
-      // setAssignedTo(issueData.Owner?.name || "Not assigned");
-      // setStartDate(issueData.start || "");
-      // setDueDate(issueData.end || "");
-      // setPriority(issueData.Priority?.name || "Medium");
-      // setTracker(issueData.Tracker?.name || "Task");
-      // setStatus(issue.Status || "Open");
-      // setProgress(issueData.progress || 0);
-    } catch (err) {
-      console.error("Failed to fetch issue:", err);
+  //Note
+  const handleAddNote = async () => {
+    if (noteInput.trim()) {
+      try {
+        const newNote = { content: noteInput.trim() };
+        const addedNote = await addNotes(pid, id, newNote);
+        setNotes([...notes, addedNote]);
+        setNoteInput("");
+        fetchIssue();
+      } catch (error) {
+        console.error("Error adding note:", error);
+      }
     }
   };
 
-  const handleCommentChange = (e) => setComment(e.target.value);
-
-  const handleAddComment = () => {
-    if (!comment.trim()) return;
-    const newComment = {
-      id: comments.length + 1,
-      author: "Current User",
-      content: comment,
-      parentCommentId: replyingTo,
-    };
-    setComments([...comments, newComment]);
-    setComment("");
-    setReplyingTo(null);
-  };
-  const handleEditComment = async (commentId, updatedContent) => {
+  const handleDeleteNote = async (noteId) => {
     try {
-      await updateComment(pid, id, commentId, updatedContent);
-
-      const updatedComments = comments.map((c) =>
-        c.id === commentId ? { ...c, content: updatedContent } : c
-      );
-      setComments(updatedComments);
-    } catch (err) {
-      console.error("Error editing comment:", err);
+      await deleteNoteContent(pid, id, noteId);
+      setNotes(notes.filter((note) => note.id !== noteId));
+      toast({
+        title: "Note deleted.",
+        description: "The note has been successfully deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchIssue();
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      toast({
+        title: "Error deleting note.",
+        description: "There was an issue deleting the note. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter((c) => c.id !== commentId));
+  const handleEditNote = (noteId, content) => {
+    setEditingNoteId(noteId);
+    setEditingContent(content);
   };
 
+  const handleUpdateNote = async () => {
+    if (editingContent.trim()) {
+      try {
+        await updateNoteContent(pid, id, editingNoteId, editingContent.trim()); // Call the update API
+
+        setNotes(
+          notes.map((note) =>
+            note.id === editingNoteId
+              ? { ...note, content: editingContent.trim() }
+              : note
+          )
+        );
+        setEditingNoteId(null);
+        setEditingContent("");
+
+        toast({
+          title: "Note updated.",
+          description: "The note has been successfully updated.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Error updating note:", error);
+
+        toast({
+          title: "Error updating note.",
+          description:
+            "There was an issue updating the note. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+  //Comment
+  const handleAddComment = async () => {
+    if (commentInput.trim()) {
+      try {
+        const newComment = { value: commentInput.trim() };
+        await addNewComment(pid, id, newComment);
+        setCommentInput("");
+        fetchIssue();
+        toast({
+          title: "Comment added.",
+          description: "Your comment has been successfully added.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Error adding comment:", error);
+        toast({
+          title: "Error adding comment.",
+          description:
+            "There was an issue adding your comment. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+  //Add Reply
+  const handleAddReply = async () => {
+    if (replyInput.trim()) {
+      try {
+        const newReply = { value: replyInput.trim() };
+        await addNewComment(pid, id, newReply, repliedToCommentId);
+        setReplyInput("");
+        setRepliedToCommentId(null);
+        fetchIssue();
+      } catch (error) {
+        console.error("Error adding reply:", error);
+      }
+    }
+  };
   const handleReplyClick = (commentId) => {
-    setReplyingTo(commentId);
-    const parentComment = comments.find((c) => c.id === commentId);
-    setComment(parentComment.content);
+    setRepliedToCommentId(commentId);
+  };
+  // Handle Edit Comment
+  const handleEditComment = (commentId, commentValue) => {
+    setEditingCommentId(commentId);
+    setEditingComment(commentValue);
   };
 
-  const [checklist, setChecklist] = useState([false, false, false]);
-
-  const handleCheckboxChange = (index) => {
-    const newChecklist = [...checklist];
-    newChecklist[index] = !newChecklist[index];
-    setChecklist(newChecklist);
+  const handleUpdateComment = async () => {
+    if (editingComment.trim()) {
+      try {
+        const updatedComment = await updateComment(pid, id, editingCommentId, {
+          value: editingComment.trim(),
+        });
+        setComments(
+          comments.map((comment) =>
+            comment.id === editingCommentId
+              ? { ...comment, value: editingComment.trim() }
+              : comment
+          )
+        );
+        setEditingCommentId(null);
+        setEditingComment("");
+        toast({
+          title: "Comment updated.",
+          description: "Your comment has been updated.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Error updating comment:", error);
+        toast({
+          title: "Error updating comment.",
+          description:
+            "There was an issue updating your comment. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
   };
 
-  function EditableControls() {
-    const {
-      isEditing,
-      getSubmitButtonProps,
-      getCancelButtonProps,
-      getEditButtonProps,
-    } = useEditableControls();
+  // Handle Delete Comment
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(pid, id, commentId);
+      setComments(comments.filter((comment) => comment.id !== commentId));
+      toast({
+        title: "Comment deleted.",
+        description: "The comment has been successfully deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast({
+        title: "Error deleting comment.",
+        description:
+          "There was an issue deleting the comment. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+  //Check list
+  const handleAddChecklist = async () => {
+    if (newChecklistInput.trim()) {
+      try {
+        const newChecklistItem = {
+          name: newChecklistInput.trim(),
+          checked: false,
+        };
+        await createSingleChecklist(pid, id, newChecklistItem);
+        setNewChecklistInput("");
+        fetchIssue();
+        toast({
+          title: "Checklist item added.",
+          description: "The checklist item has been successfully added.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        console.error("Error adding checklist item:", error);
+        toast({
+          title: "Error adding checklist item.",
+          description:
+            "There was an issue adding the checklist item. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
 
-    return isEditing ? (
-      <ButtonGroup
-        justifyContent="center"
-        alignContent={"center"}
-        mx="4"
-        size="sm">
-        <IconButton icon={<Check />} {...getSubmitButtonProps()} />
-        <IconButton icon={<X />} {...getCancelButtonProps()} />
-      </ButtonGroup>
-    ) : (
-      <ButtonGroup
-        justifyContent="center"
-        alignContent={"center"}
-        mx="4"
-        size="sm">
-        <IconButton size="sm" icon={<Pencil />} {...getEditButtonProps()} />
-      </ButtonGroup>
-    );
-  }
+  if (loading) return <p>Loading issue details...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!issueData) return <p>No issue data found.</p>;
+
+  const { Issue } = issueData;
+  const issue = Issue || {};
+  const formattedCreatedDate = issue.created
+    ? new Date(issue.created).toISOString().split("T")[0]
+    : "";
+  const formattedStartDate = issue.start
+    ? new Date(issue.start).toISOString().split("T")[0]
+    : "";
+  const formattedEndDate = issue.end
+    ? new Date(issue.end).toISOString().split("T")[0]
+    : "";
 
   return (
-    <Box maxW="1200px" mx="auto" p={5}>
+    <Box w="100%" p={5}>
       <Flex justify="space-between" align="center" mb={4}>
-        <Editable
-          defaultValue={issue.name || "Untitled Issue"}
-          fontSize="2xl"
-          fontWeight="bold"
-          isPreviewFocusable={false}>
-          <EditablePreview />
-          <Input as={EditableInput} />
-          <EditableControls />
-        </Editable>
-        <StatusBadge
-          status={status.name || "Open"}
-          pid={pid}
-          issueId={id}
-          onUpdateStatus={(pid, updatedStatus) =>
-            console.log("name", issue.Status?.name)
-          }
-        />
+        <Heading fontSize="2xl" fontWeight="bold">
+          {issue.name || "Unknown"}
+        </Heading>
+        <Flex align="center" gap="4">
+          <StatusBadge status={issue.Status} pid={pid} issueId={id} />
+          <Badge px={4} py={2} borderRadius="md" colorScheme="orange">
+            {issue.Priority?.name || "N/A"}
+          </Badge>
+          <Badge px={4} py={2} borderRadius="md" colorScheme="red">
+            {issue.Tracker?.name || "N/A"}
+          </Badge>
+        </Flex>
       </Flex>
-
-      {/* Issue Info */}
       <VStack align="start" spacing={4} mb={6}>
         <HStack>
-          <Text fontWeight="bold">Assigned to: </Text>
-          <HStack spacing={2}>
-            <Menu>
-              <MenuButton as={Avatar} bgColor="transparent" size="sm" mr={4}>
-                <Avatar name={assignedTo} size="sm" mr={4} />
-              </MenuButton>
-              <Text>{assignedTo}</Text>
-            </Menu>
-          </HStack>
+          <AssigneeModal
+            Assignee={issue.Assignee}
+            pid={pid}
+            id={id}
+            fetchIssue={fetchIssue}
+          />
         </HStack>
-        <Flex w="100%" gap="4">
-          <Flex alignItems={"start"} flexDir={"column"} minW="50%" gap="4">
-            <HStack w="100%">
-              <Text fontWeight="bold">Start Date:</Text>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                size="sm"
-                w="50%"
-              />
-            </HStack>
-            <HStack>
-              <Text fontWeight="bold">Due Date:</Text>
-              <Input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                size="sm"
-                w="60%"
-              />
-            </HStack>
-          </Flex>
-          <Flex alignItems={"start"} flexDir={"column"} minW="50%" gap="4">
-            <HStack>
-              <Text fontWeight="bold">Priority:</Text>
-              <Select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                size="sm"
-                width="auto">
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </Select>
-            </HStack>
-            <HStack>
-              <Text fontWeight="bold">Tracker:</Text>
-              <Select
-                value={tracker}
-                onChange={(e) => setTracker(e.target.value)}
-                size="sm"
-                width="auto">
-                <option value="Bug">Bug</option>
-                <option value="Feature">Feature</option>
-                <option value="Task">Task</option>
-              </Select>
-            </HStack>
-          </Flex>
-        </Flex>
+        <DateUpdateForm
+          formattedCreatedDate={formattedCreatedDate}
+          formattedStartDate={formattedStartDate}
+          formattedEndDate={formattedEndDate}
+          issueId={id}
+          pid={pid}
+        />
       </VStack>
-
-      {/* Progress Bar */}
-      <IssuceProgress percent={progress} />
-
-      {/* Issue Description */}
-      <Box mt={6}>
-        <Heading size="md" mb={2}>
-          Description
-        </Heading>
-        <Editable
-          defaultValue={issue.description || "No description available."}
-          fontSize="sm"
-          isPreviewFocusable={false}>
-          <EditablePreview />
-          <Input as={EditableInput} />
-          <EditableControls />
-        </Editable>
-      </Box>
+      <IssuceProgress percent={issue.progress || 0} />
 
       <Divider mt={6} />
 
-      {/* Checklist */}
       <Box mt={6}>
         <Heading size="md" mb={2}>
           Checklist
         </Heading>
-        <CheckboxGroup value={checklist} onChange={setChecklist}>
-          <VStack align="start" spacing={2}>
-            <Checkbox
-              isChecked={checklist[0]}
-              onChange={() => handleCheckboxChange(0)}>
-              Verify the login button functionality.
-            </Checkbox>
-            <Checkbox
-              isChecked={checklist[1]}
-              onChange={() => handleCheckboxChange(1)}>
-              Test edge cases with incorrect credentials.
-            </Checkbox>
-            <Checkbox
-              isChecked={checklist[2]}
-              onChange={() => handleCheckboxChange(2)}>
-              Fix the form freeze issue and test for performance.
-            </Checkbox>
-          </VStack>
-        </CheckboxGroup>
+        {checklistItems.map((checklist, index) => (
+          <Checkbox key={index} isChecked={checklist.checked}>
+            {checklist.name || "Unnamed Item"}
+          </Checkbox>
+        ))}
+        {checklistItems.map((checklist, index) => (
+          <Text key={index} isChecked={checklist.checked}>
+            {checklist.name || "Unnamed Item"}
+          </Text>
+        ))}
+        <Input
+          placeholder="Add a new checklist item"
+          value={newChecklistInput}
+          onChange={(e) => setNewChecklistInput(e.target.value)}
+        />
+        <Button mt={2} colorScheme="blue" onClick={handleAddChecklist}>
+          Add Checklist
+        </Button>
       </Box>
 
       <Divider mt={6} />
 
-      {/* Notes Section */}
       <Box mt={6}>
         <Heading size="md" mb={2}>
           Notes
         </Heading>
-        <Editable
-          defaultValue="Ensure all edge cases are covered during testing. This issue should be resolved before the upcoming release."
-          fontSize="sm"
-          isPreviewFocusable={false}>
-          <EditablePreview />
-          <Input as={EditableInput} />
-          <EditableControls />
-        </Editable>
-      </Box>
 
-      <Divider mt={6} />
-
-      {/* Comments Section */}
-      <Box mt={6}>
         <VStack align="start" spacing={4}>
-          {comments
-            .filter((c) => c.parentCommentId === null)
-            .map((comment) => (
-              <Box
-                key={comment.id}
-                w="full"
-                p={4}
-                borderWidth={1}
-                borderRadius="md"
-                boxShadow="md">
-                <Text fontWeight="bold">{comment.author}</Text>
-                <Text>{comment.content}</Text>
+          {notes.map((note) => (
+            <Flex
+              justify="space-between"
+              align="center"
+              width="100%"
+              key={note.id}>
+              {editingNoteId === note.id ? (
+                <Input
+                  value={editingContent}
+                  onChange={(e) => setEditingContent(e.target.value)}
+                />
+              ) : (
+                <Text fontSize="sm">{note?.content || "Missing Content"}</Text>
+              )}
+              <HStack>
                 <Button
-                  variant="link"
-                  colorScheme="blue"
-                  size="sm"
-                  onClick={() => handleReplyClick(comment.id)}>
-                  Reply
-                </Button>
-                <Button
-                  variant="link"
+                  size="xs"
                   colorScheme="red"
-                  size="sm"
+                  leftIcon={<Trash2 size="16" />}
+                  onClick={() => handleDeleteNote(note.id)}>
+                  Delete Note
+                </Button>
+                {editingNoteId === note.id ? (
+                  <Button
+                    size="xs"
+                    colorScheme="blue"
+                    onClick={handleUpdateNote}>
+                    Save
+                  </Button>
+                ) : (
+                  <Button
+                    size="xs"
+                    colorScheme="yellow"
+                    leftIcon={<Edit size="16" />}
+                    onClick={() => handleEditNote(note.id, note.content)}>
+                    Edit
+                  </Button>
+                )}
+              </HStack>
+            </Flex>
+          ))}
+
+          <Input
+            placeholder="Add a new note"
+            value={noteInput}
+            onChange={(e) => setNoteInput(e.target.value)}
+          />
+          <Button mt={2} colorScheme="blue" onClick={handleAddNote}>
+            Add Note
+          </Button>
+        </VStack>
+      </Box>
+      <Box mt={6}>
+        <Heading size="md" mb={2}>
+          Comments
+        </Heading>
+        <VStack align="start" spacing={4}>
+          {comments.map((comment) => (
+            <Flex
+              justify="space-between"
+              align="center"
+              width="100%"
+              key={comment.id}>
+              {editingCommentId === comment.id ? (
+                <Input
+                  value={editingComment}
+                  onChange={(e) => setEditingComment(e.target.value)}
+                />
+              ) : (
+                <Text fontSize="sm">{comment.value || "Missing Content"}</Text>
+              )}
+              <HStack>
+                {editingCommentId === comment.id ? (
+                  <Button
+                    size="xs"
+                    colorScheme="blue"
+                    onClick={handleUpdateComment}>
+                    Save
+                  </Button>
+                ) : (
+                  <Button
+                    size="xs"
+                    colorScheme="yellow"
+                    leftIcon={<Edit size="16" />}
+                    onClick={() =>
+                      handleEditComment(comment.id, comment.value)
+                    }>
+                    Edit
+                  </Button>
+                )}
+                <Button
+                  size="xs"
+                  colorScheme="red"
+                  leftIcon={<Trash2 size="16" />}
                   onClick={() => handleDeleteComment(comment.id)}>
                   Delete
                 </Button>
+              </HStack>
+            </Flex>
+          ))}
 
-                {/* If replying to this comment, show the reply input */}
-                {replyingTo === comment.id && (
-                  <Box mt={4}>
-                    <Textarea
-                      placeholder="Write a reply..."
-                      value={comment}
-                      onChange={handleCommentChange}
-                      size="sm"
-                    />
-                    <Button
-                      mt={2}
-                      onClick={handleAddComment}
-                      colorScheme="blue">
-                      Reply
-                    </Button>
-                  </Box>
-                )}
-
-                {/* Render nested replies if they exist */}
-                {comments
-                  .filter((c) => c.parentCommentId === comment.id) // Filter replies to this comment
-                  .map((reply) => (
-                    <Box
-                      key={reply.id}
-                      ml={6}
-                      mt={4}
-                      p={4}
-                      borderWidth={1}
-                      borderRadius="md"
-                      boxShadow="md">
-                      <Text fontWeight="bold">{reply.author}</Text>
-                      <Text>{reply.content}</Text>
-                      <Button
-                        variant="link"
-                        colorScheme="red"
-                        size="sm"
-                        onClick={() => handleDeleteComment(reply.id)}>
-                        Delete
-                      </Button>
-                    </Box>
-                  ))}
-              </Box>
-            ))}
-        </VStack>
-
-        <Divider mt={6} />
-
-        {/* Main Comment Input */}
-        <Box mt={6}>
-          {/* If replying, set the parent comment's content in the textarea */}
-          <Textarea
-            placeholder={replyingTo ? "Write a reply..." : "Write a comment..."}
-            value={comment}
-            onChange={handleCommentChange}
-            size="sm"
+          <Input
+            placeholder="Add a new comment"
+            value={commentInput}
+            onChange={(e) => setCommentInput(e.target.value)}
           />
-          <Button mt={2} onClick={handleAddComment} colorScheme="blue">
-            {replyingTo ? "Reply" : "Add Comment"}
+          <Button mt={2} colorScheme="blue" onClick={handleAddComment}>
+            Add Comment
           </Button>
-        </Box>
+        </VStack>
       </Box>
+
+      <Divider mt={6} />
     </Box>
   );
 }

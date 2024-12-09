@@ -10,6 +10,8 @@ import {
   CardBody,
   VStack,
   useToast,
+  CardFooter,
+  Link,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { signUpNew } from "../../services/API/authAPI";
@@ -63,21 +65,26 @@ export default function ResponsiveRegisterForm() {
   };
 
   return (
-    <VStack spacing={4} mt="10">
+    <VStack spacing={4} w="90%">
       <VStack mb={6}>
-        <Heading size="2xl" fontWeight="bold" letterSpacing="tight">
-          Register
+        <Heading
+          color={"#E38E49"}
+          size="2xl"
+          fontWeight="bold"
+          letterSpacing="tight">
+          Grow.co
         </Heading>
-        <Text fontSize={{ base: "md", md: "lg" }} color="gray.600" mt={2}>
-          Create a new account to get started.
+        <Text fontSize={{ base: "md", md: "lg" }} fontWeight={"medium"} mt={2}>
+          Sign up to continue
         </Text>
       </VStack>
-      <Card>
+      <Card boxShadow={"xl"}>
         <CardBody>
           <form onSubmit={handleRegister}>
             <FormControl id="name" mb={4}>
-              <FormLabel>Name</FormLabel>
+              <FormLabel fontSize={"sm"}>Name</FormLabel>
               <Input
+                fontSize={"sm"}
                 type="text"
                 placeholder="John Doe"
                 value={formData.name}
@@ -89,8 +96,9 @@ export default function ResponsiveRegisterForm() {
             </FormControl>
 
             <FormControl id="username" mb={4}>
-              <FormLabel>Username</FormLabel>
+              <FormLabel fontSize={"sm"}>Username</FormLabel>
               <Input
+                fontSize={"sm"}
                 type="text"
                 placeholder="john_doe"
                 value={formData.userName}
@@ -102,8 +110,9 @@ export default function ResponsiveRegisterForm() {
             </FormControl>
 
             <FormControl id="email" mb={4}>
-              <FormLabel>Email</FormLabel>
+              <FormLabel fontSize={"sm"}>Email</FormLabel>
               <Input
+                fontSize={"sm"}
                 type="email"
                 placeholder="example@example.com"
                 value={formData.email}
@@ -115,8 +124,9 @@ export default function ResponsiveRegisterForm() {
             </FormControl>
 
             <FormControl id="password" mb={4}>
-              <FormLabel>Password</FormLabel>
+              <FormLabel fontSize={"sm"}>Password</FormLabel>
               <Input
+                fontSize={"sm"}
                 type="password"
                 placeholder="••••••••"
                 value={formData.password}
@@ -130,14 +140,22 @@ export default function ResponsiveRegisterForm() {
             <Button
               type="submit"
               w="100%"
-              colorScheme="blue"
               size={{ base: "md", sm: "lg" }}
               isLoading={isLoading}
-              _hover={{ textDecoration: "none", color: "gray.400" }}>
+              bg="#2668CA"
+              color="white"
+              _hover={{ bg: "#0A3981", color: "white" }}
+              fontWeight={"bold"}>
               Sign up
             </Button>
           </form>
         </CardBody>
+
+        <CardFooter>
+          <Link fontSize={"sm"} href="/logIn" color="#E38E49">
+            Already have an Atlassian account? Log in
+          </Link>
+        </CardFooter>
       </Card>
     </VStack>
   );

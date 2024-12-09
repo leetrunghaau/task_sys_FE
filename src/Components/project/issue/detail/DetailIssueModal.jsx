@@ -1,221 +1,126 @@
 import {
+  Badge,
   Button,
-  FormControl,
-  FormLabel,
-  Stack,
-  Divider,
+  Text,
+  VStack,
+  HStack,
+  Icon,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton,
-  useToast,
-  Avatar,
-  List,
-  ListItem,
-  Text,
-  Spinner,
   Flex,
-  Input,
-  Box,
+  ModalFooter,
+  Link,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react"; // Import the down arrow icon
-import { allProjectMembers } from "../../../../services/API/permissionAPI";
-
+import { ScanEye, Calendar, Flag, User, Users, Lightbulb } from "lucide-react";
 export default function DetailIssueModal({
   pid,
+  id,
   isOpen,
   onClose,
   selectedIssue,
 }) {
-  const toast = useToast();
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isFocused, setIsFocused] = useState(false); // State for focus handling
-
-  const [formData, setFormData] = useState({
-    name: "",
-    dueDate: "",
-    assignee: "",
-  });
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isUserListOpen, setIsUserListOpen] = useState(false); // State for toggling user list visibility
-
-  useEffect(() => {
-    fetchProjectMembers();
-    if (selectedIssue) {
-      setFormData({
-        name: selectedIssue.name || "",
-        dueDate: selectedIssue.dueDate || "",
-        assignee: selectedIssue.assignee || "",
-      });
-    }
-  }, [selectedIssue]);
-
-  const fetchProjectMembers = async () => {
-    setLoading(true);
-    try {
-      const response = await allProjectMembers(pid);
-      setUsers(response.data);
-    } catch (error) {
-      setError("Failed to load project members");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdateIssue = (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate an API update call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Issue updated.",
-        description: `The issue "${formData.name}" has been successfully updated.`,
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      onClose();
-    }, 1500);
-  };
-
-  const handleAssigneeSelect = (user) => {
-    setFormData((prev) => ({ ...prev, assignee: user.User.name }));
-    setIsUserListOpen(false); // Close the user list once an assignee is selected
-  };
+  if (!selectedIssue) return null;
 
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Issue</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form onSubmit={handleUpdateIssue}>
-              <FormControl isRequired>
-                <FormLabel>Name</FormLabel>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, name: e.target.value }))
-                  }
-                  placeholder="Issue name"
-                />
-              </FormControl>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>
+          <HStack justify="space-between">
+            <Text fontSize="2xl" fontWeight="bold">
+              {selectedIssue.name}
+            </Text>
+            <Badge
+              px={4}
+              py={2}
+              borderRadius="md"
+              colorScheme="teal"
+              cursor="pointer">
+              {selectedIssue.status}
+            </Badge>
+          </HStack>
+        </ModalHeader>
+        <ModalBody>
+          <VStack spacing={6} align="start">
+            <HStack spacing={4} w="full">
+              <Icon as={User} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  Owner
+                </Text>
+                <Text fontWeight="medium">{selectedIssue.owner}</Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={4} w="full">
+              <Icon as={Users} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  Assignee
+                </Text>
+                <Text fontWeight="medium">{selectedIssue.assignee}</Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={4} w="full">
+              <Icon as={Calendar} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  Start Date
+                </Text>
+                <Text fontWeight="medium">
+                  {new Date(selectedIssue.start).toLocaleDateString()}
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={4} w="full">
+              <Icon as={Flag} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  End Date
+                </Text>
+                <Text fontWeight="medium">
+                  {selectedIssue.end
+                    ? new Date(selectedIssue.end).toLocaleDateString()
+                    : "N/A"}
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={4} w="full">
+              <Icon as={Lightbulb} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  Status
+                </Text>
+                <Text fontWeight="medium">{selectedIssue.status}</Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={4} w="full">
+              <Icon as={ScanEye} w={4} h={4} color="gray.500" />
+              <VStack align="start">
+                <Text fontSize="sm" color="gray.500">
+                  Tracker
+                </Text>
+                <Text fontWeight="medium">{selectedIssue.tracker}</Text>
+              </VStack>
+            </HStack>
+          </VStack>
+        </ModalBody>
+        <ModalFooter>
+          <Flex gap="4">
+            <Link href={`/projects/${pid}/issue/${selectedIssue.id}`}>
+              <Button variant={"outline"} colorScheme="blue" onClick={onClose}>
+                Issue Detail
+              </Button>
+            </Link>
 
-              <FormControl mt={4} isRequired>
-                <FormLabel>Due Date</FormLabel>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={formData.dueDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      dueDate: e.target.value,
-                    }))
-                  }
-                />
-              </FormControl>
-
-              {/* Assignee Section */}
-              <FormControl mt={4}>
-                <FormLabel>Assignee</FormLabel>
-                <Flex
-                  justifyContent="space-between"
-                  alignItems="center"
-                  borderWidth="1px"
-                  borderColor={isFocused ? "blue.500" : "white"}
-                  borderRadius="md"
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  tabIndex={0}
-                  cursor="pointer"
-                  onClick={() => setIsUserListOpen(!isUserListOpen)}>
-                  <Flex gap="4" px="2" py="2">
-                    <Avatar
-                      size="sm"
-                      name={formData.assignee || "Null"}></Avatar>
-                    <Text display="flex" alignItems="center">
-                      {formData.assignee || "Null"}
-                    </Text>
-                  </Flex>
-
-                  <ChevronDown size={16} />
-                </Flex>
-              </FormControl>
-
-              {isUserListOpen && (
-                <Box
-                  mt={2}
-                  maxH="300px"
-                  overflowY="auto"
-                  sx={{
-                    "&::-webkit-scrollbar": {
-                      width: "8px",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: "#4a90e2",
-                      borderRadius: "4px",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                      background: "#f0f0f0",
-                    },
-                  }}>
-                  {users.length > 0 ? (
-                    <List spacing={2}>
-                      {users.map((user) => (
-                        <ListItem
-                          key={user.id}
-                          p={2}
-                          display="flex"
-                          alignItems="center"
-                          borderRadius="md"
-                          _hover={{ bg: "gray.100", cursor: "pointer" }}
-                          onClick={() => handleAssigneeSelect(user)}>
-                          <Avatar
-                            size="sm"
-                            name={user.User.name}
-                            src={user.User.avatar}
-                            mr={3}
-                          />
-                          <Text>{user.User.name}</Text>
-                        </ListItem>
-                      ))}
-                    </List>
-                  ) : (
-                    <Flex justify="center" align="center">
-                      <Spinner />
-                    </Flex>
-                  )}
-                </Box>
-              )}
-
-              <Divider mb={4} />
-              <Stack spacing={4}>
-                <Button type="submit" colorScheme="blue" isLoading={isLoading}>
-                  Save Changes
-                </Button>
-              </Stack>
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="red" onClick={onClose}>
               Close
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+          </Flex>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }

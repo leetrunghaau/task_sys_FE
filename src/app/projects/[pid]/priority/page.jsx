@@ -38,7 +38,7 @@ export default function PriorityPage() {
   return (
     <Flex flexDir={"column"} mx="8">
       <Flex align={"center"} gap="52" mb="8">
-        <Heading>Manage Priority</Heading>
+        <Heading fontSize={"2xl"}>Manage Priority</Heading>
         <CreatePriorityModal pid={pid} />
       </Flex>
       <PriorityTable

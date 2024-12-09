@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Box,
   Flex,
@@ -10,51 +11,19 @@ import {
   MenuItem,
   Heading,
   Link,
+  Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useBoolean } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import useAuthStore from "../../store/authStore";
 import { SquareArrowRight, CircleUserRound, ClipboardList } from "lucide-react";
 import { getUserProfile } from "../../services/API/authAPI";
-import { checkIfAdmin } from "../../utils/checkAdmin";
-import { LogIn } from "lucide-react";
+import useAuthStore from "../../store/authStore";
 
 export default function Header() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
-  const [flag, setFlag] = useBoolean();
-  const { isLoggedIn, admin, logOut } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  const handleNavigation = (sectionId) => {
-    if (router.pathname === "/") {
-      document.getElementById(sectionId).scrollIntoView({ behavior: "smooth" });
-    } else {
-      router.push(`/#${sectionId}`);
-    }
-  };
-
-  useEffect(() => {
-    const adminStatus = checkIfAdmin(); // Check if the user is an admin
-    setIsAdmin(adminStatus);
-
-    if (isLoading && isLoggedIn !== undefined) {
-      setIsLoading(false); // Stop loading once the state is determined
-    }
-  }, [isLoggedIn, isLoading]);
-
-  useEffect(() => {
-    if (!isLoading && !isLoggedIn && router.pathname !== "/") {
-      router.push("/logIn");
-    }
-  }, [isLoggedIn, router]);
-
-  const handleLogOut = () => {
-    logOut(); // Call the logout function from the store
-    router.push("/logIn"); // Redirect to the login page after logging out
-  };
+  const { isLoggedIn, logOut } = useAuthStore();
+  const [isAvatarActive, setIsAvatarActive] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -71,80 +40,90 @@ export default function Header() {
     }
   }, [isLoggedIn]);
 
+  const handleLogOut = () => {
+    logOut();
+    router.push("/logIn");
+  };
+
   return (
     <Box
       as="header"
-      py={6}
+      py={2}
       position="sticky"
       top={0}
       zIndex={30}
       borderBottom="1px solid"
       borderBottomColor="gray"
-      bg="white"
+      bg="#0A3981"
       minW="100vw">
       <Flex justify="space-between" align="center" maxW="7xl" mx="auto" px={4}>
         {/* Logo */}
         <Heading size="lg" color="gray.700">
-          <Link href="/" _hover={{ textDecoration: "none" }}>
+          <Link color={"#E38E49"} href="/" _hover={{ textDecoration: "none" }}>
             Grow.co
           </Link>
         </Heading>
 
-        {/* Right side buttons and profile */}
-        <Flex justify={"space-between"} align={"center"}>
-          {isAdmin ? (
-            <Button
-              variant="ghost"
-              colorScheme="black"
-              size={{ base: "xs", md: "md" }}
-              onClick={() => router.push("/admin")}>
-              Admin Dashboard
-            </Button>
-          ) : null}
-
-          {isLoggedIn ? (
-            <Button
-              variant="ghost"
-              colorScheme="black"
-              size={{ base: "xs", md: "md" }}
-              onClick={() => router.push("/dashboard")}>
-              Dashboard
-            </Button>
-          ) : null}
-
-          {/* Profile Menu */}
-          {isLoggedIn ? (
-            <Menu>
-              <MenuButton as={Button} bgColor="transparent">
-                <Avatar name={profile?.name} size="sm" mr={4} />
-              </MenuButton>
-              <MenuList p="4">
-                <MenuItem onClick={handleLogOut} gap="4">
-                  Log Out
-                  <SquareArrowRight />
-                </MenuItem>
-                <MenuItem onClick={() => router.push("/yourProfile")} gap="4">
-                  Your Profile
-                  <CircleUserRound />
-                </MenuItem>
-                <MenuItem onClick={() => router.push("/dashboard")} gap="4">
-                  Dash Board
-                  <ClipboardList />
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          ) : (
-            <Button
-              leftIcon={<LogIn size={18} />}
-              variant="ghost"
-              colorScheme="black"
-              size={{ base: "xs", md: "md" }}
-              onClick={() => router.push("/logIn")}
-              _hover={{ textDecoration: "none", color: "gray.400" }}>
-              Log In
-            </Button>
-          )}
-        </Flex>
+        {/* Profile Menu */}
+        {isLoggedIn ? (
+          <Menu>
+            <MenuButton
+              as={Button}
+              bgColor="transparent"
+              _hover={{ bgColor: "#0A3981" }}
+              _active={{ bgColor: "#0A3981" }}
+              onClick={() => setIsAvatarActive((prev) => !prev)}>
+              <Avatar
+                name={profile?.name}
+                size="sm"
+                boxShadow={
+                  isAvatarActive ? "0 0 10px 4px rgba(227, 142, 73)" : ""
+                }
+                transition="box-shadow 0.2s ease"
+              />
+            </MenuButton>
+            <MenuList display={"flex"} flexDir={"column"} gap="1">
+              <Flex flexDir={"column"} gap="2" ml="2" mb="4">
+                <Text fontSize={"sm"} fontWeight={"semibold"}>
+                  Account
+                </Text>
+                <Flex align={"center"} gap="2">
+                  <Avatar name={profile?.name} size="sm" />
+                  <Flex flexDir={"column"}>
+                    <Text fontSize={"sm"}>{profile?.name}</Text>
+                    <Text fontSize={"xs"}>{profile?.email}</Text>
+                  </Flex>
+                </Flex>
+              </Flex>
+              <MenuItem
+                onClick={() => router.push("/yourProfile")}
+                gap="1"
+                fontSize={"sm"}>
+                <CircleUserRound size="18" />
+                Your Profile
+              </MenuItem>
+              <MenuItem
+                onClick={() => router.push("/dashboard")}
+                fontSize={"sm"}
+                gap="1">
+                <ClipboardList size="18" />
+                Dashboard
+              </MenuItem>
+              <MenuItem onClick={handleLogOut} gap="1" fontSize={"sm"}>
+                <SquareArrowRight size="18" />
+                Log Out
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            colorScheme={"orange"}
+            onClick={() => router.push("/logIn")}>
+            Log In
+          </Button>
+        )}
       </Flex>
     </Box>
   );

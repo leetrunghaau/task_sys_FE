@@ -24,42 +24,65 @@
 // }
 
 // pages/index.js
-import { Box, Button, Flex, Heading, Input, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Text,
+  Divider,
+  AbsoluteCenter,
+  Link,
+} from "@chakra-ui/react";
 
 export default function Page() {
   return (
     <Box minH="100vh" bg="white">
       <Box as="main" py={12}>
-        <Box maxW="3xl" mx="auto" px={4}>
-          <Heading size="2xl" fontWeight="semibold" color="gray.700" mb={8}>
-            Task
-            <br />
-            Management
+        <Flex flexDir={"column"} alignItems={"center"}>
+          <Heading
+            textAlign={"center"}
+            size="2xl"
+            fontWeight="semibold"
+            color="gray.700"
+            mb={8}>
+            Connect every team, task, and project together
           </Heading>
-          <Text color="gray.500" fontSize="lg" mb={8}>
-            Unlock your team's potential with our powerful task management
-            platform. Boost productivity, improve collaboration, and achieve
-            your goals.
-          </Text>
-
-          {/* Input and Button */}
-          <Flex maxW="md" gap={2}>
+          <Flex w="70%" flexDir={"column"} gap={4}>
             <Input
               type="email"
+              borderRadius={"full"}
               placeholder="Email Address"
-              borderRight="none"
-              rounded="none"
               focusBorderColor="gray.500"
             />
+            <Text
+              mx="4"
+              fontSize={"xs"}
+              fontWeight={"medium "}
+              color={"gray.500"}>
+              Find teammates, plus keep work and life separate by using your
+              work email.
+            </Text>
             <Button
-              bg="gray.700"
+              borderRadius={"full"}
+              bg="#2668CA"
               color="white"
-              _hover={{ bg: "gray.800" }}
-              rounded="none">
-              Learn More
+              _hover={{ bg: "#0A3981", color: "white  " }}
+              fontWeight={"bold"}>
+              Sign up
             </Button>
+            <Box position="relative" padding="10">
+              <Divider borderWidth="1px" />
+              <AbsoluteCenter fontSize={"sm"} bg="white" px="4">
+                Trying to access?{" "}
+                <Link href="/logIn" color="#E38E49" textDecoration="underline">
+                  Log In
+                </Link>
+              </AbsoluteCenter>
+            </Box>
           </Flex>
-        </Box>
+        </Flex>
       </Box>
     </Box>
   );

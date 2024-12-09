@@ -1,6 +1,6 @@
 "use client";
 import { Box } from "@chakra-ui/react";
-import KanBanBoard from "../../../../Components/project/board/KanbanBoard";
+import KanbanBoard from "../../../../Components/project/board/KanbanBoard";
 import { allIssues } from "../../../../services/API/issueAPI";
 import { allStatuses } from "../../../../services/API/statusAPI";
 import { useEffect, useState } from "react";
@@ -17,14 +17,8 @@ export default function BoardPage() {
   const fetchAllIssues = async () => {
     try {
       const response = await allIssues(pid);
-      const formattedIssues = response.data.map((issue) => ({
-        id: issue.id.toString(),
-        name: issue.name,
-        assignee: issue.assignee,
-        status: issue.status,
-      }));
 
-      setIssues(formattedIssues);
+      setIssues(response.data);
     } catch (err) {
       setError("Failed to load all Issues");
     } finally {
@@ -35,14 +29,9 @@ export default function BoardPage() {
     try {
       const response = await allStatuses(pid);
 
-      const formattedStatuses = response.data.map((status) => ({
-        id: status.id.toString(),
-        name: status.name,
-      }));
-
-      setStatuses(formattedStatuses);
+      setStatuses(response.data);
     } catch (err) {
-      setError("Failed to load all Issues");
+      setError("Failed to load all Status");
     } finally {
       setLoading(false);
     }
@@ -61,7 +50,7 @@ export default function BoardPage() {
   }
   return (
     <Box w="100%">
-      <KanBanBoard pid={pid} issues={issues} statuses={statuses} />
+      <KanbanBoard pid={pid} initialIssues={issues} statuses={statuses} />
     </Box>
   );
 }

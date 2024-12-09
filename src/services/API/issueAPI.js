@@ -4,7 +4,6 @@ import {
   getAllIssues,
   createNewIssue,
   delIssue,
-  editIssueContent,
   editIssueStatus,
   editIssueDueDate,
   editAssignee,
@@ -94,47 +93,6 @@ export const deleteIssue = async (id, issuesId) => {
   }
 };
 
-export const updateIssue = async (id, issuesId, updateType, value) => {
-  try {
-    const token = useAuthStore.getState().token;
-    if (!token) {
-      throw new Error("No authentication token found.");
-    }
-
-    let url;
-    switch (updateType) {
-      case "content":
-        url = editIssueContent(id, issuesId);
-        break;
-      case "status":
-        url = editIssueStatus(id, issuesId);
-        break;
-      case "dueDate":
-        url = editIssueDueDate(id, issuesId);
-        break;
-      case "assignee":
-        url = editAssignee(id, issuesId);
-        break;
-      default:
-        throw new Error("Invalid update type.");
-    }
-
-    const payload = { [updateType]: value };
-
-    const response = await axiosInstance.patch(url, payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Failed to update issue:", error);
-    throw error;
-  }
-};
-
 export const updateIssueStatus = async (id, issuesId, payload) => {
   try {
     const token = useAuthStore.getState().token;
@@ -143,7 +101,8 @@ export const updateIssueStatus = async (id, issuesId, payload) => {
     }
 
     const url = editIssueStatus(id, issuesId);
-
+    console.log("URL: " + url);
+    console.log(payload);
     const response = await axiosInstance.put(url, payload, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -177,6 +136,29 @@ export const updateAssignee = async (id, issuesId, payload) => {
     return response.data;
   } catch (error) {
     console.error("Failed to update issue assignee:", error);
+    throw error;
+  }
+};
+
+export const updateIssueDue = async (id, issuesId, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = editIssueDueDate(id, issuesId);
+
+    const response = await axiosInstance.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update issue status:", error);
     throw error;
   }
 };

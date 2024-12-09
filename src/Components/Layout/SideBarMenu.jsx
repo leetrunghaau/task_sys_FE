@@ -7,13 +7,16 @@ import {
   ScanEye,
   Lightbulb,
   BadgeAlert,
+  ChartNoAxesGantt,
+  Columns3,
+  List,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar({ project }) {
   return (
-    <Box as="aside" w="64" bg="white" borderRightWidth="4px" h="h-screen">
-      {/* Header */}
+    <Box as="aside" bg="white" borderRightWidth="2px" h="h-screen">
       <Flex gap="2">
         <Flex flexDir={"column"}>
           <Heading noOfLines={1} fontSize="xl" fontWeight="semibold">
@@ -24,8 +27,7 @@ export default function Sidebar({ project }) {
           </Text>
         </Flex>
       </Flex>
-      {/* Navigation */}
-      <VStack align="stretch" spacing="4" p="4">
+      <VStack align="stretch" spacing="4">
         <Box>
           <Heading
             as="h2"
@@ -40,7 +42,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<BadgeAlert size="16px" />}>
+                leftIcon={<ChartNoAxesGantt size="16px" />}>
                 Timeline
               </Button>
             </Link>
@@ -56,7 +58,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<BadgeAlert size="16px" />}>
+                leftIcon={<Columns3 size="16px" />}>
                 Board
               </Button>
             </Link>
@@ -64,7 +66,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<BadgeAlert size="16px" />}>
+                leftIcon={<List size="16px" />}>
                 List
               </Button>
             </Link>
@@ -127,7 +129,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Lightbulb size="16px" />}>
+                leftIcon={<Settings size="16px" />}>
                 Project Settings
               </Button>
             </Link>

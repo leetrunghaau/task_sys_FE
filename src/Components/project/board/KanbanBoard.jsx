@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -9,40 +10,67 @@ import {
   Flex,
   Badge,
   Tooltip,
+  useToast,
 } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import DetailIssueModal from "../issue/detail/DetailIssueModal";
-export default function KanbanBoard({ pid, issues, statuses }) {
-  const [statusMap, setStatusMap] = useState({});
-  const [tasks, setTasks] = useState({});
+import { updateIssueStatus } from "../../../services/API/issueAPI";
+
+export default function KanbanBoard({ pid, initialIssues, statuses }) {
+  const [issues, setIssues] = useState({});
+  const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
 
+  // Group issues by status on mount or when initialIssues change
   useEffect(() => {
-    const statusMapping = statuses.reduce((acc, status) => {
-      acc[status.name] = status.id;
+    // Check if statuses and initialIssues are valid
+    if (
+      !statuses ||
+      !Array.isArray(statuses) ||
+      !initialIssues ||
+      !Array.isArray(initialIssues)
+    ) {
+      return;
+    }
+
+    const groupedIssues = statuses.reduce((acc, status) => {
+      // Ensure status and issue.Status are not null/undefined
+      if (!status || !status.name) {
+        return acc;
+      }
+
+      const issuesInStatus = initialIssues.filter((issue) => {
+        return issue.Status && issue.Status.name === status.name;
+      });
+
+      if (issuesInStatus.length > 0) {
+        acc[status.name] = issuesInStatus;
+      }
+
       return acc;
     }, {});
-    setStatusMap(statusMapping);
 
-    const initialTasks = statuses.reduce((acc, status) => {
-      acc[status.name] = [];
-      return acc;
-    }, {});
+    setIssues(groupedIssues);
+  }, [initialIssues, statuses]);
 
-    const groupedTasks = issues.reduce((acc, issue) => {
-      const columnName =
-        statuses.find((status) => status.id === issue.status)?.name || "To do";
-      if (!acc[columnName]) acc[columnName] = [];
-      acc[columnName].push({ ...issue, id: issue.id.toString() });
-      return acc;
-    }, initialTasks);
+  const formatIssue = (issue) => {
+    return {
+      id: issue.id,
+      name: issue.name,
+      status: issue.Status.name || "Unknown",
+      priority: issue.Priority.name || "Unknown",
+      tracker: issue.Tracker.name || "Unknown",
+      owner: issue.Owner.name || "Unknown",
+      assignee: issue.Assignee.name || "Unknown",
+      start: issue.start,
+      end: issue.end,
+    };
+  };
 
-    setTasks(groupedTasks);
-  }, [issues, statuses]);
-
-  const handleTaskClick = (task) => {
-    setSelectedIssue(task);
+  const handleIssueClick = (issue) => {
+    const formattedIssue = formatIssue(issue);
+    setSelectedIssue(formattedIssue);
     setIsModalOpen(true);
   };
 
@@ -51,42 +79,59 @@ export default function KanbanBoard({ pid, issues, statuses }) {
     setSelectedIssue(null);
   };
 
-  // Handle drag end event
-  const handleDragEnd = (result) => {
+  const handleDragEnd = async (result) => {
     const { source, destination, draggableId } = result;
 
-    // If dropped outside the valid areas, do nothing
     if (!destination) return;
+    if (source.droppableId === destination.droppableId) return;
 
-    // If dropped in the same position, do nothing
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return;
+    const issueId = draggableId;
+    const newStatusName = destination.droppableId;
+    const newStatus = statuses.find((status) => status.name === newStatusName);
+    if (!newStatus) return;
+
+    try {
+      await updateIssueStatus(pid, issueId, { statusId: newStatus.id });
+
+      setIssues((prevIssues) => {
+        const sourceIssues = [...prevIssues[source.droppableId]];
+        const destIssues = [...prevIssues[destination.droppableId]];
+        const [movedIssue] = sourceIssues.splice(source.index, 1);
+        movedIssue.Status = { name: newStatusName, id: newStatus.id };
+        destIssues.splice(destination.index, 0, movedIssue);
+
+        return {
+          ...prevIssues,
+          [source.droppableId]: sourceIssues,
+          [destination.droppableId]: destIssues,
+        };
+      });
+
+      toast({
+        title: "Issue updated.",
+        description: `The issue's status has been updated to ${newStatusName}.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Failed to update issue status:", error);
+      toast({
+        title: "Error.",
+        description: "Failed to update the issue's status.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-
-    // Reorder the tasks within the columns
-    const startColumn = tasks[source.droppableId];
-    const endColumn = tasks[destination.droppableId];
-
-    const [removedTask] = startColumn.splice(source.index, 1);
-    endColumn.splice(destination.index, 0, removedTask);
-
-    // Update state with the new task order
-    setTasks({
-      ...tasks,
-      [source.droppableId]: startColumn,
-      [destination.droppableId]: endColumn,
-    });
   };
 
   return (
     <Box>
       <DragDropContext onDragEnd={handleDragEnd}>
         <HStack align="start" spacing={4}>
-          {Object.entries(tasks).map(([columnId, columnTasks]) => (
-            <Droppable key={columnId} droppableId={columnId}>
+          {Object.entries(issues).map(([statusName, statusIssues]) => (
+            <Droppable key={statusName} droppableId={statusName}>
               {(provided) => (
                 <VStack
                   ref={provided.innerRef}
@@ -99,12 +144,12 @@ export default function KanbanBoard({ pid, issues, statuses }) {
                   spacing={4}
                   align="stretch">
                   <Heading size="md" textAlign="center">
-                    {columnId}
+                    {statusName}
                   </Heading>
-                  {columnTasks.map((task, index) => (
+                  {statusIssues.map((issue, index) => (
                     <Draggable
-                      key={task.id}
-                      draggableId={task.id.toString()}
+                      key={issue.id}
+                      draggableId={issue.id.toString()}
                       index={index}>
                       {(provided) => (
                         <Flex
@@ -115,12 +160,12 @@ export default function KanbanBoard({ pid, issues, statuses }) {
                           borderWidth={1}
                           borderRadius="md"
                           p={4}
-                          gap="2"
-                          flexDir={"column"}
-                          onClick={() => handleTaskClick(task)}>
-                          <Text>{task.name}</Text>
+                          gap={2}
+                          flexDir="column"
+                          onClick={() => handleIssueClick(issue)}>
+                          <Text>{issue.name}</Text>
                           <Flex
-                            gap="4"
+                            gap={4}
                             justifyContent="space-between"
                             alignItems="center">
                             <Tooltip label="Status">
@@ -129,7 +174,7 @@ export default function KanbanBoard({ pid, issues, statuses }) {
                                 colorScheme="green"
                                 px={4}
                                 py={1}>
-                                {task.status || "To do"}
+                                {issue.Status.name}
                               </Badge>
                             </Tooltip>
                           </Flex>
@@ -146,12 +191,15 @@ export default function KanbanBoard({ pid, issues, statuses }) {
       </DragDropContext>
 
       {/* Detail Issue Modal */}
-      <DetailIssueModal
-        pid={pid}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        selectedIssue={selectedIssue}
-      />
+      {selectedIssue && (
+        <DetailIssueModal
+          pid={pid}
+          id={selectedIssue.id}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          selectedIssue={selectedIssue}
+        />
+      )}
     </Box>
   );
 }

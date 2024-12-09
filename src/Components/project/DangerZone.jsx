@@ -2,7 +2,6 @@
 import {
   Button,
   Flex,
-  Text,
   useDisclosure,
   AlertDialog,
   AlertDialogOverlay,
@@ -44,11 +43,12 @@ export default function DangerZone({ id }) {
     }
   };
   return (
-    <Flex flexDir={"column"} w="100%">
-      <Text fontSize="lg" fontWeight="medium" mb={2}>
-        Danger Zone
-      </Text>
-      <Button w="20%" colorScheme="red" onClick={onOpen} leftIcon={<Trash2 />}>
+    <Flex flexDir={"column"}>
+      <Button
+        size="sm"
+        colorScheme="red"
+        onClick={onOpen}
+        leftIcon={<Trash2 size="16" />}>
         Delete Project
       </Button>
 

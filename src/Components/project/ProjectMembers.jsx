@@ -218,15 +218,20 @@ export default function ProjectMembers({ id, roles }) {
 
   return (
     <Flex flexDir={"column"} gap="4">
-      <Stack mt={4} direction="row" alignItems="center">
+      <Stack mt={4} direction="row" alignItems="center" w="70%">
         <Input
-          placeholder="e.g.. Maria"
+          placeholder="Add People to your project with their name e.g.. Maria"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         {isChecking && <Spinner size="sm" ml={2} />}
       </Stack>
-      <Stack spacing={4} overflowY="auto">
+      <Stack
+        spacing={4}
+        overflowY="auto"
+        borderWidth={"1px"}
+        borderColor={"gray.100"}
+        w="70%">
         {userResults.length > 0 ? (
           userResults.map((user) => {
             const isAlreadyMember = members.some(
@@ -236,14 +241,14 @@ export default function ProjectMembers({ id, roles }) {
               <Box
                 key={user.id}
                 p={2}
-                bg="gray.100"
                 borderRadius="md"
                 display="flex"
                 justifyContent="space-between"
-                alignItems="center">
+                alignItems="center"
+                _hover={{ bgColor: "gray.200" }}>
                 <Box display="flex" alignItems="center">
                   <Avatar name={user.name} size="sm" />
-                  <Flex flexDir={"column"}>
+                  <Flex flexDir={"column"} fontSize={"sm"}>
                     <Text ml={2}>{user.name}</Text>
                     <Text ml={2}>{user.email}</Text>
                   </Flex>
@@ -265,9 +270,11 @@ export default function ProjectMembers({ id, roles }) {
       </Stack>
 
       <Stack spacing={4} mt={4}>
-        <Text fontWeight="bold">Existing Members</Text>
+        <Text fontWeight="bold" fontSize={"2xl"}>
+          Existing Members
+        </Text>
         <TableContainer>
-          <Table variant="simple">
+          <Table variant="simple" size="sm">
             <TableCaption></TableCaption>
             <Thead>
               <Tr>
@@ -281,11 +288,10 @@ export default function ProjectMembers({ id, roles }) {
             <Tbody>
               {members.map((member) => (
                 <Tr key={member.id}>
-                  <Td>
-                    <Avatar name={member.User.name} size="sm" />
-                    <Text ml={2}>
-                      {member.User.name}
-                      {member.User.id}
+                  <Td display={"flex"} alignItems={"center"} gap="2">
+                    <Avatar name={member.User.name} size="xs" />
+                    <Text>
+                      {member.User.name} -{member.User.id}
                     </Text>
                   </Td>
                   <Td>{member.User.email}</Td>

@@ -37,7 +37,7 @@ export default function StatusPage() {
   return (
     <Flex flexDir={"column"} mx="8">
       <Flex align={"center"} gap="52" mb="8">
-        <Heading>Manage Status</Heading>
+        <Heading fontSize={"2xl"}>Manage Status</Heading>
         <CreateStatusModal pid={pid} />
       </Flex>
       <StatusTable pid={pid} statuses={statuses} />

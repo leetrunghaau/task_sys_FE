@@ -62,7 +62,7 @@ export default function CreateStatusModal({ pid }) {
 
   return (
     <>
-      <Button onClick={onOpen} colorScheme={"blue"}>
+      <Button size="sm" onClick={onOpen} colorScheme={"blue"}>
         Create New Status
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
