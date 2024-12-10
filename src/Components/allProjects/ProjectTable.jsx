@@ -3,7 +3,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -15,6 +14,7 @@ import {
   MenuItem,
   Button,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { allProjects, deleteProject } from "../../services/API/projectAPI";
@@ -42,14 +42,6 @@ export default function ProjectCard() {
 
     fetchAllProjects();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   const handleCardClick = (id) => {
     router.push(`/projects/${id}`);
@@ -83,6 +75,18 @@ export default function ProjectCard() {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error || projects.length === 0) {
+    return (
+      <Text fontSize="lg" color="gray.500" textAlign="center" mt={4}>
+        You don't have any projects. Create new ones.
+      </Text>
+    );
+  }
+
   return (
     <TableContainer>
       <Table variant="simple">
@@ -91,7 +95,7 @@ export default function ProjectCard() {
           <Tr>
             <Th>ID</Th>
             <Th>Name</Th>
-            <Th>Status</Th>
+            <Th>Description</Th>
             <Th>Privacy</Th>
             <Th>Action</Th>
           </Tr>
@@ -121,11 +125,6 @@ export default function ProjectCard() {
             </Tr>
           ))}
         </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>PT</Th>
-          </Tr>
-        </Tfoot>
       </Table>
     </TableContainer>
   );

@@ -15,21 +15,32 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { SquareArrowRight, CircleUserRound, ClipboardList } from "lucide-react";
+import {
+  SquareArrowRight,
+  CircleUserRound,
+  ClipboardList,
+  Layout,
+} from "lucide-react"; // Added Layout icon
 import { getUserProfile } from "../../services/API/authAPI";
 import useAuthStore from "../../store/authStore";
+import { checkIfAdmin } from "../../utils/checkAdmin"; // Adjust the import path as needed
 
 export default function Header() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
   const { isLoggedIn, logOut } = useAuthStore();
   const [isAvatarActive, setIsAvatarActive] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // State to track admin status
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await getUserProfile();
         setProfile(response.data);
+
+        // Check if the user is an admin
+        const adminStatus = checkIfAdmin();
+        setIsAdmin(adminStatus);
       } catch (err) {
         console.error("Failed to load profile", err);
       }
@@ -95,6 +106,16 @@ export default function Header() {
                   </Flex>
                 </Flex>
               </Flex>
+              {/* Admin Link */}
+              {isAdmin && (
+                <MenuItem
+                  onClick={() => router.push("/admin")}
+                  gap="1"
+                  fontSize={"sm"}>
+                  <Layout size="18" />
+                  Admin Panel
+                </MenuItem>
+              )}
               <MenuItem
                 onClick={() => router.push("/yourProfile")}
                 gap="1"

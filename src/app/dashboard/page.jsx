@@ -1,8 +1,5 @@
 "use client";
 import { Flex, Text } from "@chakra-ui/react";
-import DashBoardStat from "../../Components/dashboard/DashboardSummary/DashBoardStat";
-import UpComingTask from "../../Components/dashboard/UpComingTask/UpComingTask";
-import RecentTask from "../../Components/dashboard/RecentTask/RecentTask";
 import Projects from "../../Components/dashboard/Projects/Projects";
 import { allProjects } from "../../services/API/projectAPI";
 import { useState, useEffect } from "react";
@@ -40,23 +37,22 @@ export default function DashBoardPage() {
     }
   };
 
+  // Redirect to /projects if there's an error
+  useEffect(() => {
+    if (error) {
+      router.push("/projects");
+    }
+  }, [error, router]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  const handleCardClick = (id) => {
-    router.push(`/projects/${id}`);
-  };
-
   return (
-    <Flex px={{ base: 2, md: 6 }} flexDir={"column"} gap="10">
-      <DashBoardStat />
+    <Flex px={{ base: 2, md: 6 }} flexDir={"column"} gap="10" w="100%">
+      {/* <DashBoardStat />
       <RecentTask />
-      <UpComingTask />
+      <UpComingTask /> */}
 
       {projects.length > 0 ? (
         <Projects projects={projects} />

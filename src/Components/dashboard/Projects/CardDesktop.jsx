@@ -21,6 +21,7 @@ export default function CardDesktop({ project }) {
 
   return (
     <Box
+      w="50%"
       p={4}
       borderWidth="1px"
       borderRadius="md"

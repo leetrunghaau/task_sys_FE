@@ -88,7 +88,6 @@ export default function CreateRoleModal({ pid }) {
               <Divider mb={4} />
               <Stack spacing={4}>
                 <Box>
-                  <FormLabel>People in this role can: Danh sách Perm</FormLabel>
                   {/* <Stack spacing={2}>
                     <Checkbox
                       name="administer"

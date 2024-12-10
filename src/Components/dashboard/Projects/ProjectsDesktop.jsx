@@ -9,7 +9,7 @@ export default function ProjectsDesktop({ projects }) {
     .slice(0, 5);
 
   return (
-    <Box>
+    <Box w="100%">
       <Flex justify="space-between" align="center" mb={4}>
         <Heading as="h2" size="lg">
           Recent Projects

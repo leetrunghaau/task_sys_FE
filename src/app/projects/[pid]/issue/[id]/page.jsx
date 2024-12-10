@@ -11,13 +11,11 @@ import {
   Input,
   Button,
   useToast,
-  Checkbox,
 } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react"; // Import Edit icon
 import { getSingleIssueById } from "../../../../../services/API/issueAPI";
-import IssuceProgress from "../../../../../Components/project/issue/detail/Progress";
 import StatusBadge from "../../../../../Components/project/issue/detail/StatusBadge";
 import AssigneeModal from "../../../../../Components/project/issue/detail/AssigneeModal";
 import DateUpdateForm from "../../../../../Components/project/issue/detail/DateUpdateForm";
@@ -121,7 +119,7 @@ export default function IssueDetailPage() {
   const handleUpdateNote = async () => {
     if (editingContent.trim()) {
       try {
-        await updateNoteContent(pid, id, editingNoteId, editingContent.trim()); // Call the update API
+        await updateNoteContent(pid, id, editingNoteId, editingContent.trim());
 
         setNotes(
           notes.map((note) =>
@@ -346,22 +344,22 @@ export default function IssueDetailPage() {
           pid={pid}
         />
       </VStack>
-      <IssuceProgress percent={issue.progress || 0} />
+      {/* <IssuceProgress percent={issue.progress || 0} /> */}
 
       <Divider mt={6} />
 
-      <Box mt={6}>
+      {/* <Box mt={6}>
         <Heading size="md" mb={2}>
           Checklist
         </Heading>
         {checklistItems.map((checklist, index) => (
           <Checkbox key={index} isChecked={checklist.checked}>
-            {checklist.name || "Unnamed Item"}
+            {checklist.name}
           </Checkbox>
         ))}
         {checklistItems.map((checklist, index) => (
           <Text key={index} isChecked={checklist.checked}>
-            {checklist.name || "Unnamed Item"}
+            {checklist.name}
           </Text>
         ))}
         <Input
@@ -372,7 +370,7 @@ export default function IssueDetailPage() {
         <Button mt={2} colorScheme="blue" onClick={handleAddChecklist}>
           Add Checklist
         </Button>
-      </Box>
+      </Box> */}
 
       <Divider mt={6} />
 

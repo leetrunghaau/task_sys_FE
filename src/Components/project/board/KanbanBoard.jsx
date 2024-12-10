@@ -24,7 +24,6 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
 
   // Group issues by status on mount or when initialIssues change
   useEffect(() => {
-    // Check if statuses and initialIssues are valid
     if (
       !statuses ||
       !Array.isArray(statuses) ||
@@ -35,18 +34,14 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
     }
 
     const groupedIssues = statuses.reduce((acc, status) => {
-      // Ensure status and issue.Status are not null/undefined
       if (!status || !status.name) {
         return acc;
       }
 
-      const issuesInStatus = initialIssues.filter((issue) => {
-        return issue.Status && issue.Status.name === status.name;
-      });
-
-      if (issuesInStatus.length > 0) {
-        acc[status.name] = issuesInStatus;
-      }
+      // Initialize the column with an empty array
+      acc[status.name] = initialIssues.filter(
+        (issue) => issue.Status && issue.Status.name === status.name
+      );
 
       return acc;
     }, {});
