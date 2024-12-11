@@ -31,9 +31,9 @@ export default function TrackerMenu({ issue, trackers, onFinish }) {
         <Menu>
             <MenuButton as={Badge} bgColor="transparent" size="sm" mr={4}>
                 <Badge 
-                colorScheme={issue.Tracker.color ?? "gray"} 
+                colorScheme={issue.Tracker?.color ?? "gray"} 
                 cursor="pointer"
-                >{issue.Tracker.name ?? "Unknow"}</Badge>
+                >{issue.Tracker?.name ?? "Unknow"}</Badge>
             </MenuButton>
             <MenuList>
                 {trackers.map(item => (

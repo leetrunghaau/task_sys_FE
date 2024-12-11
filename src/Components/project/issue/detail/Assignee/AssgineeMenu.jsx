@@ -31,11 +31,11 @@ export default function AssigneeMenu({ issue, members, onFinish }) {
     return (
         <Menu>
             <MenuButton as={Avatar} bgColor="transparent" size="sm" mr={4}>
-                <Avatar name={issue.Assignee.name} size="sm" mr={4} />
+                <Avatar name={issue.Assignee?.name ?? ""} size="sm" mr={4} />
             </MenuButton>
             <Flex flexDir={"column"} >
-                <Text fontSize={"sm"}>{issue.Assignee.name}</Text>
-                <Text fontSize={"xs"} color="gray.500">{issue.Assignee.email}</Text>
+                <Text fontSize={"sm"}>{issue.Assignee?.name ?? ""}</Text>
+                <Text fontSize={"xs"} color="gray.500">{issue.Assignee?.email ?? ""}</Text>
             </Flex>
             <MenuList>
                 {members.map(member => (

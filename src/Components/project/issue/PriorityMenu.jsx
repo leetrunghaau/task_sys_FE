@@ -31,9 +31,9 @@ export default function PrioritiesMenu({ issue, priorities, onFinish }) {
         <Menu>
             <MenuButton as={Badge} bgColor="transparent" size="sm" mr={4}>
                 <Badge 
-                colorScheme={issue.Priority.color ?? "gray"} 
+                colorScheme={issue.Priority?.color ?? "gray"} 
                 cursor="pointer"
-                >{issue.Priority.name ?? "Unknow"}</Badge>
+                >{issue.Priority?.name ?? "Unknow"}</Badge>
             </MenuButton>
             <MenuList>
                 {priorities.map(item => (

@@ -30,9 +30,9 @@ export default function StatusMenu({ issue, status, onFinish }) {
         <Menu>
             <MenuButton as={Badge} bgColor="transparent" size="sm" mr={4}>
                 <Badge 
-                colorScheme={issue.Status.color ?? "gray"} 
+                colorScheme={issue.Status?.color ?? "gray"} 
                 cursor="pointer"
-                >{issue.Status.name ?? "Unknow"}</Badge>
+                >{issue.Status?.name ?? "Unknow"}</Badge>
             </MenuButton>
             <MenuList>
                 {status.map(item => (
