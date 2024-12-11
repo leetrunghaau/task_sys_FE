@@ -28,10 +28,8 @@ export default function StatusBadge({ status, pid, issueId, onUpdateStatus }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Initialize useToast hook
   const toast = useToast();
 
-  // Fetch all statuses for the project
   const fetchAllStatuses = async () => {
     try {
       const response = await allStatuses(pid);
@@ -43,7 +41,6 @@ export default function StatusBadge({ status, pid, issueId, onUpdateStatus }) {
     }
   };
 
-  // Load statuses on component mount
   useEffect(() => {
     fetchAllStatuses();
   }, []);
@@ -54,16 +51,13 @@ export default function StatusBadge({ status, pid, issueId, onUpdateStatus }) {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      // Update status on the server using statusId
-      const payload = { statusId: newStatus.id }; // Using statusId as per the API requirements
+      const payload = { statusId: newStatus.id }; 
       await updateIssueStatus(pid, issueId, payload);
-      setSelectedStatus(newStatus.name); // Update selected status locally
+      setSelectedStatus(newStatus.name); 
       if (onUpdateStatus) {
-        onUpdateStatus(pid, newStatus); // Notify parent component
+        onUpdateStatus(pid, newStatus); 
       }
-      onClose(); // Close modal
-
-      // Display success toast message
+      onClose(); 
       toast({
         title: "Status updated.",
         description: `The status has been successfully updated to "${newStatus.name}".`,

@@ -5,8 +5,29 @@ import {
   addMultipleChecklists,
   updateChecklist,
   deleteChecklist,
+  getChecklists
 } from "../url";
 
+export const readChecklists = async (pId, iId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = getChecklists(pId, iId);
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add notes:", error);
+    throw error;
+  }
+};
 // Add a single checklist
 export const createSingleChecklist = async (projectId, issueId, payload) => {
   try {

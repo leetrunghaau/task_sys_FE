@@ -10,8 +10,8 @@ import {
 import { useState, useEffect } from "react";
 import { Box, Button, Flex, Heading, HStack, Input, Text, VStack, useToast } from "@chakra-ui/react";
 import { Trash2, Edit, SquarePlus } from "lucide-react";
-import EditLine from './EditLine';
-import AddLine from './AddLine';
+import EditLine from '../../../utils/EditLine';
+import AddLine from '../../../utils/AddLine';
 export default function Notes() {
     const params = useParams();
     const { pid, id } = params;

@@ -5,6 +5,7 @@ import {
   createNewIssue,
   delIssue,
   editIssueStatus,
+  editIssueContent,
   editIssueDueDate,
   editAssignee,
   getIssueById,
@@ -101,6 +102,29 @@ export const updateIssueStatus = async (id, issuesId, payload) => {
     }
 
     const url = editIssueStatus(id, issuesId);
+    console.log("URL: " + url);
+    console.log(payload);
+    const response = await axiosInstance.put(url, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update issue status:", error);
+    throw error;
+  }
+};
+export const updateIssueContent = async (id, issuesId, payload) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = editIssueContent(id, issuesId);
     console.log("URL: " + url);
     console.log(payload);
     const response = await axiosInstance.put(url, payload, {

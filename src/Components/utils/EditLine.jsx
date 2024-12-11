@@ -39,14 +39,14 @@ export default function EditLine({ value, onFinish, size, bold, area }) {
                         <Textarea
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)} // Update input state
-                            fontSize="2xl"
+                            fontSize={size ?? "2xl"}
                             mr={2}
                         />
                         :
                         <Input
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)} // Update input state
-                            fontSize="2xl"
+                            fontSize={size ?? "2xl"}
                             mr={2}
                         />
                     }

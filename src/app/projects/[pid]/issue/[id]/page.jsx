@@ -16,23 +16,24 @@ import {
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react"; // Import Edit icon
-import { getSingleIssueById } from "../../../../../services/API/issueAPI";
-import StatusBadge from "../../../../../Components/project/issue/detail/StatusBadge";
-import AssigneeModal from "../../../../../Components/project/issue/detail/AssigneeModal";
+//componant
 import DateUpdateForm from "../../../../../Components/project/issue/detail/DateUpdateForm";
 import Comments from "../../../../../Components/project/issue/detail/Comment";
 import Notes from "../../../../../Components/project/issue/detail/Note";
+import CheckList from "../../../../../Components/project/issue/detail/CheckList";
 import IssuceProgress from "../../../../../Components/project/issue/detail/Progress";
-
-import { createSingleChecklist } from "../../../../../services/API/checkListAPI";
 import AssigneeMenu from './../../../../../Components/project/issue/detail/Assignee/AssgineeMenu';
-
-
+import StatusMenu from './../../../../../Components/project/issue/StatusMenu';
+import TrackerMenu from './../../../../../Components/project/issue/TrackerMenu';
+import PriorityMenu from './../../../../../Components/project/issue/PriorityMenu';
+import EidtLine from '../../../../../Components/utils/EditLine';
+import DateTimePicker from '../../../../../Components/utils/DateTimePicker'
+//api
+import { getSingleIssueById , updateIssueDue} from "../../../../../services/API/issueAPI";
 import { allProjectMembers } from "../../../../../services/API/permissionAPI"
 import { allStatuses } from "../../../../../services/API/statusAPI"
-import StatusMenu from './../../../../../Components/project/issue/StatusMenu';
-import EidtLine from './../../../../../Components/project/issue/detail/EditLine';
-import DateTimePicker from '../../../../../Components/utils/DateTimePicker'
+import { allTrackers } from "../../../../../services/API/trackerAPI"
+import { allPriorities } from "../../../../../services/API/priorityAPI"
 import moment from "moment";
 
 export default function IssueDetailPage() {
@@ -50,6 +51,8 @@ export default function IssueDetailPage() {
 
   const [members, setMembers] = useState([])
   const [status, setStatus] = useState([])
+  const [trackers, setTrackers] = useState([])
+  const [priorities, setPriorities] = useState([])
 
   const fetchIssue = async () => {
     try {
@@ -91,11 +94,59 @@ export default function IssueDetailPage() {
       setLoading(false);
     }
   }
-
+  const fetchTracker = async () => {
+    try {
+      const response = await allTrackers(pid);
+      console.log("member ===>", response.data)
+      setTrackers(response.data ?? [])
+    } catch (err) {
+      console.error("Error fetching issue:", err);
+      setError(err.message || "Failed to fetch issue");
+    } finally {
+      setLoading(false);
+    }
+  }
+  const fetchPriority = async () => {
+    try {
+      const response = await allPriorities(pid);
+      console.log("member ===>", response.data)
+      setPriorities(response.data ?? [])
+    } catch (err) {
+      console.error("Error fetching issue:", err);
+      setError(err.message || "Failed to fetch issue");
+    } finally {
+      setLoading(false);
+    }
+  }
+  const updateDue = async (date)=>{
+    try {
+      await updateIssueDue(pid, id, {start: date.startDate, end: date.endDate});
+      fetchIssue();
+      toast({
+        title: "Due updated.",
+        description: "The due has been successfully updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error updating note:", error);
+      toast({
+        title: "Error updating due.",
+        description:
+          "There was an issue updating the due. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
   useEffect(() => {
     fetchIssue();
     fetchMember();
     fetchStatus();
+    fetchTracker();
+    fetchPriority();
   }, [pid, id]);
 
 
@@ -105,29 +156,17 @@ export default function IssueDetailPage() {
   if (error) return <p>Error: {error}</p>;
   if (!issueData) return <p>No issue data found.</p>;
 
-  const { Issue } = issueData;
-  const issue = Issue || {};
-  const formattedCreatedDate = issue.created
-    ? new Date(issue.created).toISOString().split("T")[0]
-    : "";
-  const formattedStartDate = issue.start
-    ? new Date(issue.start).toISOString().split("T")[0]
-    : "";
-  const formattedEndDate = issue.end
-    ? new Date(issue.end).toISOString().split("T")[0]
-    : "";
-
   return (
     <Box w="100%" p={5}>
       <Flex justify="space-between" align="center" mb={4}>
         <Flex direction="row" align="center">
           <Heading fontSize="2xl" fontWeight="bold">
-            Issues#{issue.id}:
+            Issues#{issueData.Issue.id}:
           </Heading>
-          <EidtLine 
-          bold={true}
-          value={issue.name ?? "Unknown"} 
-          onFinish={(rs) => console.log(rs)} 
+          <EidtLine
+            bold={true}
+            value={issueData.Issue.name ?? "Unknown"}
+            onFinish={(rs) => console.log(rs)}
           />
         </Flex>
       </Flex>
@@ -149,14 +188,12 @@ export default function IssueDetailPage() {
             <Text fontWeight="bold">Updated:</Text>
             <Text >{moment(issueData.Issue.updated).format("DD-MM-YYYY")}</Text>
           </HStack>
-          <HStack>
-            <Text fontWeight="bold">Start date:</Text>
-            <DateTimePicker/>
-          </HStack>
-          <HStack>
-            <Text fontWeight="bold">Due date:</Text>
-
-          </HStack>
+          <DateTimePicker
+            dateInit={{ startDate: issueData.Issue.start, endDate: issueData.Issue.end }}
+            onChange={(date)=>{
+              updateDue(date)
+            }}
+          />
         </VStack>
         <VStack align="start" justify='start' spacing={4} mb={6}>
           <HStack>
@@ -170,24 +207,24 @@ export default function IssueDetailPage() {
           <HStack>
             <Text fontWeight="bold">Status:</Text>
             <StatusMenu
-              issue={issueData.issue}
+              issue={issueData.Issue}
               status={status}
               onFinish={() => fetchIssue()}
             />
           </HStack>
           <HStack>
             <Text fontWeight="bold">Tracker:</Text>
-            <StatusMenu
-              issue={issueData.issue}
-              status={status}
+            <TrackerMenu
+              issue={issueData.Issue}
+              trackers={trackers}
               onFinish={() => fetchIssue()}
             />
           </HStack>
           <HStack>
             <Text fontWeight="bold">Priority:</Text>
-            <StatusMenu
-              issue={issueData.issue}
-              status={status}
+            <PriorityMenu
+              issue={issueData.Issue}
+              priorities={priorities}
               onFinish={() => fetchIssue()}
             />
           </HStack>
@@ -195,13 +232,14 @@ export default function IssueDetailPage() {
       </Flex>
 
       <IssuceProgress percent={issueData.Issue.progress || 0} />
-
+      <Divider mt={6} />
+      <CheckList onFinish={()=>{fetchIssue()}}/>
       <Divider mt={6} />
       <Notes />
       <Divider mt={6} />
       <Comments />
-
       <Divider mt={6} />
+
     </Box>
   );
 }

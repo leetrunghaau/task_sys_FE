@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ButtonGroup, Flex, IconButton, Input, Text, Button } from "@chakra-ui/react";
 import { Check, X, Edit } from "lucide-react";
 
-export default function AddLine({ value, onFinish, onCancel }) {
+export default function AddLine({ value, size, onFinish, onCancel }) {
     const [inputValue, setInputValue] = useState("");
 
 
@@ -22,7 +22,7 @@ export default function AddLine({ value, onFinish, onCancel }) {
                     value={inputValue}
                     placeholder={value}
                     onChange={(e) => setInputValue(e.target.value)} // Update input state
-                    fontSize="2xl"
+                    fontSize={size ?? "2xl"}
                     mr={2}
                 />
                 <ButtonGroup size="sm">

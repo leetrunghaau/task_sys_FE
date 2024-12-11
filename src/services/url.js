@@ -117,6 +117,8 @@ export const deleteNote = (projectId, issueId, noteId) =>
   `project/${projectId}/issues/${issueId}/note/${noteId}`;
 
 //Check list
+export const getChecklists = (id, issueId) =>
+  `project/${id}/issues/${issueId}/check-lists`;
 export const addSingleChecklist = (projectId, issueId) =>
   `project/${projectId}/issues/${issueId}/check-list`;
 export const addMultipleChecklists = (projectId, issueId) =>

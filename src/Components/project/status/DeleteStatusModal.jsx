@@ -25,7 +25,6 @@ export default function DeleteStatusModal({ pid, statusId }) {
 
     try {
       await deleteStatus(pid, statusId);
-
       toast({
         title: "Delete Status Successfully!",
         description: "This Status has been deleted successfully.",

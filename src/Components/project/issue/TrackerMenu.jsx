@@ -1,13 +1,14 @@
-import { Avatar, Flex, Menu, MenuButton, MenuItem, MenuList, Text, Badge, useToast } from "@chakra-ui/react";
-import { updateIssueStatus } from "../../../services/API/issueAPI"; // Ensure this function is imported
 
-export default function StatusMenu({ issue, status, onFinish }) {
+import { Avatar, Flex, Menu, MenuButton, MenuItem, MenuList, Text, Badge, useToast } from "@chakra-ui/react";
+import { updateIssueContent } from "../../../services/API/issueAPI"; // Ensure this function is imported
+
+export default function TrackerMenu({ issue, trackers, onFinish }) {
     const toast = useToast();
     const menuClick = async (id, name) => {
         try {
-            await updateIssueStatus(issue.projectId, issue.id, { statusId: id });
+            await updateIssueContent(issue.projectId, issue.id, { trackerId: id });
             toast({
-                title: "Status Updated",
+                title: "Tracker Updated",
                 description: `Successfully update to ${name}`,
                 status: "success",
                 duration: 3000,
@@ -15,10 +16,10 @@ export default function StatusMenu({ issue, status, onFinish }) {
             });
             onFinish();
         } catch (error) {
-            console.error("Error updating status:", error);
+            console.error("Error updating tracker:", error);
             toast({
                 title: "Error",
-                description: "Failed to update status.",
+                description: "Failed to update tracker.",
                 status: "error",
                 duration: 3000,
                 isClosable: true,
@@ -30,12 +31,12 @@ export default function StatusMenu({ issue, status, onFinish }) {
         <Menu>
             <MenuButton as={Badge} bgColor="transparent" size="sm" mr={4}>
                 <Badge 
-                colorScheme={issue.Status.color ?? "gray"} 
+                colorScheme={issue.Tracker.color ?? "gray"} 
                 cursor="pointer"
-                >{issue.Status.name ?? "Unknow"}</Badge>
+                >{issue.Tracker.name ?? "Unknow"}</Badge>
             </MenuButton>
             <MenuList>
-                {status.map(item => (
+                {trackers.map(item => (
                     <MenuItem
                         key={item.id}
                         onClick={() => menuClick(item.id, item.name)}

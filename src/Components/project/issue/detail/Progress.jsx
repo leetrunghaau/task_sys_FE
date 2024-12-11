@@ -10,7 +10,6 @@ export default function IssuceProgress({percent}) {
                     <Text fontSize="sm">Progress: {percent}%</Text>
                 </HStack>
             </Box>
-            <Divider mt={6} />
         </>
     )
 }
