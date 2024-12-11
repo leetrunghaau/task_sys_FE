@@ -5,8 +5,29 @@ import {
   addMultipleNotes,
   updateNote,
   deleteNote,
+  getNotes
 } from "../url";
 
+export const readNotes = async (pId, iId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = getNotes(pId, iId);
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add notes:", error);
+    throw error;
+  }
+};
 export const addNotes = async (projectId, issueId, payload) => {
   try {
     const token = useAuthStore.getState().token;

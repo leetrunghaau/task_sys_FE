@@ -95,6 +95,8 @@ export const editAssignee = (id, issuesId) =>
 export const delIssue = (id, issuesId) => `project/${id}/issues/${issuesId}`;
 
 //Comment
+export const getComments = (id, issuesId) =>
+  `project/${id}/issues/${issuesId}/comments`;
 export const createNewComment = (id, issuesId) =>
   `project/${id}/issues/${issuesId}/comment`;
 export const editComment = (id, issuesId, commentId) =>
@@ -103,6 +105,8 @@ export const delComment = (id, issuesId, commentId) =>
   `project/${id}/issues/${issuesId}/comment/${commentId}`;
 
 //Notes
+export const getNotes = (id, issueId) =>
+  `project/${id}/issues/${issueId}/notes`;
 export const addSingleNote = (id, issueId) =>
   `project/${id}/issues/${issueId}/note`;
 export const addMultipleNotes = (projectId, issueId) =>

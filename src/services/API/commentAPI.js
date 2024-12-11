@@ -1,7 +1,28 @@
-import { createNewComment, editComment, delComment } from "../url";
+import { createNewComment, editComment, delComment, getComments } from "../url";
 import useAuthStore from "../../store/authStore";
 import axiosInstance from "../axios";
 
+export const readsComments = async (id, issuesId) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const url = getComments(id, issuesId);
+
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add comment:", error);
+    throw error; // Throw the error to be handled by the caller
+  }
+};
 // Add a new comment
 export const addNewComment = async (id, issuesId, commentPayload) => {
   try {

@@ -35,7 +35,7 @@ export default function AssigneeModal({ pid, id, Assignee, fetchIssue }) {
 
   const fetchAllMembers = async () => {
     try {
-      const response = await allProjectMembers(pid, id);
+      const response = await allProjectMembers(pid);
       setMembers(response.data);
     } catch (err) {
       setError("Failed to load all Members");

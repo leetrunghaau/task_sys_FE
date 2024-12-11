@@ -5,6 +5,7 @@ import {
   Input,
   useToast,
   Flex,
+  Textarea,
 } from "@chakra-ui/react";
 import { updateProject } from "../../services/API/projectAPI";
 import LoadingSpinner from "../Layout/Loading";
@@ -23,6 +24,7 @@ export default function ProjectInfoForm({ id }) {
     public: 1,
     active: 0,
   });
+  
 
   const handleUpdateProject = async (e) => {
     e.preventDefault();
@@ -63,6 +65,7 @@ export default function ProjectInfoForm({ id }) {
   return (
     <Flex mb={4}>
       <form onSubmit={handleUpdateProject} style={{ width: "70%" }}>
+
         <FormControl mb={4}>
           <FormLabel>Project Name</FormLabel>
           <Input
@@ -75,10 +78,9 @@ export default function ProjectInfoForm({ id }) {
             required
           />
         </FormControl>
-
         <FormControl mb={4}>
           <FormLabel>Project Description</FormLabel>
-          <Input
+          <Textarea
             id="description"
             value={formData.description}
             onInput={(e) =>
