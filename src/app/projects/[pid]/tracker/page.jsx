@@ -189,7 +189,7 @@ export default function TrackerPage() {
                   <Td>
                     <ConfirmDeleteModal
                       message={`Are you sure you want to delete tracker "${tracker.name}"?`}
-                      onConfirm={() => { deleteTracker(tracker.id) }}
+                      onConfirm={() => { deleteTrackerHandler(tracker.id) }}
                     />
                   </Td>
                 </Tr>

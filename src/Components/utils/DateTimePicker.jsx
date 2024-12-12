@@ -4,8 +4,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const RangDateTimePicker = ({ dateInit, onChange }) => {
-	const [startDate, setStartDate] = useState(new Date(dateInit.startDate));
-	const [endDate, setEndDate] = useState(new Date(dateInit.endDate));
+	const startInitDate = dateInit.startDate ? new Date(dateInit.startDate) : new Date()
+	const endInitDate = dateInit.endDate ? new Date(dateInit.endDate) : new Date()
+	const [startDate, setStartDate] = useState(startInitDate);
+	const [endDate, setEndDate] = useState(endInitDate);
 
 	const setStartDateEvent = (date) => {
 		setStartDate(date)

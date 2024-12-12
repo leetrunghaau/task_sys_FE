@@ -3,19 +3,21 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Trash2, Edit, SquarePlus } from "lucide-react";
 import { Flex, Text, HStack, Input, Button, Box, Heading, VStack, useToast, Avatar } from "@chakra-ui/react";
+import ConfirmDeleteModal from "../../../../Components/utils/ConfirmDeleteModal"
 import {
     readsComments,
     addNewComment,
     updateComment,
     deleteComment,
-} from "../../../../services/API/commentAPI"; 
+} from "../../../../services/API/commentAPI";
+import { getUserProfile } from "../../../../services/API/authAPI"
 import moment from "moment";
 
 export default function Comments() {
     const params = useParams();
     const { pid, id } = params;
     const [comments, setComments] = useState([]);
-   
+    const [profile, setProfile] = useState(null)
     const [newComment, setNewComment] = useState("");
     const [reply, setReply] = useState("");
     const [activeCommentId, setActiveCommentId] = useState(null);
@@ -28,18 +30,25 @@ export default function Comments() {
     const fetchComments = async () => {
         try {
             const response = await readsComments(pid, id);
-            console.log("API Response:", response);
             if (response && response.data) {
                 setComments(response.data);
             } else {
                 throw new Error("No data found");
             }
         } catch (err) {
-            console.error("Error fetching projects:", err); 
+            console.error("Error fetching projects:", err);
             setError("Failed to load projects");
-            setComments([]); 
+            setComments([]);
         } finally {
             setLoading(false);
+        }
+    };
+    const fetchProfile = async () => {
+        try {
+            const response = await getUserProfile();
+            setProfile(response.data);
+        } catch (err) {
+            console.error("Failed to load profile", err);
         }
     };
     //Comment
@@ -74,9 +83,10 @@ export default function Comments() {
     const handleAddReply = async (commentId) => {
         if (reply.trim()) {
             try {
-                const newReplyReq = { value: reply.trim() , parentId: commentId};
+                const newReplyReq = { value: reply.trim(), parentId: commentId };
                 await addNewComment(pid, id, newReplyReq);
                 setReply("");
+                setActiveCommentId(null)
                 fetchComments();
                 toast({
                     title: "Comment added.",
@@ -98,11 +108,35 @@ export default function Comments() {
             }
         }
     };
+    const handleDeleteComment = async (commentId) => {
+        try {
+            await deleteComment(pid, id, commentId);
+            fetchComments();
+            toast({
+                title: "Comment deleted.",
+                description: "Your comment has been successfully deleted.",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+        } catch (error) {
+            console.error("Error adding comment:", error);
+            toast({
+                title: "Error adding comment.",
+                description:
+                    "There was an issue adding your comment. Please try again.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    }
     const handleReplyClick = (commentId) => {
         setRepliedToCommentId(commentId);
     };
-    
+
     useEffect(() => {
+        fetchProfile();
         fetchComments();
     }, [pid, id]);
 
@@ -112,13 +146,13 @@ export default function Comments() {
             {/* Main Comment Input */}
             <VStack align="stretch" spacing={4}>
                 <HStack spacing={3} w="100%">
-                    <Avatar size="sm" name="John Doe" />
+                    <Avatar size="sm" name={profile?.name ?? ""} />
                     <Input
                         placeholder="Add a comment..."
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         size="md"
-                        w="100%" 
+                        w="100%"
                     />
                     <Button colorScheme="blue" size="sm" onClick={handleAddComment}>
                         Comment
@@ -129,15 +163,23 @@ export default function Comments() {
                 <VStack align="stretch" spacing={4}>
                     {comments.map((comment) => (
                         <Box key={comment.id} p={3} border="1px solid #ddd" borderRadius="md">
-                            <Flex align="center" gap={3}>
-                                <Avatar size="sm" name={comment.User.name}  />
-                                <Box>
-                                    <Flex flexDir='row'>
+                            <Flex flexDir={"row"} justify={"space-between"}>
+                                <Flex align="center" gap={3}>
+                                    <Avatar size="sm" name={comment.User.name} />
+                                    <Box>
+                                        <Flex flexDir='row'>
                                             <Text fontWeight="bold">{comment.User.name}</Text>
                                             <Text color='GrayText' fontSize='sm' ml={5}>{moment(comment.created).format("DD-MM-YYYY")}</Text>
-                                    </Flex>
-                                    <Text>{comment.value}</Text>
-                                </Box>
+                                        </Flex>
+                                        <Text>{comment.value}</Text>
+                                    </Box>
+                                </Flex>
+                                {comment.User.email == profile.email ?
+                                    <ConfirmDeleteModal
+                                        message={`Are you sure you want to delete this comment ?`}
+                                        onConfirm={() => { handleDeleteComment(comment.id) }}
+                                    /> : <></>
+                                }
                             </Flex>
                             <Button
                                 size="xs"
@@ -148,20 +190,22 @@ export default function Comments() {
                                 Reply
                             </Button>
 
+
                             {/* Reply Input Field */}
                             {activeCommentId === comment.id && (
                                 <HStack spacing={3} mt={2} w="100%">
-                                    <Avatar size="sm" name="Jane Doe" />
+                                    <Avatar size="sm" name={profile?.name ?? ""} />
                                     <Input
                                         placeholder="Write a reply..."
                                         value={reply}
                                         onChange={(e) => setReply(e.target.value)}
                                         size="sm"
-                                        w="100%" 
+                                        w="100%"
                                     />
                                     <Button colorScheme="blue" size="sm" onClick={() => handleAddReply(comment.id)}>
                                         Reply
                                     </Button>
+
                                 </HStack>
                             )}
 
@@ -169,16 +213,26 @@ export default function Comments() {
                             <VStack align="stretch" spacing={2} mt={3} pl={5}>
                                 {comment.Chillrend.map((reply) => (
                                     <Box key={reply.id}>
-                                        <Flex align="center" gap={3}>
-                                            <Avatar size="sm" name={reply.User.name} />
-                                            <Box>
-                                                <Flex flexDir='row'>
-                                                    <Text fontWeight="bold">{reply.User.name}</Text>
-                                                    <Text color='GrayText' fontSize='sm' ml={5}>{moment(reply.created).format("DD-MM-YYYY")}</Text>
-                                                </Flex>
-                                                <Text>{reply.value}</Text>
-                                            </Box>
+                                        <Flex flexDir={"row"} justify={"space-between"}>
+                                            <Flex align="center" gap={3}>
+                                                <Avatar size="sm" name={reply.User.name} />
+                                                <Box>
+                                                    <Flex flexDir='row'>
+                                                        <Text fontWeight="bold">{reply.User.name}</Text>
+                                                        <Text color='GrayText' fontSize='sm' ml={5}>{moment(reply.created).format("DD-MM-YYYY")}</Text>
+                                                    </Flex>
+                                                    <Text>{reply.value}</Text>
+                                                </Box>
+
+                                            </Flex>
+                                            {reply.User.email == profile.email ?
+                                                <ConfirmDeleteModal
+                                                    message={`Are you sure you want to delete this reply ?`}
+                                                    onConfirm={() => { handleDeleteComment(reply.id) }}
+                                                /> : <></>
+                                            }
                                         </Flex>
+
                                     </Box>
                                 ))}
                             </VStack>

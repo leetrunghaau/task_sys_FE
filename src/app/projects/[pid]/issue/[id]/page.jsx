@@ -29,7 +29,7 @@ import PriorityMenu from './../../../../../Components/project/issue/PriorityMenu
 import EidtLine from '../../../../../Components/utils/EditLine';
 import DateTimePicker from '../../../../../Components/utils/DateTimePicker'
 //api
-import { getSingleIssueById , updateIssueDue} from "../../../../../services/API/issueAPI";
+import { getSingleIssueById , updateIssueDue ,updateIssueContent} from "../../../../../services/API/issueAPI";
 import { allProjectMembers } from "../../../../../services/API/permissionAPI"
 import { allStatuses } from "../../../../../services/API/statusAPI"
 import { allTrackers } from "../../../../../services/API/trackerAPI"
@@ -57,11 +57,8 @@ export default function IssueDetailPage() {
   const fetchIssue = async () => {
     try {
       const data = await getSingleIssueById(pid, id);
-      console.log("isuce ===>", data.data)
       setIssueData(data.data);
       setChecklistItems(data.data?.Checklist || []);
-
-      console.log(data.data.CheckList);
     } catch (err) {
       console.error("Error fetching issue:", err);
       setError(err.message || "Failed to fetch issue");
@@ -73,7 +70,6 @@ export default function IssueDetailPage() {
   const fetchMember = async () => {
     try {
       const response = await allProjectMembers(pid);
-      console.log("member ===>", response.data)
       setMembers(response.data ?? [])
     } catch (err) {
       console.error("Error fetching issue:", err);
@@ -85,7 +81,6 @@ export default function IssueDetailPage() {
   const fetchStatus = async () => {
     try {
       const response = await allStatuses(pid);
-      console.log("member ===>", response.data)
       setStatus(response.data ?? [])
     } catch (err) {
       console.error("Error fetching issue:", err);
@@ -97,7 +92,6 @@ export default function IssueDetailPage() {
   const fetchTracker = async () => {
     try {
       const response = await allTrackers(pid);
-      console.log("member ===>", response.data)
       setTrackers(response.data ?? [])
     } catch (err) {
       console.error("Error fetching issue:", err);
@@ -109,7 +103,6 @@ export default function IssueDetailPage() {
   const fetchPriority = async () => {
     try {
       const response = await allPriorities(pid);
-      console.log("member ===>", response.data)
       setPriorities(response.data ?? [])
     } catch (err) {
       console.error("Error fetching issue:", err);
@@ -141,6 +134,34 @@ export default function IssueDetailPage() {
       });
     }
   }
+  const updateContent = async (value)=>{
+    if (value.trim()){
+      try {
+      await updateIssueContent(pid, id, {name: value.trim()});
+      fetchIssue();
+      toast({
+        title: "Name issue updated.",
+        description: "The name has been successfully updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error("Error updating name:", error);
+      toast({
+        title: "Error updating name.",
+        description:
+          "There was an issue updating the name. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+    }
+    
+    
+  }
+
   useEffect(() => {
     fetchIssue();
     fetchMember();
@@ -166,7 +187,7 @@ export default function IssueDetailPage() {
           <EidtLine
             bold={true}
             value={issueData.Issue.name ?? "Unknown"}
-            onFinish={(rs) => console.log(rs)}
+            onFinish={(rs) => updateContent(rs)}
           />
         </Flex>
       </Flex>

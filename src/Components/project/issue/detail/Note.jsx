@@ -25,9 +25,7 @@ export default function Notes() {
     const fetchNotes = async () => {
         try {
             const response = await readNotes(pid, id);
-            console.log("API Response:", response);
             if (response && response.data) {
-                console.log("aooi===>:", response.data)
                 setNotes(response.data);
             } else {
                 throw new Error("No data found");

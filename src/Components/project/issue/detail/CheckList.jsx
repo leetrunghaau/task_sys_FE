@@ -26,10 +26,8 @@ export default function CheckList({onFinish}) {
     const fetchCheckLists = async () => {
         try {
             const response = await readChecklists(pid, id);
-            console.log("API Response:", response);
             onFinish()
             if (response && response.data) {
-                console.log("aooi===>:", response.data)
                 setCheckLists(response.data);
             } else {
                 throw new Error("No data found");
