@@ -116,12 +116,12 @@ export default function ProjectInfo({ pId }) {
                     <TrackersCart
                         key={project.project?.id}
                         pid={project.project?.id}
-                        trackers={project.status ?? []}
+                        trackers={project.tracker ?? []}
                     />
                     <PrioritiesCart
                         key={project.project?.id}
                         pid={project.project?.id}
-                        priorities={project.status ?? []}
+                        priorities={project.priority ?? []}
                     />
                     <MembersCart
                         key={project.project?.id}
