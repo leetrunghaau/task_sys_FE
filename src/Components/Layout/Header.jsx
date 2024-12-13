@@ -77,65 +77,85 @@ export default function Header() {
 
         {/* Profile Menu */}
         {isLoggedIn ? (
-          <Menu>
-            <MenuButton
-              as={Button}
-              bgColor="transparent"
-              _hover={{ bgColor: "#0A3981" }}
-              _active={{ bgColor: "#0A3981" }}
-              onClick={() => setIsAvatarActive((prev) => !prev)}>
-              <Avatar
-                name={profile?.name}
+          <>
+            <Flex gap={5}>
+              <Button
                 size="sm"
-                boxShadow={
-                  isAvatarActive ? "0 0 10px 4px rgba(227, 142, 73)" : ""
-                }
-                transition="box-shadow 0.2s ease"
-              />
-            </MenuButton>
-            <MenuList display={"flex"} flexDir={"column"} gap="1">
-              <Flex flexDir={"column"} gap="2" ml="2" mb="4">
-                <Text fontSize={"sm"} fontWeight={"semibold"}>
-                  Account
-                </Text>
-                <Flex align={"center"} gap="2">
-                  <Avatar name={profile?.name} size="sm" />
-                  <Flex flexDir={"column"}>
-                    <Text fontSize={"sm"}>{profile?.name}</Text>
-                    <Text fontSize={"xs"}>{profile?.email}</Text>
+                variant="link"
+                colorScheme={"orange"}
+                onClick={() => router.push("/projects")}>
+                Projects
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                colorScheme={"orange"}
+                onClick={() => router.push("/issues")}>
+                Issues
+              </Button>
+              
+              
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  bgColor="transparent"
+                  _hover={{ bgColor: "#0A3981" }}
+                  _active={{ bgColor: "#0A3981" }}
+                  onClick={() => setIsAvatarActive((prev) => !prev)}>
+                  <Avatar
+                    name={profile?.name}
+                    size="sm"
+                    boxShadow={
+                      isAvatarActive ? "0 0 10px 4px rgba(227, 142, 73)" : ""
+                    }
+                    transition="box-shadow 0.2s ease"
+                  />
+                </MenuButton>
+                <MenuList display={"flex"} flexDir={"column"} gap="1">
+                  <Flex flexDir={"column"} gap="2" ml="2" mb="4">
+                    <Text fontSize={"sm"} fontWeight={"semibold"}>
+                      Account
+                    </Text>
+                    <Flex align={"center"} gap="2">
+                      <Avatar name={profile?.name} size="sm" />
+                      <Flex flexDir={"column"}>
+                        <Text fontSize={"sm"}>{profile?.name}</Text>
+                        <Text fontSize={"xs"}>{profile?.email}</Text>
+                      </Flex>
+                    </Flex>
                   </Flex>
-                </Flex>
-              </Flex>
-              {/* Admin Link */}
-              {isAdmin && (
-                <MenuItem
-                  onClick={() => router.push("/admin")}
-                  gap="1"
-                  fontSize={"sm"}>
-                  <Layout size="18" />
-                  Admin Panel
-                </MenuItem>
-              )}
-              <MenuItem
-                onClick={() => router.push("/yourProfile")}
-                gap="1"
-                fontSize={"sm"}>
-                <CircleUserRound size="18" />
-                Your Profile
-              </MenuItem>
-              <MenuItem
-                onClick={() => router.push("/dashboard")}
-                fontSize={"sm"}
-                gap="1">
-                <ClipboardList size="18" />
-                Dashboard
-              </MenuItem>
-              <MenuItem onClick={handleLogOut} gap="1" fontSize={"sm"}>
-                <SquareArrowRight size="18" />
-                Log Out
-              </MenuItem>
-            </MenuList>
-          </Menu>
+                  {/* Admin Link */}
+                  {isAdmin && (
+                    <MenuItem
+                      onClick={() => router.push("/admin")}
+                      gap="1"
+                      fontSize={"sm"}>
+                      <Layout size="18" />
+                      Admin Panel
+                    </MenuItem>
+                  )}
+                  <MenuItem
+                    onClick={() => router.push("/yourProfile")}
+                    gap="1"
+                    fontSize={"sm"}>
+                    <CircleUserRound size="18" />
+                    Your Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => router.push("/dashboard")}
+                    fontSize={"sm"}
+                    gap="1">
+                    <ClipboardList size="18" />
+                    Dashboard
+                  </MenuItem>
+                  <MenuItem onClick={handleLogOut} gap="1" fontSize={"sm"}>
+                    <SquareArrowRight size="18" />
+                    Log Out
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </Flex>
+          </>
         ) : (
           <Button
             size="sm"

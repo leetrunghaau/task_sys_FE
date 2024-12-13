@@ -2,6 +2,7 @@ import axiosInstance from "../axios";
 import useAuthStore from "../../store/authStore";
 import {
   getAllIssues,
+  getAllIssuesQuery,
   createNewIssue,
   delIssue,
   editIssueStatus,
@@ -18,6 +19,26 @@ export const allIssues = async (id) => {
       throw new Error("No authentication token found.");
     }
     const url = getAllIssues(id);
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Connection test failed:", error);
+    throw error;
+  }
+};
+export const allIssuesQuery = async (query = null) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = getAllIssuesQuery(query);
     const response = await axiosInstance.get(url, {
       headers: {
         Authorization: `Bearer ${token}`,

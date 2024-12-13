@@ -24,10 +24,7 @@ export default function ProjectSettings({ id }) {
       <ProjectInfoForm id={id} />
       <Divider my={4} />
 
-      <Text fontSize="lg" fontWeight="medium">
-        Project Members
-      </Text>
-      <ProjectMembers id={id} />
+      
     </Flex>
   );
 }

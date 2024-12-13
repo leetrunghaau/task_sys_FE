@@ -1,29 +1,5 @@
 "use client";
-// import { VStack } from "@chakra-ui/react";
-// import Contact from "../Components/landingPage/Contact";
-// import HeroSection from "../Components/landingPage/HeroSection";
-// import Pricing from "../Components/landingPage/Pricing";
-// import Features from "../Components/landingPage/Features";
-// export default function Page() {
-//   return (
-//     <VStack minW="100vw">
-//       <section id="hero-section">
-//         <HeroSection></HeroSection>
-//       </section>
-//       <section id="features">
-//         <Features></Features>
-//       </section>
-//       <section id="pricing">
-//         <Pricing></Pricing>
-//       </section>
-//       <section id="contact">
-//         <Contact></Contact>
-//       </section>
-//     </VStack>
-//   );
-// }
 
-// pages/index.js
 import {
   Box,
   Button,
@@ -34,9 +10,31 @@ import {
   Divider,
   AbsoluteCenter,
   Link,
+  useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import useAuthStore from "../store/authStore";
+import { useEffect } from "react";
 
 export default function Page() {
+  const router = useRouter();
+  const toast = useToast();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      toast({
+        title: "You are already logged in.",
+        description: "Redirecting you to your dashboard.",
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
+      router.push("/dashboard");
+    }
+  // }, []);
+  }, [isLoggedIn, router, toast]);
+
   return (
     <Box minH="100vh" bg="white">
       <Box as="main" py={12}>
@@ -64,14 +62,17 @@ export default function Page() {
               Find teammates, plus keep work and life separate by using your
               work email.
             </Text>
-            <Button
-              borderRadius={"full"}
-              bg="#2668CA"
-              color="white"
-              _hover={{ bg: "#0A3981", color: "white  " }}
-              fontWeight={"bold"}>
-              Sign up
-            </Button>
+            <Link href="/logIn" w='100%'>
+              <Button
+              w="100%"
+                borderRadius={"full"}
+                bg="#2668CA"
+                color="white"
+                _hover={{ bg: "#0A3981", color: "white  " }}
+                fontWeight={"bold"}>
+                Sign up
+              </Button>
+            </Link>
             <Box position="relative" padding="10">
               <Divider borderWidth="1px" />
               <AbsoluteCenter fontSize={"sm"} bg="white" px="4">

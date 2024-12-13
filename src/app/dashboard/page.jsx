@@ -50,10 +50,6 @@ export default function DashBoardPage() {
 
   return (
     <Flex px={{ base: 2, md: 6 }} flexDir={"column"} gap="10" w="100%">
-      {/* <DashBoardStat />
-      <RecentTask />
-      <UpComingTask /> */}
-
       {projects.length > 0 ? (
         <Projects projects={projects} />
       ) : (

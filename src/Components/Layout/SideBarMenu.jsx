@@ -16,7 +16,7 @@ import Link from "next/link";
 
 export default function Sidebar({ project }) {
   return (
-    <Box as="aside" bg="white" borderRightWidth="2px" h="h-screen">
+    <Box as="aside" bg="white" borderRightWidth="2px" h="h-screen" w="20%">
       <Flex gap="2">
         <Flex flexDir={"column"}>
           <Heading noOfLines={1} fontSize="xl" fontWeight="semibold">
@@ -28,13 +28,15 @@ export default function Sidebar({ project }) {
         </Flex>
       </Flex>
       <VStack align="stretch" spacing="4">
-        <Box>
+        <Box mt={5}>
           <Heading
             as="h2"
             fontSize="xs"
             fontWeight="semibold"
             color="gray.500"
-            mb="2">
+            mb="2"
+            ml="2"
+            >
             PLANNING
           </Heading>
           <VStack spacing="1" align="stretch">
@@ -76,6 +78,7 @@ export default function Sidebar({ project }) {
       {/* Setting  */}
       <VStack align="stretch" spacing="4" p="4">
         <Box>
+        <Link href={`/projects/${project.project.id}`}>
           <Heading
             as="h2"
             fontSize="xs"
@@ -84,6 +87,7 @@ export default function Sidebar({ project }) {
             mb="2">
             SETTINGS
           </Heading>
+          </Link>
           <VStack spacing="1" align="stretch">
             <Link href={`/projects/${project.project.id}/role`}>
               <Button
@@ -123,14 +127,6 @@ export default function Sidebar({ project }) {
                 justifyContent="flex-start"
                 leftIcon={<Lightbulb size="16px" />}>
                 Status
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/settings`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<Settings size="16px" />}>
-                Project Settings
               </Button>
             </Link>
           </VStack>

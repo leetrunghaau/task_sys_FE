@@ -77,7 +77,7 @@ export const deleteRolePermissions = async (id, roleId, permissionId) => {
     if (!token) {
       throw new Error("No authentication token found.");
     }
-    const url = delRolePermissions(id, roleId);
+    const url = delRolePermissions(id, roleId, permissionId);
 
     const response = await axiosInstance.delete(url, {
       headers: {
