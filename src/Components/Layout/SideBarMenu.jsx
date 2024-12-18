@@ -10,6 +10,7 @@ import {
   ChartNoAxesGantt,
   Columns3,
   LayoutDashboard,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -61,7 +62,7 @@ export default function Sidebar({ project }) {
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
-                leftIcon={<Columns3 size="16px" />}>
+                leftIcon={<CalendarDays size="16px" />}>
                 Calendar
               </Button>
             </Link>

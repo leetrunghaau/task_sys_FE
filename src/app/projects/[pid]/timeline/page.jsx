@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Box } from "@chakra-ui/react";
-import { allIssues } from "../../../../services/API/issueAPI";
+import { Box, Heading, Flex } from "@chakra-ui/react";
+import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
 import { useParams } from "next/navigation";
 import DetailIssueModal from "../../../../Components/project/issue/detail/DetailIssueModal";
 import { Chart } from "react-google-charts";
+import FilterDrawer from "../../../../Components/project/Filter";
 
 export default function ListViewCalendar() {
   const params = useParams();
@@ -12,10 +13,11 @@ export default function ListViewCalendar() {
   const [events, setEvents] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [query, setQuery] = useState(`?project=${pid}`);
 
   const fetchIssues = async () => {
     try {
-      const response = await allIssues(pid);
+      const response = await allIssuesQuery2(query);
       const issues = response.data;
       console.log(response.data);
 
@@ -50,6 +52,9 @@ export default function ListViewCalendar() {
     fetchIssues();
   }, [pid]);
 
+  useEffect(() => {
+    fetchIssues();
+  }, [query]);
   const handleEventClick = (event) => {
     const eventDetails = {
       id: event.id,
@@ -108,7 +113,19 @@ export default function ListViewCalendar() {
   });
 
   return (
-    <Box w="100%" h="100%">
+    <Box w="100%" h="100%" mx="6">
+      <Flex alignItems={"center"} justifyContent={"space-between"} my="4">
+        <Heading size="md" mb={2} mr={4}>
+          Time Line
+        </Heading>
+        <FilterDrawer
+          pid={pid}
+          onFinish={(value) => {
+            setQuery(value);
+            console.log(value);
+          }}
+        />
+      </Flex>
       <Chart
         height="100vh"
         chartType="Timeline"

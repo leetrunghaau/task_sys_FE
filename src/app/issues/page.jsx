@@ -29,16 +29,15 @@ export default function IssuesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [assigneeToMe, setAssigneeToMe] = useState(false);
-
   const toast = useToast();
   const params = useParams();
   const { pid } = params;
   const user = useAuthStore((state) => state.user);
+  const [query, setQuery] = useState(`?project=${pid}`);
 
   const fetchAllIssues = async () => {
     try {
       const response = await allIssuesQuery();
-      console.log(response);
       setIssues(response.data);
       setDataTable(response.data);
     } catch (err) {

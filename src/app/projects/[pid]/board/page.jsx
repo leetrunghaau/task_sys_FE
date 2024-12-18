@@ -1,11 +1,11 @@
 "use client";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import KanbanBoard from "../../../../Components/project/board/KanbanBoard";
-import { allIssues } from "../../../../services/API/issueAPI";
+import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
 import { allStatuses } from "../../../../services/API/statusAPI";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
+import FilterDrawer from "../../../../Components/project/Filter";
 export default function BoardPage() {
   const [issues, setIssues] = useState([]);
   const [statuses, setStatuses] = useState([]);
@@ -13,12 +13,12 @@ export default function BoardPage() {
   const [error, setError] = useState(null);
   const params = useParams();
   const { pid } = params;
+  const [query, setQuery] = useState(`?project=${pid}`);
 
   const fetchAllIssues = async () => {
     try {
-      const response = await allIssues(pid);
+      const response = await allIssuesQuery2(query);
       console.log(response);
-
       setIssues(response.data);
     } catch (err) {
       setError("Failed to load all Issues");
@@ -42,7 +42,9 @@ export default function BoardPage() {
     fetchAllIssues();
     fetchAllStatuses();
   }, []);
-
+  useEffect(() => {
+    fetchAllIssues();
+  }, [query]);
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -50,7 +52,20 @@ export default function BoardPage() {
     return <div>{error}</div>;
   }
   return (
-    <Box w="80%">
+    <Box w="80%" mx="6">
+      <Flex alignItems={"center"} justifyContent={"space-between"} my="4">
+        <Heading size="md" mb={2} mr={4}>
+          Kanban Board
+        </Heading>
+        <FilterDrawer
+          pid={pid}
+          onFinish={(value) => {
+            setQuery(value);
+            console.log(value);
+          }}
+        />
+      </Flex>
+
       <KanbanBoard pid={pid} initialIssues={issues} statuses={statuses} />
     </Box>
   );

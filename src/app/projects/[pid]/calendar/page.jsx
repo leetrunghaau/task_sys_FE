@@ -1,25 +1,27 @@
 "use client";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { allIssues } from "../../../../services/API/issueAPI";
+import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import FilterDrawer from "../../../../Components/project/Filter";
+
 import DetailIssueModal from "../../../../Components/project/issue/detail/DetailIssueModal";
 export default function CalendarPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [eventDetails, setEventDetails] = useState(null);
   const [events, setEvents] = useState([]);
-
   const params = useParams();
   const { pid, id } = params;
+  const [query, setQuery] = useState(`?project=${pid}`);
 
   const fetchIssues = async () => {
     try {
-      const response = await allIssues(pid);
+      const response = await await allIssuesQuery2(query);
       const issues = response.data;
 
       // Map issues to events for FullCalendar
@@ -46,6 +48,9 @@ export default function CalendarPage() {
     fetchIssues();
   }, []);
 
+  useEffect(() => {
+    fetchIssues();
+  }, [query]);
   const handleEventClick = (info) => {
     const eventDetails = {
       id: info.event.id,
@@ -69,7 +74,19 @@ export default function CalendarPage() {
   };
 
   return (
-    <Box w="100%" cursor={"pointer"}>
+    <Box w="100%" cursor={"pointer"} mx="4">
+      <Flex alignItems={"center"} justifyContent={"space-between"} my="4">
+        <Heading size="md" mb={2} mr={4}>
+          Calendar
+        </Heading>
+        <FilterDrawer
+          pid={pid}
+          onFinish={(value) => {
+            setQuery(value);
+            console.log(value);
+          }}
+        />
+      </Flex>
       <FullCalendar
         plugins={[
           resourceTimelinePlugin,

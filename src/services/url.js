@@ -81,15 +81,25 @@ export const delStatus = (id, statusId) => `project/${id}/status/${statusId}`;
 
 //Issue
 export const getAllIssues = (id) => `issuess?project=${id}`;
+
 export const getAllIssuesQuery = (query = null) => {
-  let rs = "issuess"
+  let rs = "issuess";
   if (!query) {
-    return rs
+    return rs;
   }
-  return rs + Object.entries(query)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-}
+  return (
+    rs +
+    Object.entries(query)
+      .map(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      )
+      .join("&")
+  );
+};
+
+export const getAllIssuesQuery2 = (query = null) => `issuess${query ?? ""}`;
+
 export const getIssueById = (pid, issueId) =>
   `project/${pid}/issues/${issueId}`;
 export const createNewIssue = (id) => `project/${id}/issues`;

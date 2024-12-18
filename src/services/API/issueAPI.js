@@ -10,6 +10,7 @@ import {
   editIssueDueDate,
   editAssignee,
   getIssueById,
+  getAllIssuesQuery2,
 } from "../url";
 
 export const allIssues = async (id) => {
@@ -52,6 +53,28 @@ export const allIssuesQuery = async (query = null) => {
     throw error;
   }
 };
+
+export const allIssuesQuery2 = async (query = null) => {
+  try {
+    const token = useAuthStore.getState().token;
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+    const url = getAllIssuesQuery2(query);
+    const response = await axiosInstance.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Connection test failed:", error);
+    throw error;
+  }
+};
+
 export const getSingleIssueById = async (pid, issueId) => {
   try {
     const token = useAuthStore.getState().token;

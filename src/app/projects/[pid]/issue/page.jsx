@@ -20,13 +20,15 @@ import TrackerMenu from "../../../../Components/project/issue/TrackerMenu";
 import PriorityMenu from "../../../../Components/project/issue/PriorityMenu";
 import AddLine from "../../../../Components/utils/AddLine";
 import { useParams } from "next/navigation";
-import { allIssues, addNewIssue } from "../../../../services/API/issueAPI";
+import { addNewIssue } from "../../../../services/API/issueAPI";
 import { useState, useEffect } from "react";
 import { allStatuses } from "../../../../services/API/statusAPI";
 import { allTrackers } from "../../../../services/API/trackerAPI";
 import { allPriorities } from "../../../../services/API/priorityAPI";
 import { allProjectMembers } from "../../../../services/API/permissionAPI";
 import { ExternalLink } from "lucide-react";
+import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
+
 import FilterDrawer from "../../../../Components/project/Filter";
 import moment from "moment";
 export default function IssusesPage() {
@@ -41,10 +43,11 @@ export default function IssusesPage() {
   const toast = useToast();
   const params = useParams();
   const { pid } = params;
+  const [query, setQuery] = useState(`?project=${pid}`);
 
   const fetchAllIssues = async () => {
     try {
-      const response = await allIssues(pid);
+      const response = await allIssuesQuery2(query);
       setIssues(response.data);
     } catch (err) {
       setError("Failed to load all Issues");
@@ -102,7 +105,9 @@ export default function IssusesPage() {
     fetchAllTracker();
     fetchAllPriority();
   }, []);
-
+  useEffect(() => {
+    fetchAllIssues();
+  }, [query]);
   const addItemClick = () => {
     if (!addItem) {
       setAddItem(true);
@@ -142,7 +147,7 @@ export default function IssusesPage() {
         <FilterDrawer
           pid={pid}
           onFinish={(value) => {
-            // addIssueSubmit(value);
+            setQuery(value);
             console.log(value);
           }}
         />

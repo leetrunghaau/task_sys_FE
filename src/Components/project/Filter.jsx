@@ -3,8 +3,8 @@ import {
   Button,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
+  DrawerFooter,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
@@ -88,17 +88,19 @@ export default function FilterDrawer({ pid, onFinish }) {
   };
   useEffect(() => {
     const generateQueryString = (key, list) => {
-      const selectedIds = list.filter(item => item.checked).map(item => item.id);
-      return selectedIds.length ? `${key}=${selectedIds.join("-")}` : "";
+      const selectedIds = list
+        .filter((item) => item.checked)
+        .map((item) => item.id);
+      return selectedIds.length ? `&${key}=${selectedIds.join("-")}` : "";
     };
-  
+
     let rs = `?project=${pid}`;
     rs += generateQueryString("status", statuses);
     rs += generateQueryString("tracker", trackers);
     rs += generateQueryString("priority", priorities);
     rs += generateQueryString("assignee", assignees);
     rs += generateQueryString("owner", owner);
-  
+
     onFinish(rs);
   }, [statuses, priorities, trackers, assignees, owner]);
   useEffect(() => {
@@ -157,6 +159,23 @@ export default function FilterDrawer({ pid, onFinish }) {
       )
     );
   };
+  const clearFilters = () => {
+    setStatuses((prevStatuses) =>
+      prevStatuses.map((status) => ({ ...status, checked: false }))
+    );
+    setPriorities((prevPriorities) =>
+      prevPriorities.map((priority) => ({ ...priority, checked: false }))
+    );
+    setTrackers((prevTrackers) =>
+      prevTrackers.map((tracker) => ({ ...tracker, checked: false }))
+    );
+    setAssignees((prevAssignees) =>
+      prevAssignees.map((assignee) => ({ ...assignee, checked: false }))
+    );
+    setOwner((prevOwner) =>
+      prevOwner.map((item) => ({ ...item, checked: false }))
+    );
+  };
 
   return (
     <Box>
@@ -177,6 +196,23 @@ export default function FilterDrawer({ pid, onFinish }) {
                   <Box as="span" flex="1" textAlign="left">
                     Status
                   </Box>
+                  {(() => {
+                    const total = statuses.filter(
+                      (item) => item.checked === true
+                    ).length;
+                    return total === 0 ? (
+                      <></>
+                    ) : (
+                      <Badge
+                        borderRadius={"4"}
+                        px="2"
+                        py="1"
+                        colorScheme={"teal"}>
+                        +{total}
+                      </Badge>
+                    );
+                  })()}
+
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel
@@ -208,6 +244,22 @@ export default function FilterDrawer({ pid, onFinish }) {
                   <Box as="span" flex="1" textAlign="left">
                     Priority
                   </Box>
+                  {(() => {
+                    const total = priorities.filter(
+                      (item) => item.checked === true
+                    ).length;
+                    return total === 0 ? (
+                      <></>
+                    ) : (
+                      <Badge
+                        borderRadius={"4"}
+                        px="2"
+                        py="1"
+                        colorScheme={"teal"}>
+                        +{total}
+                      </Badge>
+                    );
+                  })()}
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel
@@ -236,6 +288,22 @@ export default function FilterDrawer({ pid, onFinish }) {
                   <Box as="span" flex="1" textAlign="left">
                     Tracker
                   </Box>
+                  {(() => {
+                    const total = trackers.filter(
+                      (item) => item.checked === true
+                    ).length;
+                    return total === 0 ? (
+                      <></>
+                    ) : (
+                      <Badge
+                        borderRadius={"4"}
+                        px="2"
+                        py="1"
+                        colorScheme={"teal"}>
+                        +{total}
+                      </Badge>
+                    );
+                  })()}
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel
@@ -264,6 +332,22 @@ export default function FilterDrawer({ pid, onFinish }) {
                   <Box as="span" flex="1" textAlign="left">
                     Assignee
                   </Box>
+                  {(() => {
+                    const total = assignees.filter(
+                      (item) => item.checked === true
+                    ).length;
+                    return total === 0 ? (
+                      <></>
+                    ) : (
+                      <Badge
+                        borderRadius={"4"}
+                        px="2"
+                        py="1"
+                        colorScheme={"teal"}>
+                        +{total}
+                      </Badge>
+                    );
+                  })()}
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel
@@ -306,6 +390,22 @@ export default function FilterDrawer({ pid, onFinish }) {
                   <Box as="span" flex="1" textAlign="left">
                     Created by
                   </Box>
+                  {(() => {
+                    const total = owner.filter(
+                      (item) => item.checked === true
+                    ).length;
+                    return total === 0 ? (
+                      <></>
+                    ) : (
+                      <Badge
+                        borderRadius={"4"}
+                        px="2"
+                        py="1"
+                        colorScheme={"teal"}>
+                        +{total}
+                      </Badge>
+                    );
+                  })()}
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel
@@ -341,12 +441,10 @@ export default function FilterDrawer({ pid, onFinish }) {
               </AccordionItem>
             </Accordion>
           </DrawerBody>
-
           <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
+            <Button colorScheme="red" onClick={clearFilters}>
+              Clear Filter
             </Button>
-            <Button colorScheme="blue">Apply Filters</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
