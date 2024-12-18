@@ -15,12 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  SquareArrowRight,
-  CircleUserRound,
-  ClipboardList,
-  Layout,
-} from "lucide-react"; // Added Layout icon
+import { SquareArrowRight, CircleUserRound, Layout } from "lucide-react"; // Added Layout icon
 import { getUserProfile } from "../../services/API/authAPI";
 import useAuthStore from "../../store/authStore";
 import { checkIfAdmin } from "../../utils/checkAdmin"; // Adjust the import path as needed
@@ -82,19 +77,18 @@ export default function Header() {
               <Button
                 size="sm"
                 variant="link"
-                colorScheme={"orange"}
+                color={"#E38E49"}
                 onClick={() => router.push("/projects")}>
                 Projects
               </Button>
               <Button
                 size="sm"
                 variant="link"
-                colorScheme={"orange"}
+                color={"#E38E49"}
                 onClick={() => router.push("/issues")}>
                 Issues
               </Button>
-              
-              
+
               <Menu>
                 <MenuButton
                   as={Button}
@@ -141,13 +135,13 @@ export default function Header() {
                     <CircleUserRound size="18" />
                     Your Profile
                   </MenuItem>
-                  <MenuItem
+                  {/* <MenuItem
                     onClick={() => router.push("/dashboard")}
                     fontSize={"sm"}
                     gap="1">
                     <ClipboardList size="18" />
                     Dashboard
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem onClick={handleLogOut} gap="1" fontSize={"sm"}>
                     <SquareArrowRight size="18" />
                     Log Out

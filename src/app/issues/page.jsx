@@ -1,20 +1,27 @@
 "use client";
-import { Box, Link, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Avatar, Text, Badge, useToast, Button, FormLabel, Switch } from "@chakra-ui/react";
+import {
+  Box,
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Avatar,
+  Text,
+  Badge,
+  useToast,
+  Switch,
+} from "@chakra-ui/react";
 import { Flex, Heading } from "@chakra-ui/react";
-import { SquarePlus } from "lucide-react";
-import AssigneeMenu from "../../Components/project/issue/detail/Assignee/AssgineeMenu"
-import StatusMenu from "../../Components/project/issue/StatusMenu"
-import TrackerMenu from "../../Components/project/issue/TrackerMenu"
-import PriorityMenu from "../../Components/project/issue/PriorityMenu"
-import AddLine from "../../Components/utils/AddLine"
 import { useParams } from "next/navigation";
-import { allIssues, addNewIssue, allIssuesQuery } from "../../services/API/issueAPI";
+import { addNewIssue, allIssuesQuery } from "../../services/API/issueAPI";
 import { useState, useEffect } from "react";
-import { allStatuses } from "../../services/API/statusAPI";
-import { allTrackers } from "../../services/API/trackerAPI";
-import { allPriorities } from "../../services/API/priorityAPI";
-import { allProjectMembers } from "../../services/API/permissionAPI";
-import moment from "moment"
+import { ExternalLink } from "lucide-react";
+
+import moment from "moment";
 import useAuthStore from "../../store/authStore";
 export default function IssuesPage() {
   const [issues, setIssues] = useState([]);
@@ -31,9 +38,9 @@ export default function IssuesPage() {
   const fetchAllIssues = async () => {
     try {
       const response = await allIssuesQuery();
-      console.log(response)
+      console.log(response);
       setIssues(response.data);
-      setDataTable(response.data)
+      setDataTable(response.data);
     } catch (err) {
       setError("Failed to load all Issues");
     } finally {
@@ -46,9 +53,9 @@ export default function IssuesPage() {
 
   const addItemClick = () => {
     if (!addItem) {
-      setAddItem(true)
+      setAddItem(true);
     }
-  }
+  };
   const addIssueCancel = () => {
     setAddItem(null);
   };
@@ -57,7 +64,7 @@ export default function IssuesPage() {
       try {
         const newIssue = { name: value.trim() };
         const addedNote = await addNewIssue(pid, newIssue);
-        fetchAllIssues()
+        fetchAllIssues();
         setAddItem(null);
       } catch (error) {
         console.error("Error adding note:", error);
@@ -67,17 +74,17 @@ export default function IssuesPage() {
   const switchCheck = (value) => {
     setAssigneeToMe(value);
     if (value) {
-      let temp = []
-      issues.forEach(item => {
+      let temp = [];
+      issues.forEach((item) => {
         if (item.Assignee?.email == user) {
-          temp.push(item)
+          temp.push(item);
         }
-      })
-      setDataTable(temp)
+      });
+      setDataTable(temp);
     } else {
-      setDataTable(issues)
+      setDataTable(issues);
     }
-  }
+  };
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -88,8 +95,9 @@ export default function IssuesPage() {
     <Flex flexDir={"column"} mx="8">
       <Flex align={"center"} gap="52" mb="8">
         <Flex direction="row" justify="space-between" w="100%">
-          <Heading size="md" mb={2} mr={4}>Issue Overview</Heading>
-
+          <Heading size="md" mb={2} mr={4}>
+            Issue Overview
+          </Heading>
         </Flex>
       </Flex>
       <Box w="100%">
@@ -103,44 +111,80 @@ export default function IssuesPage() {
                 <Th>Status</Th>
                 <Th>Priority</Th>
                 <Th>Name</Th>
-                <Th>Assignee me <Switch id='aw' ml={3} defaultChecked={assigneeToMe} onChange={e => { switchCheck(e.target.checked) }} /></Th>
+
+                <Th>
+                  Assignee
+                  <Switch
+                    id="aw"
+                    ml={3}
+                    defaultChecked={assigneeToMe}
+                    onChange={(e) => {
+                      switchCheck(e.target.checked);
+                    }}
+                  />
+                </Th>
                 <Th>Updated</Th>
               </Tr>
             </Thead>
             <Tbody>
-
               {dataTable.map((issue) => (
                 <Tr key={issue.id}>
                   <Td>{issue.id}</Td>
-                  <Td><Link href={`/projects/${issue.projectId}`} fontWeight="bold">
-                    {issue.Project.name}
-                  </Link></Td>
                   <Td>
-                    <Badge
-                      colorScheme={issue.Tracker?.color ?? "gray"}
-                    >{issue.Tracker?.name ?? "Unknow"}</Badge>
+                    <Link
+                      display={"flex"}
+                      justify="center"
+                      alignItems="center"
+                      gap="2"
+                      href={`/projects/${issue.projectId}`}>
+                      <Text maxW="128px" noOfLines={"1"}>
+                        {issue.Project.name}
+                      </Text>
+                      <ExternalLink size="16" mx="2px" />
+                    </Link>
                   </Td>
                   <Td>
-                    <Badge
-                      colorScheme={issue.Status?.color ?? "gray"}
-                    >{issue.Status?.name ?? "Unknow"}</Badge>
+                    <Badge colorScheme={issue.Tracker?.color ?? "gray"}>
+                      {issue.Tracker?.name ?? "Unknow"}
+                    </Badge>
                   </Td>
                   <Td>
-                    <Badge
-                      colorScheme={issue.Priority?.color ?? "gray"}
-                    >{issue.Priority?.name ?? "Unknow"}</Badge>
+                    <Badge colorScheme={issue.Status?.color ?? "gray"}>
+                      {issue.Status?.name ?? "Unknow"}
+                    </Badge>
                   </Td>
                   <Td>
-                    <Link href={`/projects/${issue.projectId}/issue/${issue.id}`} fontWeight="bold">
-                      {issue.name}
+                    <Badge colorScheme={issue.Priority?.color ?? "gray"}>
+                      {issue.Priority?.name ?? "Unknow"}
+                    </Badge>
+                  </Td>
+                  <Td>
+                    <Link
+                      display={"flex"}
+                      justify="center"
+                      alignItems="center"
+                      gap="2"
+                      href={`/projects/${issue.projectId}/issue/${issue.id}`}>
+                      <Text maxW="128px" noOfLines={"1"}>
+                        {issue.name}
+                      </Text>
+                      <ExternalLink size="16" mx="2px" />
                     </Link>
                   </Td>
                   <Td width="200px">
-                    <Flex flexDir={"row"} >
-                      <Avatar name={issue.Assignee?.name ?? ""} size="sm" mr={4} />
+                    <Flex flexDir={"row"}>
+                      <Avatar
+                        name={issue.Assignee?.name ?? ""}
+                        size="sm"
+                        mr={4}
+                      />
                       <Flex flexDir={"column"} ml={2}>
-                        <Text fontSize={"sm"}>{issue.Assignee?.name ?? ""}</Text>
-                        <Text fontSize={"xs"} color="gray.500">{issue.Assignee?.email ?? ""}</Text>
+                        <Text fontSize={"sm"}>
+                          {issue.Assignee?.name ?? ""}
+                        </Text>
+                        <Text fontSize={"xs"} color="gray.500">
+                          {issue.Assignee?.email ?? ""}
+                        </Text>
                       </Flex>
                     </Flex>
                   </Td>

@@ -5,7 +5,7 @@ import Exp from "../../Components/yourProfile/Exp/Exp";
 import { useState, useEffect } from "react";
 import { getUserProfile } from "../../services/API/authAPI";
 import { useAuthRedirect } from "../../utils/useAuthRedirect";
-
+import ExpDesktop from "../../Components/yourProfile/Exp/ExpDesktop";
 export default function YourProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,9 +37,9 @@ export default function YourProfilePage() {
   return (
     <>
       <div className="hidden md:block">
-        <Flex>
+        <Flex w="100%" h="100vh">
           <InfoCard profile={profile} />
-          <Exp />
+          <ExpDesktop />
         </Flex>
       </div>
       <div className="block md:hidden">

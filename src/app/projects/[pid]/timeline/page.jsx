@@ -1,104 +1,139 @@
 "use client";
-import { Box } from "@chakra-ui/react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { allIssues } from "../../../../services/API/issueAPI";
 import { useEffect, useState } from "react";
+import { Box } from "@chakra-ui/react";
+import { allIssues } from "../../../../services/API/issueAPI";
 import { useParams } from "next/navigation";
 import DetailIssueModal from "../../../../Components/project/issue/detail/DetailIssueModal";
-export default function CalendarPage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [eventDetails, setEventDetails] = useState(null);
-  const [events, setEvents] = useState([]);
+import { Chart } from "react-google-charts";
 
+export default function ListViewCalendar() {
   const params = useParams();
-  const { pid, id } = params;
+  const { pid } = params;
+  const [events, setEvents] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const fetchIssues = async () => {
     try {
       const response = await allIssues(pid);
       const issues = response.data;
+      console.log(response.data);
 
-      // Map issues to events for FullCalendar
-      const mappedEvents = issues.map((issue) => ({
-        id: issue.id,
-        name: issue.name,
-        start: issue.start || issue.created,
-        end: issue.end || undefined,
-        owner: issue.Owner?.name || "Unknown",
-        description: issue.description || "Unknown",
-        status: issue?.Status?.name || "Unknown",
-        priority: issue?.Priority?.name || "Unknown",
-        tracker: issue?.Tracker?.name || "Unknown",
-        assignee: issue.Assignee?.name || "Unknown",
-      }));
+      const mappedEvents = issues.map((issue) => {
+        const adjustedStart = issue.start ? new Date(issue.start) : new Date();
+        adjustedStart.setHours(adjustedStart.getHours() + 1);
+
+        const adjustedEnd = issue.end ? new Date(issue.end) : null;
+        if (adjustedEnd) {
+          adjustedEnd.setHours(adjustedEnd.getHours() + 1);
+        }
+
+        return {
+          id: issue.id,
+          title: issue.name || "Unknown",
+          start: adjustedStart,
+          end: adjustedEnd || adjustedStart,
+          status: issue.Status?.name || "Unknown",
+          priority: issue.Priority?.name || "Unknown",
+          tracker: issue.Tracker?.name || "Unknown",
+          owner: issue.Owner?.name || "Unknown",
+        };
+      });
 
       setEvents(mappedEvents);
-    } catch (err) {
-      console.error("Failed to fetch issues:", err);
+    } catch (error) {
+      console.error("Error fetching issues:", error);
     }
   };
 
   useEffect(() => {
     fetchIssues();
-  }, []);
+  }, [pid]);
 
-  const handleEventClick = (info) => {
+  const handleEventClick = (event) => {
     const eventDetails = {
-      id: info.event.id,
-      name: info.event.extendedProps.name,
-      status: info.event.extendedProps.status || "Unknown",
-      priority: info.event.extendedProps.priority || "Unknown",
-      tracker: info.event.extendedProps.tracker || "Unknown",
-      owner: info.event.extendedProps.owner || "Unknown",
-      assignee: info.event.extendedProps.assignee || "Unknown",
-      start: info.event.start,
-      end: info.event.end,
+      id: event.id,
+      name: event.title,
+      status: event.status,
+      priority: event.priority,
+      tracker: event.tracker,
+      owner: event.owner,
+      start: event.start,
+      end: event.end,
     };
 
-    setEventDetails(eventDetails);
-    setIsOpen(true);
+    setSelectedEvent(eventDetails);
+    setIsModalOpen(true);
+    console.log("Is Modal Open:", isModalOpen); // Check the updated value
   };
 
-  const closeModal = () => {
-    setIsOpen(false);
-    setEventDetails(null);
-  };
+  // Group events by start date and status
+  const groupedEvents = events.reduce((acc, event) => {
+    const startDateKey = event.start.toISOString(); // Use start date as key (string format)
+    const statusKey = event.status; // Group by status
+
+    if (!acc[startDateKey]) {
+      acc[startDateKey] = {};
+    }
+    if (!acc[startDateKey][statusKey]) {
+      acc[startDateKey][statusKey] = [];
+    }
+    acc[startDateKey][statusKey].push(event);
+
+    return acc;
+  }, {});
+
+  // Convert grouped events to chart-friendly format
+  const chartData = [
+    [
+      { type: "string", id: "Position" },
+      { type: "string", id: "Task" },
+      { type: "date", id: "Start" },
+      { type: "date", id: "End" },
+    ],
+  ];
+
+  // Flatten the grouped events and map to chart data
+  Object.keys(groupedEvents).forEach((startDateKey) => {
+    Object.keys(groupedEvents[startDateKey]).forEach((statusKey) => {
+      groupedEvents[startDateKey][statusKey].forEach((event) => {
+        chartData.push([
+          statusKey, // Position (status)
+          event.title, // Task name
+          event.start, // Start date
+          event.end, // End date
+        ]);
+      });
+    });
+  });
 
   return (
-    <Box w="100%" cursor={"pointer"}>
-      <FullCalendar
-        plugins={[
-          resourceTimelinePlugin,
-          dayGridPlugin,
-          interactionPlugin,
-          timeGridPlugin,
+    <Box w="100%" h="100%">
+      <Chart
+        height="100vh"
+        chartType="Timeline"
+        data={chartData}
+        chartEvents={[
+          {
+            eventName: "select",
+            callback: ({ chartWrapper }) => {
+              const selectedItem = chartWrapper.getChart().getSelection()[0];
+              if (selectedItem) {
+                const event = events[selectedItem.row];
+                handleEventClick(event);
+              }
+            },
+          },
         ]}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "resourceTimelineWeek,dayGridMonth,timeGridWeek",
-        }}
-        initialView="timeGridWeek"
-        nowIndicator={true}
-        editable={true}
-        selectable={true}
-        selectMirror={true}
-        events={events} // Use mapped events here
-        eventClick={handleEventClick}
       />
-      <DetailIssueModal
-        pid={pid}
-        id={id}
-        isOpen={isOpen}
-        onClose={closeModal}
-        selectedIssue={eventDetails}
-        fetchIssue={fetchIssues}
-      />
-     
+      {isModalOpen && (
+        <DetailIssueModal
+          pid={pid}
+          isOpen={isModalOpen}
+          event={selectedEvent}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </Box>
   );
 }

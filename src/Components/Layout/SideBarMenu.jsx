@@ -1,5 +1,5 @@
 "use client";
-import { Box, Button, Flex, Heading, VStack, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, VStack } from "@chakra-ui/react";
 import {
   UserPen,
   UserPlus,
@@ -9,8 +9,7 @@ import {
   BadgeAlert,
   ChartNoAxesGantt,
   Columns3,
-  List,
-  Settings,
+  LayoutDashboard,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -18,13 +17,16 @@ export default function Sidebar({ project }) {
   return (
     <Box as="aside" bg="white" borderRightWidth="2px" h="h-screen" w="20%">
       <Flex gap="2">
-        <Flex flexDir={"column"}>
-          <Heading noOfLines={1} fontSize="xl" fontWeight="semibold">
+        <Flex flexDir={"column"} ml="4">
+          <Heading
+            textTransform="uppercase"
+            colorScheme={"blackAlpha"}
+            noOfLines={2}
+            fontSize="lg"
+            fontWeight="semibold"
+            maxW="128px">
             {project.project.name}
           </Heading>
-          <Text noOfLines={1} fontSize="md" color="gray.500">
-            {project.project.description}
-          </Text>
         </Flex>
       </Flex>
       <VStack align="stretch" spacing="4">
@@ -35,17 +37,32 @@ export default function Sidebar({ project }) {
             fontWeight="semibold"
             color="gray.500"
             mb="2"
-            ml="2"
-            >
+            ml="2">
             PLANNING
           </Heading>
           <VStack spacing="1" align="stretch">
+            <Link href={`/projects/${project.project.id}`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<LayoutDashboard size="16px" />}>
+                Dashboard
+              </Button>
+            </Link>
             <Link href={`/projects/${project.project.id}/timeline`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
                 leftIcon={<ChartNoAxesGantt size="16px" />}>
                 Timeline
+              </Button>
+            </Link>
+            <Link href={`/projects/${project.project.id}/calendar`}>
+              <Button
+                variant="ghost"
+                justifyContent="flex-start"
+                leftIcon={<Columns3 size="16px" />}>
+                Calendar
               </Button>
             </Link>
             <Link href={`/projects/${project.project.id}/issue`}>
@@ -61,32 +78,32 @@ export default function Sidebar({ project }) {
                 variant="ghost"
                 justifyContent="flex-start"
                 leftIcon={<Columns3 size="16px" />}>
-                Board
+                Kanban Board
               </Button>
             </Link>
-            <Link href={`/projects/${project.project.id}/list`}>
+            {/* <Link href={`/projects/${project.project.id}/list`}>
               <Button
                 variant="ghost"
                 justifyContent="flex-start"
                 leftIcon={<List size="16px" />}>
                 List
               </Button>
-            </Link>
+            </Link> */}
           </VStack>
         </Box>
       </VStack>
       {/* Setting  */}
       <VStack align="stretch" spacing="4" p="4">
         <Box>
-        <Link href={`/projects/${project.project.id}`}>
-          <Heading
-            as="h2"
-            fontSize="xs"
-            fontWeight="semibold"
-            color="gray.500"
-            mb="2">
-            SETTINGS
-          </Heading>
+          <Link href={`/projects/${project.project.id}`}>
+            <Heading
+              as="h2"
+              fontSize="xs"
+              fontWeight="semibold"
+              color="gray.500"
+              mb="2">
+              SETTINGS
+            </Heading>
           </Link>
           <VStack spacing="1" align="stretch">
             <Link href={`/projects/${project.project.id}/role`}>

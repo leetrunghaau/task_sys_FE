@@ -1,14 +1,24 @@
 "use client";
-import { Box, Link, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Link,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+  Text,
+} from "@chakra-ui/react";
 import { Flex, Heading } from "@chakra-ui/react";
-import { Trash2, Edit, SquarePlus, Badge } from "lucide-react";
-import IssueTable from "../../../../Components/project/issue/IssueTable";
-import CreateIssueModal from "../../../../Components/project/issue/CreateIssueModal";
-import AssigneeMenu from "../../../../Components/project/issue/detail/Assignee/AssgineeMenu"
-import StatusMenu from "../../../../Components/project/issue/StatusMenu"
-import TrackerMenu from "../../../../Components/project/issue/TrackerMenu"
-import PriorityMenu from "../../../../Components/project/issue/PriorityMenu"
-import AddLine from "../../../../Components/utils/AddLine"
+import { SquarePlus } from "lucide-react";
+import AssigneeMenu from "../../../../Components/project/issue/detail/Assignee/AssgineeMenu";
+import StatusMenu from "../../../../Components/project/issue/StatusMenu";
+import TrackerMenu from "../../../../Components/project/issue/TrackerMenu";
+import PriorityMenu from "../../../../Components/project/issue/PriorityMenu";
+import AddLine from "../../../../Components/utils/AddLine";
 import { useParams } from "next/navigation";
 import { allIssues, addNewIssue } from "../../../../services/API/issueAPI";
 import { useState, useEffect } from "react";
@@ -16,7 +26,9 @@ import { allStatuses } from "../../../../services/API/statusAPI";
 import { allTrackers } from "../../../../services/API/trackerAPI";
 import { allPriorities } from "../../../../services/API/priorityAPI";
 import { allProjectMembers } from "../../../../services/API/permissionAPI";
-import moment from "moment"
+import { ExternalLink } from "lucide-react";
+import FilterDrawer from "../../../../Components/project/Filter";
+import moment from "moment";
 export default function IssusesPage() {
   const [issues, setIssues] = useState([]);
   const [addItem, setAddItem] = useState(null);
@@ -73,14 +85,14 @@ export default function IssusesPage() {
   const fetchMember = async () => {
     try {
       const response = await allProjectMembers(pid);
-      setMembers(response.data ?? [])
+      setMembers(response.data ?? []);
     } catch (err) {
       console.error("Error fetching issue:", err);
       setError(err.message || "Failed to fetch issue");
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchAllStatuses();
@@ -93,9 +105,9 @@ export default function IssusesPage() {
 
   const addItemClick = () => {
     if (!addItem) {
-      setAddItem(true)
+      setAddItem(true);
     }
-  }
+  };
   const addIssueCancel = () => {
     setAddItem(null);
   };
@@ -104,13 +116,14 @@ export default function IssusesPage() {
       try {
         const newIssue = { name: value.trim() };
         const addedNote = await addNewIssue(pid, newIssue);
-        fetchAllIssues()
+        fetchAllIssues();
         setAddItem(null);
       } catch (error) {
         console.error("Error adding note:", error);
       }
     }
   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -119,11 +132,20 @@ export default function IssusesPage() {
   }
   return (
     <Flex flexDir={"column"} mx="8">
-      <Flex align={"center"} gap="52" mb="8">
+      <Flex align={"center"} mb="8" justifyContent={"space-between"}>
         <Flex direction="row" align="start">
-          <Heading size="md" mb={2} mr={4}>Manage Issue</Heading>
-          <SquarePlus grow='start' onClick={addItemClick} />
+          <Heading size="md" mb={2} mr={4}>
+            Manage Issue
+          </Heading>
+          <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
         </Flex>
+        <FilterDrawer
+          pid={pid}
+          onFinish={(value) => {
+            // addIssueSubmit(value);
+            console.log(value);
+          }}
+        />
       </Flex>
       <Box w="100%">
         <TableContainer>
@@ -140,22 +162,25 @@ export default function IssusesPage() {
               </Tr>
             </Thead>
             <Tbody>
-              {
-                addItem ? <>
+              {addItem ? (
+                <>
                   <Tr key={-1}>
                     <Td>*</Td>
                     <Td colSpan="6">
                       <AddLine
-                        size='sm'
+                        size="sm"
                         value={"Add new issue name"}
                         onCancel={addIssueCancel}
-                        onFinish={(value) => { addIssueSubmit(value) }}
+                        onFinish={(value) => {
+                          addIssueSubmit(value);
+                        }}
                       />
                     </Td>
-
                   </Tr>
-                </> : <></>
-              }
+                </>
+              ) : (
+                <></>
+              )}
               {issues.map((issue) => (
                 <Tr key={issue.id}>
                   <Td>{issue.id}</Td>
@@ -181,8 +206,16 @@ export default function IssusesPage() {
                     />
                   </Td>
                   <Td>
-                    <Link href={`/projects/${issue.projectId}/issue/${issue.id}`} fontWeight="bold">
-                      {issue.name}
+                    <Link
+                      display={"flex"}
+                      justify="center"
+                      alignItems="center"
+                      gap="2"
+                      href={`/projects/${issue.projectId}/issue/${issue.id}`}>
+                      <Text maxW="128px" noOfLines={"1"}>
+                        {issue.name}
+                      </Text>
+                      <ExternalLink size="16" mx="2px" />
                     </Link>
                   </Td>
                   <Td width="200px">

@@ -218,7 +218,7 @@ export default function ProjectMembers({ id, roles }) {
 
   return (
     <Flex flexDir={"column"} gap="4">
-      <Stack mt={4} direction="row" alignItems="center" w="70%">
+      <Stack mt={4} direction="row" alignItems="center" w="100%">
         <Input
           placeholder="Add People to your project with their name e.g.. Maria"
           value={username}
@@ -231,7 +231,7 @@ export default function ProjectMembers({ id, roles }) {
         overflowY="auto"
         borderWidth={"1px"}
         borderColor={"gray.100"}
-        w="70%">
+        w="100%">
         {userResults.length > 0 ? (
           userResults.map((user) => {
             const isAlreadyMember = members.some(

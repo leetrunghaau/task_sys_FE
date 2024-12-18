@@ -5,7 +5,7 @@ export default function Projects() {
     <>
       {/* Desktop Layout 
        Show on screens larger than md */}
-      <div className="hidden md:block">
+      <div className="hidden md:block w-full">
         <ExpDesktop />
       </div>
       {/* Mobile Layout 

@@ -1,18 +1,32 @@
 "use client";
-import { Flex, Heading, Box, TableContainer, Table, Thead, Tr, Th, Tbody, Td, useToast } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Box,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  useToast,
+} from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { allStatuses } from "../../../../services/API/statusAPI";
 import { useParams } from "next/navigation";
-import { Trash2, Edit, SquarePlus } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 
+import ConfirmDeleteModal from "../../../../Components/utils/ConfirmDeleteModal";
+import AddLine from "../../../../Components/utils/AddLine";
+import EditLine from "../../../../Components/utils/EditLine";
+import ColorMenu from "../../../../Components/utils/ColorMenu";
 
-import ConfirmDeleteModal from "../../../../Components/utils/ConfirmDeleteModal"
-import AddLine from "../../../../Components/utils/AddLine"
-import EditLine from "../../../../Components/utils/EditLine"
-import ColorMenu from '../../../../Components/utils/ColorMenu';
-
-
-import { updateStatus, deleteStatus, addNewStatus } from "../../../../services/API/statusAPI"
+import {
+  updateStatus,
+  deleteStatus,
+  addNewStatus,
+} from "../../../../services/API/statusAPI";
 
 export default function StatusPage() {
   const params = useParams();
@@ -56,7 +70,7 @@ export default function StatusPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   const deleteStatusHandler = async (id) => {
     try {
       await deleteStatus(pid, id);
@@ -80,7 +94,7 @@ export default function StatusPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   const updateColorHandler = async (id, value) => {
     try {
       await updateStatus(pid, id, { color: value });
@@ -104,15 +118,15 @@ export default function StatusPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   useEffect(() => {
     fetchAllStatuses();
   }, []);
   const addItemClick = () => {
     if (!addItem) {
-      setAddItem(true)
+      setAddItem(true);
     }
-  }
+  };
   const addStatusCancel = () => {
     setAddItem(null);
   };
@@ -121,7 +135,7 @@ export default function StatusPage() {
       try {
         const newStatus = { name: value.trim(), color: "gray" };
         const addedNote = await addNewStatus(pid, newStatus);
-        fetchAllStatuses()
+        fetchAllStatuses();
         setAddItem(null);
       } catch (error) {
         console.error("Error adding note:", error);
@@ -136,11 +150,13 @@ export default function StatusPage() {
     return <div>{error}</div>;
   }
   return (
-    <Flex flexDir={"column"} mx="8">
-      <Flex align={"center"} gap="52" mb="8">
+    <Flex flexDir={"column"} mx="8" w="100%">
+      <Flex align={"center"} w="100%" gap="4" mb="8">
         <Flex direction="row" align="start">
-          <Heading size="md" mb={2} mr={4}>Manage Status</Heading>
-          <SquarePlus grow='start' onClick={addItemClick} />
+          <Heading size="md" mb={2} mr={4}>
+            Manage Status
+          </Heading>
+          <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
         </Flex>
       </Flex>
       <Box w="100%">
@@ -155,42 +171,51 @@ export default function StatusPage() {
               </Tr>
             </Thead>
             <Tbody>
-              {
-                addItem ? <>
+              {addItem ? (
+                <>
                   <Tr key={-1}>
                     <Td>*</Td>
                     <Td colSpan="3">
                       <AddLine
-                      size='sm'
+                        size="sm"
                         value={"Add new status"}
                         onCancel={addStatusCancel}
-                        onFinish={(value) => { addStatusSubmit(value) }}
+                        onFinish={(value) => {
+                          addStatusSubmit(value);
+                        }}
                       />
                     </Td>
-                    
                   </Tr>
-                </> : <></>
-              }
+                </>
+              ) : (
+                <></>
+              )}
               {statuses.map((status) => (
                 <Tr key={status.id}>
                   <Td>{status.id}</Td>
                   <Td>
                     <EditLine
-                      size='xm'
+                      size="xm"
                       value={status.name}
-                      onFinish={(value) => { updateNameHandler(status.id, value) }}
+                      onFinish={(value) => {
+                        updateNameHandler(status.id, value);
+                      }}
                     />
                   </Td>
                   <Td>
                     <ColorMenu
                       color={status.color ?? false}
-                      onFinish={(value) => { updateColorHandler(status.id, value) }}
+                      onFinish={(value) => {
+                        updateColorHandler(status.id, value);
+                      }}
                     />
                   </Td>
                   <Td>
                     <ConfirmDeleteModal
-                     message={`Are you sure you want to delete status "${status.name}"?`}
-                      onConfirm={() => { deleteStatusHandler(status.id) }}
+                      message={`Are you sure you want to delete status "${status.name}"?`}
+                      onConfirm={() => {
+                        deleteStatusHandler(status.id);
+                      }}
                     />
                   </Td>
                 </Tr>

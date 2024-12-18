@@ -1,17 +1,32 @@
 "use client";
-import { Flex, Heading, Box, TableContainer, Table, Thead, Tr, Th, Tbody, Td, useToast } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Box,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  useToast,
+} from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Trash2, Edit, SquarePlus } from "lucide-react";
+import { SquarePlus } from "lucide-react";
 
+import ConfirmDeleteModal from "../../../../Components/utils/ConfirmDeleteModal";
+import AddLine from "../../../../Components/utils/AddLine";
+import EditLine from "../../../../Components/utils/EditLine";
+import ColorMenu from "../../../../Components/utils/ColorMenu";
 
-import ConfirmDeleteModal from "../../../../Components/utils/ConfirmDeleteModal"
-import AddLine from "../../../../Components/utils/AddLine"
-import EditLine from "../../../../Components/utils/EditLine"
-import ColorMenu from '../../../../Components/utils/ColorMenu';
-
-
-import { updateTracker, deleteTracker, addNewTracker, allTrackers } from "../../../../services/API/trackerAPI"
+import {
+  updateTracker,
+  deleteTracker,
+  addNewTracker,
+  allTrackers,
+} from "../../../../services/API/trackerAPI";
 
 export default function TrackerPage() {
   const params = useParams();
@@ -55,7 +70,7 @@ export default function TrackerPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   const deleteTrackerHandler = async (id) => {
     try {
       await deleteTracker(pid, id);
@@ -79,7 +94,7 @@ export default function TrackerPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   const updateColorHandler = async (id, value) => {
     try {
       await updateTracker(pid, id, { color: value });
@@ -103,15 +118,15 @@ export default function TrackerPage() {
     } finally {
       // setIsLoading(false);
     }
-  }
+  };
   useEffect(() => {
     fetchAllTrackers();
   }, []);
   const addItemClick = () => {
     if (!addItem) {
-      setAddItem(true)
+      setAddItem(true);
     }
-  }
+  };
   const addTrackerCancel = () => {
     setAddItem(null);
   };
@@ -120,7 +135,7 @@ export default function TrackerPage() {
       try {
         const newTracker = { name: value.trim(), color: "gray" };
         const addedNote = await addNewTracker(pid, newTracker);
-        fetchAllTrackers()
+        fetchAllTrackers();
         setAddItem(null);
       } catch (error) {
         console.error("Error adding note:", error);
@@ -135,11 +150,13 @@ export default function TrackerPage() {
     return <div>{error}</div>;
   }
   return (
-    <Flex flexDir={"column"} mx="8">
-      <Flex align={"center"} gap="52" mb="8">
+    <Flex flexDir={"column"} mx="8" w="100%">
+      <Flex align={"center"} mb="8" w="100%" gap="4">
         <Flex direction="row" align="start">
-          <Heading size="md" mb={2} mr={4}>Manage Tracker</Heading>
-          <SquarePlus grow='start' onClick={addItemClick} />
+          <Heading size="md" mb={2} mr={4}>
+            Manage Tracker
+          </Heading>
+          <SquarePlus grow="start" onClick={addItemClick} />
         </Flex>
       </Flex>
       <Box w="100%">
@@ -154,42 +171,51 @@ export default function TrackerPage() {
               </Tr>
             </Thead>
             <Tbody>
-              {
-                addItem ? <>
+              {addItem ? (
+                <>
                   <Tr key={-1}>
                     <Td>*</Td>
                     <Td colSpan="3">
                       <AddLine
-                        size='sm'
+                        size="sm"
                         value={"Add new tracker"}
                         onCancel={addTrackerCancel}
-                        onFinish={(value) => { addTrackerSubmit(value) }}
+                        onFinish={(value) => {
+                          addTrackerSubmit(value);
+                        }}
                       />
                     </Td>
-
                   </Tr>
-                </> : <></>
-              }
+                </>
+              ) : (
+                <></>
+              )}
               {trackers.map((tracker) => (
                 <Tr key={tracker.id}>
                   <Td>{tracker.id}</Td>
                   <Td>
                     <EditLine
-                      size='xm'
+                      size="xm"
                       value={tracker.name}
-                      onFinish={(value) => { updateNameHandler(tracker.id, value) }}
+                      onFinish={(value) => {
+                        updateNameHandler(tracker.id, value);
+                      }}
                     />
                   </Td>
                   <Td>
                     <ColorMenu
                       color={tracker.color ?? false}
-                      onFinish={(value) => { updateColorHandler(tracker.id, value) }}
+                      onFinish={(value) => {
+                        updateColorHandler(tracker.id, value);
+                      }}
                     />
                   </Td>
                   <Td>
                     <ConfirmDeleteModal
                       message={`Are you sure you want to delete tracker "${tracker.name}"?`}
-                      onConfirm={() => { deleteTrackerHandler(tracker.id) }}
+                      onConfirm={() => {
+                        deleteTrackerHandler(tracker.id);
+                      }}
                     />
                   </Td>
                 </Tr>

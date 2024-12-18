@@ -1,15 +1,29 @@
 "use client";
-import { Box, Button, Flex, Heading, Table, TableContainer, Tbody, Td, Th, Thead, Tr, Switch, Text, useToast } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Heading,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useToast,
+} from "@chakra-ui/react";
 import RuleOfRole from "../../../../Components/project/role/RuleOfRole";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { addNewRole, allRoles, deleteRole } from "../../../../services/API/roleAPI";
-import ConfirmDeleteModal from './../../../../Components/utils/ConfirmDeleteModal';
-import EditLine from './../../../../Components/utils/EditLine';
-import { CircleEllipsis } from "lucide-react";
+import {
+  addNewRole,
+  allRoles,
+  deleteRole,
+} from "../../../../services/API/roleAPI";
+import ConfirmDeleteModal from "./../../../../Components/utils/ConfirmDeleteModal";
+import EditLine from "./../../../../Components/utils/EditLine";
 import AddLine from "../../../../Components/utils/AddLine";
-import { Trash2, Edit, SquarePlus, Badge, ChevronRight } from "lucide-react";
-
+import { SquarePlus, ChevronRight } from "lucide-react";
 
 export default function RolePage() {
   const params = useParams();
@@ -19,7 +33,7 @@ export default function RolePage() {
   const [error, setError] = useState(null);
   const toast = useToast();
 
-  const [curRole, setCurRole] = useState(null)
+  const [curRole, setCurRole] = useState(null);
   const [newRole, setNewRole] = useState(null);
   const addRoleCancel = () => {
     setNewRole(null);
@@ -36,22 +50,22 @@ export default function RolePage() {
   };
   const addRoleClick = () => {
     if (!newRole) {
-      setNewRole(true)
+      setNewRole(true);
     }
-  }
+  };
   const roleMoreClick = (roleId) => {
     if (curRole) {
       if (curRole != roleId) {
-        setCurRole(roleId)
+        setCurRole(roleId);
       } else {
-        setCurRole(null)
+        setCurRole(null);
       }
     } else {
-      setCurRole(roleId)
+      setCurRole(roleId);
     }
-  }
+  };
   const createRoleHande = async (value) => {
-    setNewRole(null)
+    setNewRole(null);
     try {
       await addNewRole(pid, {
         name: value,
@@ -75,7 +89,7 @@ export default function RolePage() {
       });
     } finally {
     }
-  }
+  };
   // const editRoleHande = async (id, value) => {
   //   try {
   //     await addNewRole(pid, {
@@ -137,61 +151,73 @@ export default function RolePage() {
     return <div>{error}</div>;
   }
   return (
-    <Flex flexDir={"column"} mx="8">
-      <Flex align={"center"} gap="5" mb="8">
+    <Flex flexDir={"column"} mx="8" w="100%">
+      <Flex align={"center"} mb="8" w="100%" gap="4">
         <Heading fontSize={"2xl"}>Manage Roles</Heading>
-        <SquarePlus grow='start' onClick={addRoleClick} />
+        <SquarePlus cursor={"pointer"} grow="start" onClick={addRoleClick} />
       </Flex>
-      <Flex >
-        <Box >
-          <TableContainer>
-            <Table variant="simple" size="sm">
-              <Thead>
-                <Tr>
-                  <Th>ID</Th>
-                  <Th>Role</Th>
+      <Flex gap="4">
+        <TableContainer w="100%">
+          <Table variant="simple" size="sm">
+            <Thead>
+              <Tr>
+                <Th>ID</Th>
+                <Th>Role</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {newRole ? (
+                <Tr key={-1}>
+                  <Td>#</Td>
+                  <Td>
+                    <AddLine
+                      size="md"
+                      value="Role name"
+                      // onFinish={(rs) => { console.log(rs) }}
+                      onFinish={(rs) => {
+                        createRoleHande(rs);
+                      }}
+                    />
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {newRole ?
-                  <Tr key={-1}>
-                    <Td>#</Td>
-                    <Td>
-                      <AddLine
+              ) : (
+                <></>
+              )}
+              {roles.map((role) => (
+                <Tr
+                  key={role.id}
+                  bg={curRole && curRole == role.id ? "gray.300" : "while"}>
+                  <Td>{role.id}</Td>
+                  <Td>
+                    <Flex align="center">
+                      <EditLine
+                        value={role.name}
+                        onFinish={(rs) => {
+                          console.log(rs);
+                        }}
                         size="md"
-                        value="Role name"
-                        // onFinish={(rs) => { console.log(rs) }}
-                        onFinish={(rs) => { createRoleHande(rs) }}
                       />
-                    </Td>
-                  </Tr>
-                  :
-                  <></>
-                }
-                {roles.map((role) => (
-                  <Tr key={role.id} bg={curRole && curRole == role.id ? "gray.300" : "while"} >
-                    <Td>{role.id}</Td>
-                    <Td>
-                      <Flex align="center">
-                        <EditLine
-                          value={role.name}
-                          onFinish={(rs) => { console.log(rs) }}
-                          size="md"
-                        />
-                        <ConfirmDeleteModal
-                        onConfirm={()=>{deleteRolehande(role.id)}}
-                        />
-                        <Button size="xs" onClick={() => { roleMoreClick(role.id) }} variant='ghost'>
-                          <ChevronRight size="md" />
-                        </Button>
-                      </Flex>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
+                      <ConfirmDeleteModal
+                        onConfirm={() => {
+                          deleteRolehande(role.id);
+                        }}
+                      />
+                      <Button
+                        size="xs"
+                        onClick={() => {
+                          roleMoreClick(role.id);
+                        }}
+                        variant="ghost">
+                        <ChevronRight size="md" />
+                      </Button>
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+
         {curRole ? <RuleOfRole pid={pid} roleId={curRole} /> : <></>}
       </Flex>
     </Flex>

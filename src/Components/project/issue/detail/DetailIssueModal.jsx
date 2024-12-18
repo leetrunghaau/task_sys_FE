@@ -30,7 +30,7 @@ export default function DetailIssueModal({
       <ModalContent>
         <ModalHeader>
           <HStack justify="space-between">
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text maxW="258px" noOfLines={1} fontSize="2xl" fontWeight="bold">
               {selectedIssue.name}
             </Text>
             <Badge

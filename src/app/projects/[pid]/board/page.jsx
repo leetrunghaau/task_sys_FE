@@ -17,6 +17,7 @@ export default function BoardPage() {
   const fetchAllIssues = async () => {
     try {
       const response = await allIssues(pid);
+      console.log(response);
 
       setIssues(response.data);
     } catch (err) {
@@ -49,7 +50,7 @@ export default function BoardPage() {
     return <div>{error}</div>;
   }
   return (
-    <Box w="100%">
+    <Box w="80%">
       <KanbanBoard pid={pid} initialIssues={issues} statuses={statuses} />
     </Box>
   );

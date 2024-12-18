@@ -25,7 +25,7 @@ export default function CalendarPage() {
       // Map issues to events for FullCalendar
       const mappedEvents = issues.map((issue) => ({
         id: issue.id,
-        name: issue.name,
+        title: issue.name,
         start: issue.start || issue.created,
         end: issue.end || undefined,
         owner: issue.Owner?.name || "Unknown",
@@ -80,9 +80,9 @@ export default function CalendarPage() {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "resourceTimelineWeek,dayGridMonth,timeGridWeek",
+          right: "dayGridMonth",
         }}
-        initialView="timeGridWeek"
+        initialView="dayGridMonth"
         nowIndicator={true}
         editable={true}
         selectable={true}
@@ -98,7 +98,6 @@ export default function CalendarPage() {
         selectedIssue={eventDetails}
         fetchIssue={fetchIssues}
       />
-     
     </Box>
   );
 }

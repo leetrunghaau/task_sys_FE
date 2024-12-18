@@ -11,6 +11,8 @@ import {
   Badge,
   Tooltip,
   useToast,
+  Avatar,
+  Progress,
 } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import DetailIssueModal from "../issue/detail/DetailIssueModal";
@@ -51,15 +53,16 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
 
   const formatIssue = (issue) => {
     return {
-      id: issue.id,
-      name: issue.name,
-      status: issue.Status.name || "Unknown",
-      priority: issue.Priority.name || "Unknown",
-      tracker: issue.Tracker.name || "Unknown",
-      owner: issue.Owner.name || "Unknown",
-      assignee: issue.Assignee.name || "Unknown",
-      start: issue.start,
-      end: issue.end,
+      id: issue?.id ?? "Unknown",
+      name: issue?.name ?? "Unknown",
+      status: issue?.Status?.name ?? "Unknown",
+      color: issue?.Status?.color ?? "gray.100",
+      priority: issue?.Priority?.name ?? "Unknown",
+      tracker: issue?.Tracker?.name ?? "Unknown",
+      owner: issue?.Owner?.name ?? "Unknown",
+      assignee: issue?.Assignee?.name ?? "Unknown",
+      start: issue?.start ?? null,
+      end: issue?.end ?? null,
     };
   };
 
@@ -122,7 +125,7 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
   };
 
   return (
-    <Box>
+    <Box overflowX={"auto"} maxW="100%">
       <DragDropContext onDragEnd={handleDragEnd}>
         <HStack align="start" spacing={4}>
           {Object.entries(issues).map(([statusName, statusIssues]) => (
@@ -131,13 +134,11 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                 <VStack
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  w="30%"
                   bg="gray.100"
                   borderWidth={1}
                   borderRadius="md"
                   p={4}
-                  spacing={4}
-                  align="stretch">
+                  spacing={4}>
                   <Heading size="md" textAlign="center">
                     {statusName}
                   </Heading>
@@ -158,21 +159,72 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                           gap={2}
                           flexDir="column"
                           onClick={() => handleIssueClick(issue)}>
-                          <Text>{issue.name}</Text>
+                          <Flex justifyContent={"space-between"}>
+                            <Flex flexDir={"column"} gap="2">
+                              <Text
+                                maxW="256px"
+                                fontSize={"lg"}
+                                fontWeight={"semibold"}
+                                noOfLines={1}>
+                                {issue.name}
+                              </Text>
+
+                              {/* <CircularProgress
+                                size="40px"
+                                value={issue.progress}
+                                color={issue.Status.color || "gray.100"}>
+                                <CircularProgressLabel>
+                                  {issue.progress}%
+                                </CircularProgressLabel>
+                              </CircularProgress> */}
+                            </Flex>
+                          </Flex>
+
                           <Flex
                             gap={4}
                             justifyContent="space-between"
                             alignItems="center">
                             <Tooltip label="Status">
                               <Badge
+                                fontSize="8"
                                 borderRadius="full"
-                                colorScheme="green"
+                                colorScheme={issue.Status.color ?? "gray"}
                                 px={4}
                                 py={1}>
                                 {issue.Status.name}
                               </Badge>
                             </Tooltip>
+                            <Tooltip label="Priority">
+                              <Badge
+                                fontSize="8"
+                                borderRadius="full"
+                                colorScheme={issue.Priority.color ?? "gray"}
+                                px={4}
+                                py={1}>
+                                {issue.Priority.name}
+                              </Badge>
+                            </Tooltip>
+                            <Tooltip label="Tracker">
+                              <Badge
+                                fontSize="8"
+                                borderRadius="full"
+                                colorScheme={issue.Tracker.color ?? "gray"}
+                                px={4}
+                                py={1}>
+                                {issue.Tracker.name}
+                              </Badge>
+                            </Tooltip>
+                            <Avatar
+                              size={"xs"}
+                              name={issue.Assignee?.name || "A"}></Avatar>
                           </Flex>
+                          <Tooltip label={issue.progress || 0}>
+                            <Progress
+                              borderRadius={"8"}
+                              hasStripe
+                              value={issue.progress}
+                            />
+                          </Tooltip>
                         </Flex>
                       )}
                     </Draggable>

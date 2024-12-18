@@ -29,7 +29,7 @@ export default function MembersPage() {
   }, []);
   return (
     <Flex flexDir={"column"} mx="8" w="100%">
-      <Flex align={"center"} gap="52" mb="8">
+      <Flex align={"center"} mb="8" w="100%">
         <Heading fontSize={"2xl"}>Manage Members</Heading>
       </Flex>
       <ProjectMembers id={pid} roles={roles} />
