@@ -87,7 +87,19 @@ export default function FilterDrawer({ pid, onFinish }) {
     }
   };
   useEffect(() => {
-    onFinish("log");
+    const generateQueryString = (key, list) => {
+      const selectedIds = list.filter(item => item.checked).map(item => item.id);
+      return selectedIds.length ? `${key}=${selectedIds.join("-")}` : "";
+    };
+  
+    let rs = `?project=${pid}`;
+    rs += generateQueryString("status", statuses);
+    rs += generateQueryString("tracker", trackers);
+    rs += generateQueryString("priority", priorities);
+    rs += generateQueryString("assignee", assignees);
+    rs += generateQueryString("owner", owner);
+  
+    onFinish(rs);
   }, [statuses, priorities, trackers, assignees, owner]);
   useEffect(() => {
     fetchProject();
