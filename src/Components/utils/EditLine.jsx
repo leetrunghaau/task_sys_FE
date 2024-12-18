@@ -26,6 +26,7 @@ export default function EditLine({ value, onFinish, size, bold, area }) {
                 <>
                     <Text fontSize={size ?? "2xl"} mr={2} fontWeight={bold ? "bold" : "normal"}>{inputValue} </Text>
                     <Button
+                    variant='ghost'
                         size="xs"
                         onClick={handleEditClick}
                         aria-label="Edit"
@@ -52,11 +53,13 @@ export default function EditLine({ value, onFinish, size, bold, area }) {
                     }
                     <ButtonGroup size="xs">
                         <IconButton
+                        variant='ghost'
                             icon={<Check />}
                             onClick={handleSubmitClick}
                             aria-label="Submit"
                         />
                         <IconButton
+                        variant='ghost'
                             icon={<X />}
                             onClick={handleCancelClick} // Cancel editing
                             aria-label="Cancel"

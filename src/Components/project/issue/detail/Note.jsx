@@ -138,6 +138,7 @@ export default function Notes() {
                             onFinish={(value) => { updateNoteSubmit(note.id,value) }}
                         />
                         <Button
+                        variant='ghost'
                             size="xs"
                             colorScheme="red"
                             onClick={() => handleDeleteNote(note.id)}

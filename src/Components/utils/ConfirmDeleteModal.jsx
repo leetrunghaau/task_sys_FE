@@ -24,7 +24,7 @@ const ConfirmDeleteModal = ({ onConfirm, message }) => {
   return (
     <div>
       {/* Delete button */}
-      <Button size="xs" colorScheme="red" onClick={handleDeleteClick}>
+      <Button size="xs" colorScheme="red" onClick={handleDeleteClick} variant='ghost'>
         <Trash2 size="16" />
       </Button>
 

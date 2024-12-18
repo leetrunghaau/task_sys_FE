@@ -27,11 +27,13 @@ export default function AddLine({ value, size, onFinish, onCancel }) {
                 />
                 <ButtonGroup size="sm">
                     <IconButton
+                    variant='ghost'
                         icon={<Check />}
                         onClick={handleSubmitClick}
                         aria-label="Submit"
                     />
                     <IconButton
+                    variant='ghost'
                         icon={<X />}
                         onClick={handleCancelClick} // Cancel 
                         aria-label="Cancel"

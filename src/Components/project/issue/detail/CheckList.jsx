@@ -165,6 +165,7 @@ export default function CheckList({onFinish}) {
                             onFinish={(value) => { updateCheckListSubmit(checkList.id, value) }}
                         />
                         <Button
+                        variant='ghost'
                             size="xs"
                             colorScheme="red"
                             onClick={() => handleDeleteCheckList(checkList.id)}
