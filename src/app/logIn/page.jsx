@@ -19,7 +19,7 @@ export default function LogInPage() {
         duration: 3000,
         isClosable: true,
       });
-      router.push("/dashboard");
+      router.push("/yourProfile");
     }
   }, [isLoggedIn, router, toast]);
 

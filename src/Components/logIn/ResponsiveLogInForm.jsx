@@ -41,7 +41,7 @@ export default function ResponsiveLogInForm() {
         const { admin, token } = response.data;
         logIn({ user: userInfo, pass: pass, admin, token });
         setMessage("Logged in successfully!");
-        router.push("/dashboard");
+        router.push("/yourProfile");
       }
     } catch (error) {
       console.error(error);

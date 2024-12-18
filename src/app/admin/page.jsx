@@ -50,7 +50,7 @@ export default function UserTable() {
         duration: 3000,
         isClosable: true,
       });
-      router.push("/dashboard"); // Redirect to dashboard
+      router.push("/yourProfile"); // Redirect to dashboard
     } else {
       fetchAllUsers(); // Fetch users only if the user is an admin
     }

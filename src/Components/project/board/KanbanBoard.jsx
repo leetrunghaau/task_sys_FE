@@ -56,7 +56,6 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
       id: issue?.id ?? "Unknown",
       name: issue?.name ?? "Unknown",
       status: issue?.Status?.name ?? "Unknown",
-      color: issue?.Status?.color ?? "gray.100",
       priority: issue?.Priority?.name ?? "Unknown",
       tracker: issue?.Tracker?.name ?? "Unknown",
       owner: issue?.Owner?.name ?? "Unknown",
@@ -168,15 +167,6 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                                 noOfLines={1}>
                                 {issue.name}
                               </Text>
-
-                              {/* <CircularProgress
-                                size="40px"
-                                value={issue.progress}
-                                color={issue.Status.color || "gray.100"}>
-                                <CircularProgressLabel>
-                                  {issue.progress}%
-                                </CircularProgressLabel>
-                              </CircularProgress> */}
                             </Flex>
                           </Flex>
 
@@ -188,30 +178,30 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                               <Badge
                                 fontSize="8"
                                 borderRadius="full"
-                                colorScheme={issue.Status.color ?? "gray"}
+                                colorScheme={issue.Status?.color ?? "gray"}
                                 px={4}
                                 py={1}>
-                                {issue.Status.name}
+                                {issue.Status?.name ?? "NOT SET"}
                               </Badge>
                             </Tooltip>
                             <Tooltip label="Priority">
                               <Badge
                                 fontSize="8"
                                 borderRadius="full"
-                                colorScheme={issue.Priority.color ?? "gray"}
+                                colorScheme={issue.Priority?.color ?? "gray"}
                                 px={4}
                                 py={1}>
-                                {issue.Priority.name}
+                                {issue.Priority?.name ?? "NOT SET"}
                               </Badge>
                             </Tooltip>
                             <Tooltip label="Tracker">
                               <Badge
                                 fontSize="8"
                                 borderRadius="full"
-                                colorScheme={issue.Tracker.color ?? "gray"}
+                                colorScheme={issue.Tracker?.color ?? "gray"}
                                 px={4}
                                 py={1}>
-                                {issue.Tracker.name}
+                                {issue.Tracker?.name ?? "NOT SET"}
                               </Badge>
                             </Tooltip>
                             <Avatar
