@@ -30,7 +30,6 @@ import { ExternalLink } from "lucide-react";
 import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
 import FilterDrawer from "../../../../Components/project/Filter";
 import { updateAssignee } from "../../../../services/API/issueAPI";
-import useAuthStore from "../../../../store/authStore";
 import permissionsCode from "../../../../store/permissionsCode";
 import permissionsStore from "../../../../store/permissionsStore";
 
@@ -157,7 +156,6 @@ export default function IssusesPage() {
           pid={pid}
           onFinish={(value) => {
             setQuery(value);
-            console.log(value);
           }}
         />
       </Flex>

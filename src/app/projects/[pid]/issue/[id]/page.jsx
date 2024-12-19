@@ -238,11 +238,11 @@ export default function IssueDetailPage() {
           }
         </Flex>
         {deletePermission(issueData.Issue) ?
-           <Button onClick={() => handleDeleteIssue()}>Delete this Issue</Button>
-            :
-            <></>
-          }
-        
+          <Button onClick={() => handleDeleteIssue()}>Delete this Issue</Button>
+          :
+          <></>
+        }
+
       </Flex>
       <Flex justify="space-around" align="center" mb={4}>
         <VStack align="start" justify="start" spacing={4} mb={6}>
@@ -265,6 +265,7 @@ export default function IssueDetailPage() {
             <Text>{moment(issueData.Issue.updated).format("DD-MM-YYYY")}</Text>
           </HStack>
           <DateTimePicker
+            issue={issueData.Issue}
             dateInit={{
               startDate: issueData.Issue.start,
               endDate: issueData.Issue.end,
@@ -309,18 +310,18 @@ export default function IssueDetailPage() {
           </HStack>
         </VStack>
       </Flex>
-
       <IssuceProgress percent={issueData.Issue.progress || 0} />
       <Divider mt={6} />
       <CheckList
+        issue={issueData.Issue}
         onFinish={() => {
           fetchIssue();
         }}
       />
       <Divider mt={6} />
-      <Notes />
+      <Notes issue={issueData.Issue} />
       <Divider mt={6} />
-      <Comments />
+      <Comments issue={issueData.Issue} />
       <Divider mt={6} />
     </Box>
   );

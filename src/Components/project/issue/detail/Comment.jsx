@@ -12,8 +12,13 @@ import {
 } from "../../../../services/API/commentAPI";
 import { getUserProfile } from "../../../../services/API/authAPI"
 import moment from "moment";
+import useAuthStore from "../../../../store/authStore";
+import permissionsCode from "../../../../store/permissionsCode";
+import permissionsStore from "../../../../store/permissionsStore";
 
-export default function Comments() {
+export default function Comments({ issue }) {
+    const { keys } = permissionsStore();
+    const { fId } = useAuthStore();
     const params = useParams();
     const { pid, id } = params;
     const [comments, setComments] = useState([]);
@@ -27,6 +32,16 @@ export default function Comments() {
     const [loading, setLoading] = useState(true);
     const toast = useToast();
 
+    const commentOfIssuePermission =
+        keys.includes(permissionsCode.COMMENT.CREATE.ANY) ||
+        (keys.includes(permissionsCode.COMMENT.CREATE.OWN) && issue.createBy === fId) ||
+        (keys.includes(permissionsCode.COMMENT.CREATE.ASSIGNEE) && issue.assignee === fId)
+    const commentOfcommentPermission = (comment) => {
+        return (
+            keys.includes(permissionsCode.COMMENT.DELETE.ANY) ||
+            (keys.includes(permissionsCode.COMMENT.DELETE.OWN) && comment.userId === fId)
+        );
+    };
     const fetchComments = async () => {
         try {
             const response = await readsComments(pid, id);
@@ -145,19 +160,24 @@ export default function Comments() {
         <Box w="100%" p={4} border="1px solid #ddd" borderRadius="md" boxShadow="md">
             {/* Main Comment Input */}
             <VStack align="stretch" spacing={4}>
-                <HStack spacing={3} w="100%">
-                    <Avatar size="sm" name={profile?.name ?? ""} />
-                    <Input
-                        placeholder="Add a comment..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        size="md"
-                        w="100%"
-                    />
-                    <Button colorScheme="blue" size="sm" onClick={handleAddComment}>
-                        Comment
-                    </Button>
-                </HStack>
+                {commentOfIssuePermission ?
+                    <HStack spacing={3} w="100%">
+                        <Avatar size="sm" name={profile?.name ?? ""} />
+                        <Input
+                            placeholder="Add a comment..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            size="md"
+                            w="100%"
+                        />
+                        <Button colorScheme="blue" size="sm" onClick={handleAddComment}>
+                            Comment
+                        </Button>
+                    </HStack>
+                    :
+                    <></>
+                }
+
 
                 {/* Display Comments */}
                 <VStack align="stretch" spacing={4}>
@@ -174,22 +194,26 @@ export default function Comments() {
                                         <Text>{comment.value}</Text>
                                     </Box>
                                 </Flex>
-                                {comment.User.email == profile.email ?
+
+                                {commentOfcommentPermission(comment) ?
                                     <ConfirmDeleteModal
                                         message={`Are you sure you want to delete this comment ?`}
                                         onConfirm={() => { handleDeleteComment(comment.id) }}
                                     /> : <></>
                                 }
                             </Flex>
-                            <Button
-                                size="xs"
-                                colorScheme="gray"
-                                mt={2}
-                                onClick={() => setActiveCommentId(comment.id)}
-                            >
-                                Reply
-                            </Button>
-
+                            {commentOfIssuePermission ?
+                                <Button
+                                    size="xs"
+                                    colorScheme="gray"
+                                    mt={2}
+                                    onClick={() => setActiveCommentId(comment.id)}
+                                >
+                                    Reply
+                                </Button>
+                                :
+                                <></>
+                            }
 
                             {/* Reply Input Field */}
                             {activeCommentId === comment.id && (
@@ -202,10 +226,10 @@ export default function Comments() {
                                         size="sm"
                                         w="100%"
                                     />
+
                                     <Button colorScheme="blue" size="sm" onClick={() => handleAddReply(comment.id)}>
                                         Reply
                                     </Button>
-
                                 </HStack>
                             )}
 
@@ -225,7 +249,7 @@ export default function Comments() {
                                                 </Box>
 
                                             </Flex>
-                                            {reply.User.email == profile.email ?
+                                            {commentOfcommentPermission(reply) ?
                                                 <ConfirmDeleteModal
                                                     message={`Are you sure you want to delete this reply ?`}
                                                     onConfirm={() => { handleDeleteComment(reply.id) }}

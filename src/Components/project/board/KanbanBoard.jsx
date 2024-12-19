@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -17,6 +14,8 @@ import {
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import DetailIssueModal from "../issue/detail/DetailIssueModal";
 import { updateIssueStatus } from "../../../services/API/issueAPI";
+import { useState, useEffect } from "react"
+import { Dot } from "lucide-react";
 
 export default function KanbanBoard({ pid, initialIssues, statuses }) {
   const [issues, setIssues] = useState({});
@@ -62,6 +61,7 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
       assignee: issue?.Assignee?.name ?? "Unknown",
       start: issue?.start ?? null,
       end: issue?.end ?? null,
+      isDraggable: issue?.isDraggable ?? true,  // Add the new property here
     };
   };
 
@@ -141,12 +141,94 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                   <Heading size="md" textAlign="center">
                     {statusName}
                   </Heading>
-                  {statusIssues.map((issue, index) => (
-                    <Draggable
-                      key={issue.id}
-                      draggableId={issue.id.toString()}
-                      index={index}>
-                      {(provided) => (
+                  {statusIssues.map((issue, index) => {
+                    const isDraggable = issue.isDraggable !== false;  // Use the new property
+                    return (
+                      isDraggable ? (
+                        <Draggable
+                          key={issue.id}
+                          draggableId={issue.id.toString()}
+                          index={index}>
+                          {(provided) => (
+                            <Flex
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              bg="white"
+                              borderWidth={1}
+                              borderRadius="md"
+                              p={4}
+                              gap={2}
+                              flexDir="column"
+                              onClick={() => handleIssueClick(issue)}>
+                              <Flex justifyContent={"space-between"} align="center">
+                                <Flex flexDir={"column"} gap="2">
+                                  <Text
+                                    maxW="256px"
+                                    fontSize={"lg"}
+                                    fontWeight={"semibold"}
+                                    noOfLines={1}>
+                                    {issue.name}
+                                  </Text>
+                                </Flex>
+                                <Box
+                              width
+                              w="10px"
+                              h="10px"
+                              bg="#0a9608"
+                              borderRadius="full"
+                            />
+                              </Flex>
+
+                              <Flex
+                                gap={4}
+                                justifyContent="space-between"
+                                alignItems="center">
+                                <Tooltip label="Status">
+                                  <Badge
+                                    fontSize="8"
+                                    borderRadius="full"
+                                    colorScheme={issue.Status?.color ?? "gray"}
+                                    px={4}
+                                    py={1}>
+                                    {issue.Status?.name ?? "NOT SET"}
+                                  </Badge>
+                                </Tooltip>
+                                <Tooltip label="Priority">
+                                  <Badge
+                                    fontSize="8"
+                                    borderRadius="full"
+                                    colorScheme={issue.Priority?.color ?? "gray"}
+                                    px={4}
+                                    py={1}>
+                                    {issue.Priority?.name ?? "NOT SET"}
+                                  </Badge>
+                                </Tooltip>
+                                <Tooltip label="Tracker">
+                                  <Badge
+                                    fontSize="8"
+                                    borderRadius="full"
+                                    colorScheme={issue.Tracker?.color ?? "gray"}
+                                    px={4}
+                                    py={1}>
+                                    {issue.Tracker?.name ?? "NOT SET"}
+                                  </Badge>
+                                </Tooltip>
+                                <Avatar
+                                  size={"xs"}
+                                  name={issue.Assignee?.name || "A"}></Avatar>
+                              </Flex>
+                              <Tooltip label={issue.progress || 0}>
+                                <Progress
+                                  borderRadius={"8"}
+                                  hasStripe
+                                  value={issue.progress}
+                                />
+                              </Tooltip>
+                            </Flex>
+                          )}
+                        </Draggable>
+                      ) : (
                         <Flex
                           ref={provided.innerRef}
                           {...provided.draggableProps}
@@ -158,7 +240,7 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                           gap={2}
                           flexDir="column"
                           onClick={() => handleIssueClick(issue)}>
-                          <Flex justifyContent={"space-between"}>
+                          <Flex justifyContent={"space-between"} align="center">
                             <Flex flexDir={"column"} gap="2">
                               <Text
                                 maxW="256px"
@@ -168,6 +250,13 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                                 {issue.name}
                               </Text>
                             </Flex>
+                            <Box
+                              width
+                              w="10px"
+                              h="10px"
+                              bg="#cf190c"
+                              borderRadius="full"
+                            />
                           </Flex>
 
                           <Flex
@@ -216,9 +305,9 @@ export default function KanbanBoard({ pid, initialIssues, statuses }) {
                             />
                           </Tooltip>
                         </Flex>
-                      )}
-                    </Draggable>
-                  ))}
+                      )
+                    );
+                  })}
                   {provided.placeholder}
                 </VStack>
               )}

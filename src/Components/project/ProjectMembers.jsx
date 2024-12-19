@@ -34,8 +34,12 @@ import {
 import { delRoleToUser, addRoleToUser } from "../../services/API/roleAPI";
 import { checkUserName } from "../../services/API/checkAPI";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import permissionsCode from "../../store/permissionsCode"
+import permissionsStore from "../../store/permissionsStore"
 
 export default function ProjectMembers({ id, roles }) {
+  const { keys } = permissionsStore()
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -112,7 +116,6 @@ export default function ProjectMembers({ id, roles }) {
       });
       fetchProjectMembers();
     } catch (error) {
-      console.log("errr ===>", error);
       toast({
         title: "Error",
         description: error.response.data.message,
@@ -281,7 +284,11 @@ export default function ProjectMembers({ id, roles }) {
                 <Th>Name</Th>
                 <Th>Email</Th>
                 <Th>Role</Th>
+                {keys.includes(permissionsCode.PROJECT.MEMBER_GANT) ?
                 <Th>Edit Role</Th>
+                :
+                <></>
+}
                 <Th>Action</Th>
               </Tr>
             </Thead>
@@ -304,17 +311,21 @@ export default function ProjectMembers({ id, roles }) {
                       <Text>No roles assigned</Text>
                     )}
                   </Td>
-
-                  <Td>
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        onOpen();
-                        setSelectedMemberId(member.id);
-                      }}>
-                      Edit Member Roles
-                    </Button>
-                  </Td>
+                  {keys.includes(permissionsCode.PROJECT.MEMBER_GANT) ?
+                <Td>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    onOpen();
+                    setSelectedMemberId(member.id);
+                  }}>
+                  Edit Member Roles
+                </Button>
+              </Td>
+                :
+                <></>
+}
+                  
                   <Td>
                     <Button
                       size="sm"

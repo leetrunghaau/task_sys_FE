@@ -15,12 +15,19 @@ import {
   Heading,
   Checkbox,
   VStack,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { Trash2, SquarePlus } from "lucide-react";
 import EditLine from "../../../utils/EditLine";
 import AddLine from "../../../utils/AddLine";
-export default function CheckList({ onFinish }) {
+import useAuthStore from "../../../../store/authStore";
+import permissionsCode from "../../../../store/permissionsCode";
+import permissionsStore from "../../../../store/permissionsStore";
+
+export default function CheckList({ onFinish, issue }) {
+  const { keys } = permissionsStore();
+  const { fId } = useAuthStore();
   const params = useParams();
   const { pid, id } = params;
   const [addCheckList, setAddCheckList] = useState(null);
@@ -28,6 +35,10 @@ export default function CheckList({ onFinish }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
+  const checkListPermission =
+    keys.includes(permissionsCode.ISSUE.CHECK_LIST.ANY) ||
+    (keys.includes(permissionsCode.ISSUE.CHECK_LIST.OWN) && issue.createBy === fId) ||
+    (keys.includes(permissionsCode.ISSUE.CHECK_LIST.ASSIGNEE) && issue.assignee === fId)
 
   const fetchCheckLists = async () => {
     try {
@@ -153,52 +164,77 @@ export default function CheckList({ onFinish }) {
         <Heading size="md" mb={2} mr={4}>
           CheckLists
         </Heading>
-        <SquarePlus cursor={"pointer"} onClick={addCheckListClick} />
-      </Flex>
-      <VStack align="start" spacing={4}>
-        {checkLists.map((checkList) => (
-          <Flex
-            justify="flex-start"
-            align="center"
-            width="100%"
-            gap={2}
-            key={checkList.id}>
-            <Checkbox
-              defaultChecked={checkList.checked ?? false}
-              onChange={(e) => {
-                checkedClick(checkList.id, e.target.checked);
-              }}
-            />
-            <EditLine
-              size="sm"
-              area={true}
-              value={checkList.name ?? "Missing Content"}
-              onFinish={(value) => {
-                updateCheckListSubmit(checkList.id, value);
-              }}
-            />
-            <Button
-              variant="ghost"
-              size="xs"
-              colorScheme="red"
-              onClick={() => handleDeleteCheckList(checkList.id)}>
-              <Trash2 size="16" />
-            </Button>
-          </Flex>
-        ))}
-        {addCheckList ? (
-          <AddLine
-            size="lg"
-            value={"Add new CheckList"}
-            onCancel={addCheckListCancel}
-            onFinish={(value) => {
-              addCheckListSubmit(value);
-            }}
-          />
-        ) : (
+        {checkListPermission ?
+          <SquarePlus cursor={"pointer"} onClick={addCheckListClick} />
+          :
           <></>
-        )}
-      </VStack>
+        }
+      </Flex>
+      {checkListPermission ?
+        <VStack align="start" spacing={4}>
+          {checkLists.map((checkList) => (
+            <Flex
+              justify="flex-start"
+              align="center"
+              width="100%"
+              gap={2}
+              key={checkList.id}>
+
+              <Checkbox
+                defaultChecked={checkList.checked ?? false}
+                onChange={(e) => {
+                  checkedClick(checkList.id, e.target.checked);
+                }}
+              />
+              <EditLine
+                size="sm"
+                area={true}
+                value={checkList.name ?? "Missing Content"}
+                onFinish={(value) => {
+                  updateCheckListSubmit(checkList.id, value);
+                }}
+              />
+              <Button
+                variant="ghost"
+                size="xs"
+                colorScheme="red"
+                onClick={() => handleDeleteCheckList(checkList.id)}>
+                <Trash2 size="16" />
+              </Button>
+            </Flex>
+          ))}
+          {addCheckList ? (
+            <AddLine
+              size="lg"
+              value={"Add new CheckList"}
+              onCancel={addCheckListCancel}
+              onFinish={(value) => {
+                addCheckListSubmit(value);
+              }}
+            />
+          ) : (
+            <></>
+          )}
+        </VStack>
+        :
+        <VStack align="start" spacing={4}>
+          {checkLists.map((checkList) => (
+            <Flex
+              justify="flex-start"
+              align="center"
+              width="100%"
+              gap={2}
+              key={checkList.id}>
+              <Checkbox
+                isReadOnly
+                defaultChecked={checkList.checked ?? false}
+              />
+              <Text fontSize="sm">{checkList.name ?? "Missing Content"}</Text>
+            </Flex>
+          ))}
+        </VStack>
+      }
+
     </Box>
   );
 }

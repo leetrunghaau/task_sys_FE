@@ -6,6 +6,9 @@ import { allStatuses } from "../../../../services/API/statusAPI";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import FilterDrawer from "../../../../Components/project/Filter";
+import useAuthStore from "../../../../store/authStore";
+import permissionsCode from "../../../../store/permissionsCode";
+import permissionsStore from "../../../../store/permissionsStore";
 export default function BoardPage() {
   const [issues, setIssues] = useState([]);
   const [statuses, setStatuses] = useState([]);
@@ -14,12 +17,25 @@ export default function BoardPage() {
   const params = useParams();
   const { pid } = params;
   const [query, setQuery] = useState(`?project=${pid}`);
-
+  const { keys } = permissionsStore();
+  const { fId } = useAuthStore();
+  const statusPermission = (issue) => {
+    return (
+      keys.includes(permissionsCode.ISSUE.STATUS.ANY) ||
+      (keys.includes(permissionsCode.ISSUE.STATUS.OWN) && issue.createBy === fId) ||
+      (keys.includes(permissionsCode.ISSUE.STATUS.ASSIGNEE) && issue.assignee === fId)
+    );
+  };
   const fetchAllIssues = async () => {
     try {
       const response = await allIssuesQuery2(query);
-      console.log(response);
-      setIssues(response.data);
+      const tempData = response.data.map(issue => {
+        return {
+          ...issue,
+          isDraggable: statusPermission(issue)
+        }
+      })
+      setIssues(tempData);
     } catch (err) {
       setError("Failed to load all Issues");
     } finally {
@@ -61,7 +77,6 @@ export default function BoardPage() {
           pid={pid}
           onFinish={(value) => {
             setQuery(value);
-            console.log(value);
           }}
         />
       </Flex>

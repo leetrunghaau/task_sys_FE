@@ -12,7 +12,12 @@ import { Box, Button, Flex, Heading, VStack, useToast } from "@chakra-ui/react";
 import { Trash2, SquarePlus } from "lucide-react";
 import EditLine from "../../../utils/EditLine";
 import AddLine from "../../../utils/AddLine";
-export default function Notes() {
+import useAuthStore from "../../../../store/authStore";
+import permissionsCode from "../../../../store/permissionsCode";
+import permissionsStore from "../../../../store/permissionsStore";
+export default function Notes({issue}) {
+  const { keys } = permissionsStore();
+  const { fId } = useAuthStore();
   const params = useParams();
   const { pid, id } = params;
   const [addNote, setAddNote] = useState(null);
@@ -20,6 +25,10 @@ export default function Notes() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
+  const notePermission =
+    keys.includes(permissionsCode.ISSUE.NOTE.ANY) ||
+    (keys.includes(permissionsCode.ISSUE.NOTE.OWN) && issue.createBy === fId) ||
+    (keys.includes(permissionsCode.ISSUE.NOTE.ASSIGNEE) && issue.assignee === fId)
 
   const fetchNotes = async () => {
     try {
@@ -117,45 +126,66 @@ export default function Notes() {
         <Heading size="md" mb={2} mr={4}>
           Notes
         </Heading>
+        {notePermission ? 
         <SquarePlus cursor={"pointer"} onClick={addNoteClick} />
+        :
+        <></>
+      }
       </Flex>
-      <VStack align="start" spacing={4}>
-        {notes.map((note) => (
-          <Flex
-            justify="flex-start"
-            align="center"
-            width="100%"
-            gap={2}
-            key={note.id}>
-            <EditLine
-              size="sm"
-              area={true}
-              value={note.content ?? "Missing Content"}
+      {notePermission ?
+        <VStack align="start" spacing={4}>
+          {notes.map((note) => (
+            <Flex
+              justify="flex-start"
+              align="center"
+              width="100%"
+              gap={2}
+              key={note.id}>
+              <EditLine
+                size="sm"
+                area={true}
+                value={note.content ?? "Missing Content"}
+                onFinish={(value) => {
+                  updateNoteSubmit(note.id, value);
+                }}
+              />
+              <Button
+                variant="ghost"
+                size="xs"
+                colorScheme="red"
+                onClick={() => handleDeleteNote(note.id)}>
+                <Trash2 size="16" />
+              </Button>
+            </Flex>
+          ))}
+          {addNote ? (
+            <AddLine
+              value={"Add new note"}
+              onCancel={addNoteCancel}
               onFinish={(value) => {
-                updateNoteSubmit(note.id, value);
+                addNoteSubmit(value);
               }}
             />
-            <Button
-              variant="ghost"
-              size="xs"
-              colorScheme="red"
-              onClick={() => handleDeleteNote(note.id)}>
-              <Trash2 size="16" />
-            </Button>
-          </Flex>
-        ))}
-        {addNote ? (
-          <AddLine
-            value={"Add new note"}
-            onCancel={addNoteCancel}
-            onFinish={(value) => {
-              addNoteSubmit(value);
-            }}
-          />
-        ) : (
-          <></>
-        )}
-      </VStack>
+          ) : (
+            <></>
+          )}
+        </VStack>
+        :
+        <VStack align="start" spacing={4}>
+          {notes.map((note) => (
+            <Flex
+              justify="flex-start"
+              align="center"
+              width="100%"
+              gap={2}
+              key={note.id}>
+             <Text fontSize="sm">{note.content ?? "Missing Content"}</Text>
+            </Flex>
+          ))}
+         
+        </VStack>
+      }
+
     </Box>
   );
 }
