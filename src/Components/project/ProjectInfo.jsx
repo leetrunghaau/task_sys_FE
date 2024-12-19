@@ -29,6 +29,8 @@ import {
   updateProject,
 } from "../../services/API/projectAPI";
 import { useRouter } from "next/navigation";
+import permissionsCode from "../../store/permissionsCode"
+import permissionsStore from "../../store/permissionsStore"
 
 export default function ProjectInfo({ pId }) {
   const toast = useToast();
@@ -36,6 +38,7 @@ export default function ProjectInfo({ pId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const { keys } = permissionsStore()
 
   const fetchProject = async () => {
     try {
@@ -104,29 +107,36 @@ export default function ProjectInfo({ pId }) {
             <Text fontWeight={"bold"} fontSize={"lg"}>
               Project:
             </Text>
-            <EditLine
-              key={project.project?.id}
-              bold={true}
-              value={project.project?.name ?? ""}
-              size={"xl"}
-              onFinish={(rs) => {
-                fetchUpdateProject({ name: rs.trim() });
-              }}
-            />
+            {keys.includes(permissionsCode.PROJECT.UPDATE) ?
+              <EditLine
+                key={project.project?.id}
+                bold={true}
+                value={project.project?.name ?? ""}
+                size={"xl"}
+                onFinish={(rs) => {
+                  fetchUpdateProject({ name: rs.trim() });
+                }}
+              /> :
+              <Text fontSize="xl" mr={2} fontWeight="bold">{project.project?.name ?? ""}</Text>
+            }
           </Flex>
         </Flex>
 
         <Flex my="2" gap="2" alignItems={"center"}>
           <Text fontSize={"md"}>Description:</Text>
-          <EditLine
-            area={true}
-            key={project.project?.name}
-            value={project.project?.description}
-            size={"md"}
-            onFinish={(rs) => {
-              fetchUpdateProject({ description: rs.trim() });
-            }}
-          />
+
+          {keys.includes(permissionsCode.PROJECT.UPDATE) ?
+            <EditLine
+              area={true}
+              key={project.project?.name}
+              value={project.project?.description}
+              size={"md"}
+              onFinish={(rs) => {
+                fetchUpdateProject({ description: rs.trim() });
+              }}
+            /> :
+            <Text fontSize="md" mr={2} >{project.project?.name ?? ""}</Text>
+          }
         </Flex>
         <Flex gap="2" align={"center"} my="8">
           <Stat
@@ -149,86 +159,178 @@ export default function ProjectInfo({ pId }) {
               </Flex>
             </Flex>
           </Stat>
-          <Stat
-            maxW="20%"
-            borderWidth={"1px"}
-            borderRadius={"4"}
-            boxShadow={"lg"}
-            cursor={"pointer"}
-            transition="transform 0.2s ease, box-shadow 0.2s ease"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "xl",
-            }}
-            onClick={() => router.push(`/projects/${pId}/members`)}>
-            <Flex p="4" flexDir={"column"}>
-              <StatLabel>Total Members</StatLabel>
-              <Flex align={"center"} gap="2">
-                <User size="22" />
-                <StatNumber>{project.member.length}</StatNumber>
+
+
+
+          {keys.includes(permissionsCode.PROJECT.DELETE) ?
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              cursor={"pointer"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+              onClick={() => router.push(`/projects/${pId}/members`)}>
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Members</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <User size="22" />
+                  <StatNumber>{project.member.length}</StatNumber>
+                </Flex>
               </Flex>
-            </Flex>
-          </Stat>
-          <Stat
-            maxW="20%"
-            borderWidth={"1px"}
-            borderRadius={"4"}
-            boxShadow={"lg"}
-            cursor={"pointer"}
-            transition="transform 0.2s ease, box-shadow 0.2s ease"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "xl",
-            }}
-            onClick={() => router.push(`/projects/${pId}/status`)}>
-            <Flex p="4" flexDir={"column"}>
-              <StatLabel>Total Statuses</StatLabel>
-              <Flex align={"center"} gap="2">
-                <BadgeAlert size="22" />
-                <StatNumber>{project.status.length}</StatNumber>
+            </Stat>
+            :
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+            >
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Members</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <User size="22" />
+                  <StatNumber>{project.member.length}</StatNumber>
+                </Flex>
               </Flex>
-            </Flex>
-          </Stat>
-          <Stat
-            maxW="20%"
-            borderWidth={"1px"}
-            borderRadius={"4"}
-            boxShadow={"lg"}
-            cursor={"pointer"}
-            transition="transform 0.2s ease, box-shadow 0.2s ease"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "xl",
-            }}
-            onClick={() => router.push(`/projects/${pId}/tracker`)}>
-            <Flex p="4" flexDir={"column"}>
-              <StatLabel>Total Trackers</StatLabel>
-              <Flex align={"center"} gap="2">
-                <ScanEye size="22" />
-                <StatNumber>{project.tracker.length}</StatNumber>
+            </Stat>
+          }
+          {keys.includes(permissionsCode.PROJECT.DELETE) ?
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              cursor={"pointer"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+              onClick={() => router.push(`/projects/${pId}/status`)}>
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Statuses</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <BadgeAlert size="22" />
+                  <StatNumber>{project.status.length}</StatNumber>
+                </Flex>
               </Flex>
-            </Flex>
-          </Stat>
-          <Stat
-            maxW="20%"
-            borderWidth={"1px"}
-            borderRadius={"4"}
-            boxShadow={"lg"}
-            cursor={"pointer"}
-            transition="transform 0.2s ease, box-shadow 0.2s ease"
-            _hover={{
-              transform: "translateY(-5px)",
-              boxShadow: "xl",
-            }}
-            onClick={() => router.push(`/projects/${pId}/priority`)}>
-            <Flex p="4" flexDir={"column"}>
-              <StatLabel>Total Priorities</StatLabel>
-              <Flex align={"center"} gap="2">
-                <ChartNoAxesGantt size="22" />
-                <StatNumber>{project.priority.length}</StatNumber>
+            </Stat>
+            :
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+            >
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Statuses</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <BadgeAlert size="22" />
+                  <StatNumber>{project.status.length}</StatNumber>
+                </Flex>
               </Flex>
-            </Flex>
-          </Stat>
+            </Stat>
+          }
+          {keys.includes(permissionsCode.PROJECT.DELETE) ?
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              cursor={"pointer"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+              onClick={() => router.push(`/projects/${pId}/tracker`)}>
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Trackers</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <ScanEye size="22" />
+                  <StatNumber>{project.tracker.length}</StatNumber>
+                </Flex>
+              </Flex>
+            </Stat>
+            :
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+            >
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Trackers</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <ScanEye size="22" />
+                  <StatNumber>{project.tracker.length}</StatNumber>
+                </Flex>
+              </Flex>
+            </Stat>
+          }
+          {keys.includes(permissionsCode.PROJECT.DELETE) ?
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              cursor={"pointer"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+              onClick={() => router.push(`/projects/${pId}/priority`)}>
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Priorities</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <ChartNoAxesGantt size="22" />
+                  <StatNumber>{project.priority.length}</StatNumber>
+                </Flex>
+              </Flex>
+            </Stat>
+            :
+            <Stat
+              maxW="20%"
+              borderWidth={"1px"}
+              borderRadius={"4"}
+              boxShadow={"lg"}
+              transition="transform 0.2s ease, box-shadow 0.2s ease"
+              _hover={{
+                transform: "translateY(-5px)",
+                boxShadow: "xl",
+              }}
+            >
+              <Flex p="4" flexDir={"column"}>
+                <StatLabel>Total Priorities</StatLabel>
+                <Flex align={"center"} gap="2">
+                  <ChartNoAxesGantt size="22" />
+                  <StatNumber>{project.priority.length}</StatNumber>
+                </Flex>
+              </Flex>
+            </Stat>
+          }
+
         </Flex>
         <Divider mt={6} />
         {/* <Flex flexWrap={"wrap"} justifyContent={"space-around"} mt={3}>
@@ -253,22 +355,26 @@ export default function ProjectInfo({ pId }) {
             members={project.member ?? []}
           />
         </Flex> */}
-        <Flex
-          my="8"
-          minW="100%"
-          alignItems={"center"}
-          justifyContent={"space-between"}>
-          <Flex gap="2" flexDir={"column"}>
-            <Text fontWeight={"bold"} fontSize={"xl"}>
-              Delete this project.
-            </Text>
-            <Text fontSize={"sm"} color={"gray.500"}>
-              Once you delete a project, there is no going back. Please be
-              certain.
-            </Text>
-          </Flex>
-          <DangerZone />
-        </Flex>
+        {keys.includes(permissionsCode.PROJECT.DELETE) ?
+          <Flex
+            my="8"
+            minW="100%"
+            alignItems={"center"}
+            justifyContent={"space-between"}>
+            <Flex gap="2" flexDir={"column"}>
+              <Text fontWeight={"bold"} fontSize={"xl"}>
+                Delete this project.
+              </Text>
+              <Text fontSize={"sm"} color={"gray.500"}>
+                Once you delete a project, there is no going back. Please be
+                certain.
+              </Text>
+            </Flex>
+            <DangerZone />
+          </Flex> :
+          <></>
+        }
+
         <Flex
           my="8"
           minW="100%"
@@ -290,25 +396,29 @@ export default function ProjectInfo({ pId }) {
               </Text>
             </Flex>
           </Flex>
-          <Menu>
-            <MenuButton
-              as={Button}
-              colorScheme={project.project?.active === 1 ? "teal" : "red"}>
-              {project.project?.active === 1 ? "Active" : "Inactive"}
-            </MenuButton>
-            <MenuList>
-              <MenuItem
-                onClick={() => fetchUpdateProject({ active: 1 })}
-                isDisabled={project.project?.active === 1}>
-                Set Active
-              </MenuItem>
-              <MenuItem
-                onClick={() => fetchUpdateProject({ active: 0 })}
-                isDisabled={project.project?.active === 0}>
-                Set Inactive
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          {keys.includes(permissionsCode.PROJECT.CLOSE) ?
+            <Menu>
+              <MenuButton
+                as={Button}
+                colorScheme={project.project?.active === 1 ? "teal" : "red"}>
+                {project.project?.active === 1 ? "Active" : "Inactive"}
+              </MenuButton>
+              <MenuList>
+                <MenuItem
+                  onClick={() => fetchUpdateProject({ active: 1 })}
+                  isDisabled={project.project?.active === 1}>
+                  Set Active
+                </MenuItem>
+                <MenuItem
+                  onClick={() => fetchUpdateProject({ active: 0 })}
+                  isDisabled={project.project?.active === 0}>
+                  Set Inactive
+                </MenuItem>
+              </MenuList>
+            </Menu> :
+            <></>
+          }
+
         </Flex>
       </Box>
     </Flex>

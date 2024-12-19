@@ -35,13 +35,17 @@ import { allProjectMembers } from "../../../../../services/API/permissionAPI";
 import { allStatuses } from "../../../../../services/API/statusAPI";
 import { allTrackers } from "../../../../../services/API/trackerAPI";
 import { allPriorities } from "../../../../../services/API/priorityAPI";
+import useAuthStore from "../../../../../store/authStore";
+import permissionsCode from "../../../../../store/permissionsCode";
+import permissionsStore from "../../../../../store/permissionsStore";
 
 import moment from "moment";
 
 export default function IssueDetailPage() {
   const params = useParams();
   const router = useRouter();
-
+  const { keys } = permissionsStore();
+  const { fId } = useAuthStore();
   const { pid, id } = params;
   const [issueData, setIssueData] = useState(null);
   const [error, setError] = useState(null);
@@ -57,6 +61,21 @@ export default function IssueDetailPage() {
   const [trackers, setTrackers] = useState([]);
   const [priorities, setPriorities] = useState([]);
 
+
+  const updateContentPermission = (issue) => {
+    return (
+      keys.includes(permissionsCode.ISSUE.UPDATE.ANY) ||
+      (keys.includes(permissionsCode.ISSUE.UPDATE.OWN) && issue.createBy === fId) ||
+      (keys.includes(permissionsCode.ISSUE.UPDATE.ASSIGNEE) && issue.assignee === fId)
+    );
+  };
+  const deletePermission = (issue) => {
+    return (
+      keys.includes(permissionsCode.ISSUE.DELETE.ANY) ||
+      (keys.includes(permissionsCode.ISSUE.DELETE.OWN) && issue.createBy === fId) ||
+      (keys.includes(permissionsCode.ISSUE.DELETE.ASSIGNEE) && issue.assignee === fId)
+    );
+  };
   const fetchIssue = async () => {
     try {
       const data = await getSingleIssueById(pid, id);
@@ -208,13 +227,22 @@ export default function IssueDetailPage() {
           <Heading fontSize="2xl" fontWeight="bold">
             Issues#{issueData.Issue.id}:
           </Heading>
-          <EidtLine
-            bold={true}
-            value={issueData.Issue.name ?? "Unknown"}
-            onFinish={(rs) => updateContent(rs)}
-          />
+          {updateContentPermission(issueData.Issue) ?
+            <EidtLine
+              bold={true}
+              value={issueData.Issue.name ?? "Unknown"}
+              onFinish={(rs) => updateContent(rs)}
+            />
+            :
+            <Text fontSize="2xl" mr={2} fontWeight="bold">{issueData.Issue.name ?? ""} </Text>
+          }
         </Flex>
-        <Button onClick={() => handleDeleteIssue()}>Delete this Issue</Button>
+        {deletePermission(issueData.Issue) ?
+           <Button onClick={() => handleDeleteIssue()}>Delete this Issue</Button>
+            :
+            <></>
+          }
+        
       </Flex>
       <Flex justify="space-around" align="center" mb={4}>
         <VStack align="start" justify="start" spacing={4} mb={6}>

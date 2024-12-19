@@ -38,8 +38,8 @@ export default function ResponsiveLogInForm() {
       const payload = { user: userInfo, pass: pass };
       const response = await logIn(payload);
       if (response.data) {
-        const { admin, token } = response.data;
-        logIn({ user: userInfo, pass: pass, admin, token });
+        const { admin, token, id } = response.data;
+        logIn({ user: userInfo, pass: pass, admin, token , fId: id});
         setMessage("Logged in successfully!");
         router.push("/yourProfile");
       }

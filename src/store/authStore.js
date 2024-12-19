@@ -8,13 +8,14 @@ const useAuthStore = create(
       token: null,
       admin: false,
       isLoggedIn: false,
-      logIn: ({ user, token, admin }) =>
-        set({ user, token, admin, isLoggedIn: true }),
+      fId: null,
+      logIn: ({ user, token, admin, fId }) =>
+        set({ user, token, admin, fId, isLoggedIn: true }), 
       logOut: () =>
-        set({ user: null, token: null, admin: false, isLoggedIn: false }),
+        set({ user: null, token: null, admin: false, fId: null, isLoggedIn: false }), 
     }),
     {
-      name: "auth-session",
+      name: "auth-session", 
     }
   )
 );

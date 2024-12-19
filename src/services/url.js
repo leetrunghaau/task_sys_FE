@@ -56,6 +56,8 @@ export const delRolePermissions = (id, roleId, permissionId) =>
 
 export const getAllPermissionsByRole = (pid, rid) =>
   `project/${pid}/role/${rid}/permissions`;
+export const getAllPermissionsByProject = (pid) =>
+  `project/${pid}/permissions`;
 
 //Tracker
 export const getAllTrackers = (id) => `project/${id}/trackers`;

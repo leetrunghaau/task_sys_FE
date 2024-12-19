@@ -19,11 +19,11 @@ export const logIn = async (info) => {
     });
 
     if (response.status === 200) {
-      const { token, admin } = response.data.data;
+      const { token, admin, id } = response.data.data;
 
       // Update Zustand store
       const authStore = useAuthStore.getState();
-      authStore.logIn({ user: info.user, token, admin });
+      authStore.logIn({ user: info.user, token, admin , fId: id});
 
       return response.data;
     }

@@ -1,5 +1,7 @@
 "use client";
 import { Box, Button, Flex, Heading, VStack } from "@chakra-ui/react";
+import permissionsCode from "../../store/permissionsCode"
+import permissionsStore from "../../store/permissionsStore"
 import {
   UserPen,
   UserPlus,
@@ -15,6 +17,15 @@ import {
 import Link from "next/link";
 
 export default function Sidebar({ project }) {
+  const { keys } = permissionsStore()
+  const projectPermissions = [
+    permissionsCode.PROJECT.ROLE_MANAGER,
+    permissionsCode.PROJECT.MEMBER_MANAGER,
+    permissionsCode.PROJECT.PRIORITY_MANAGER,
+    permissionsCode.PROJECT.TRACKER_MANAGER,
+    permissionsCode.PROJECT.STATUS_MANAGER,
+  ];
+  const hasPermission = projectPermissions.some(permission => keys.includes(permission));
   return (
     <Box as="aside" bg="white" borderRightWidth="2px" h="h-screen" w="20%">
       <Flex gap="2">
@@ -96,7 +107,7 @@ export default function Sidebar({ project }) {
       {/* Setting  */}
       <VStack align="stretch" spacing="4" p="4">
         <Box>
-          <Link href={`/projects/${project.project.id}`}>
+          {hasPermission ?
             <Heading
               as="h2"
               fontSize="xs"
@@ -105,48 +116,58 @@ export default function Sidebar({ project }) {
               mb="2">
               SETTINGS
             </Heading>
-          </Link>
+            : <></>}
           <VStack spacing="1" align="stretch">
-            <Link href={`/projects/${project.project.id}/role`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<UserPen size="16px" />}>
-                Role
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/members`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<UserPlus size="16px" />}>
-                Members
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/priority`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<ChartNoAxesColumnIncreasing size="16px" />}>
-                Priority
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/tracker`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<ScanEye size="16px" />}>
-                Tracker
-              </Button>
-            </Link>
-            <Link href={`/projects/${project.project.id}/status`}>
-              <Button
-                variant="ghost"
-                justifyContent="flex-start"
-                leftIcon={<Lightbulb size="16px" />}>
-                Status
-              </Button>
-            </Link>
+            {keys.includes(permissionsCode.PROJECT.ROLE_MANAGER) ?
+              <Link href={`/projects/${project.project.id}/role`}>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  leftIcon={<UserPen size="16px" />}>
+                  Role
+                </Button>
+              </Link>
+              : <></>}
+            {keys.includes(permissionsCode.PROJECT.MEMBER_MANAGER) ?
+              <Link href={`/projects/${project.project.id}/members`}>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  leftIcon={<UserPlus size="16px" />}>
+                  Members
+                </Button>
+              </Link>
+              : <></>}
+            {keys.includes(permissionsCode.PROJECT.PRIORITY_MANAGER) ?
+              <Link href={`/projects/${project.project.id}/priority`}>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  leftIcon={<ChartNoAxesColumnIncreasing size="16px" />}>
+                  Priority
+                </Button>
+              </Link>
+              : <></>}
+            {keys.includes(permissionsCode.PROJECT.TRACKER_MANAGER) ?
+              <Link href={`/projects/${project.project.id}/tracker`}>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  leftIcon={<ScanEye size="16px" />}>
+                  Tracker
+                </Button>
+              </Link>
+              : <></>}
+            {keys.includes(permissionsCode.PROJECT.STATUS_MANAGER) ?
+              <Link href={`/projects/${project.project.id}/status`}>
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  leftIcon={<Lightbulb size="16px" />}>
+                  Status
+                </Button>
+              </Link>
+              : <></>}
           </VStack>
         </Box>
       </VStack>

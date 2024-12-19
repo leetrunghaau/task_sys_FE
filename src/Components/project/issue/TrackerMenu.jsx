@@ -6,10 +6,22 @@ import {
   Badge,
   useToast,
 } from "@chakra-ui/react";
-import { updateIssueContent } from "../../../services/API/issueAPI"; // Ensure this function is imported
+import { updateIssueContent } from "../../../services/API/issueAPI";
+import useAuthStore from "../../../store/authStore";
+import permissionsCode from "../../../store/permissionsCode";
+import permissionsStore from "../../../store/permissionsStore";
 
 export default function TrackerMenu({ issue, trackers, onFinish }) {
+  const { keys } = permissionsStore();
+  const { fId } = useAuthStore();
   const toast = useToast();
+  const trackerPermission = (issue) => {
+    return (
+      keys.includes(permissionsCode.ISSUE.TRACKER.ANY) ||
+      (keys.includes(permissionsCode.ISSUE.TRACKER.OWN) && issue.createBy === fId) ||
+      (keys.includes(permissionsCode.ISSUE.TRACKER.ASSIGNEE) && issue.assignee === fId)
+    );
+  };
   const menuClick = async (id, name) => {
     try {
       await updateIssueContent(issue.projectId, issue.id, { trackerId: id });
@@ -34,31 +46,40 @@ export default function TrackerMenu({ issue, trackers, onFinish }) {
   };
 
   return (
-    <Menu>
-      <MenuButton
-        cursor="pointer"
-        as={Badge}
-        bgColor="transparent"
-        size="sm"
-        mr={4}>
-        <Badge colorScheme={issue.Tracker?.color ?? "gray"}>
-          {issue.Tracker?.name ?? "Unknow"}
-        </Badge>
-      </MenuButton>
-      <MenuList>
-        {trackers.map((item) => (
-          <MenuItem key={item.id} onClick={() => menuClick(item.id, item.name)}>
-            <Badge
-              px={4}
-              py={2}
-              borderRadius="md"
-              cursor="pointer"
-              colorScheme={item.color ?? "gray"}>
-              {item.name}
+    <>
+      {trackerPermission(issue) ?
+        <Menu>
+          <MenuButton
+            cursor="pointer"
+            as={Badge}
+            bgColor="transparent"
+            size="sm"
+            mr={4}>
+            <Badge colorScheme={issue.Tracker?.color ?? "gray"}>
+              {issue.Tracker?.name ?? "Unknow"}
             </Badge>
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
+          </MenuButton>
+          <MenuList>
+            {trackers.map((item) => (
+              <MenuItem key={item.id} onClick={() => menuClick(item.id, item.name)}>
+                <Badge
+                  px={4}
+                  py={2}
+                  borderRadius="md"
+                  cursor="pointer"
+                  colorScheme={item.color ?? "gray"}>
+                  {item.name}
+                </Badge>
+              </MenuItem>
+            ))}
+          </MenuList>
+        </Menu>
+        :
+        <Badge colorScheme={issue.Tracker?.color ?? "gray"}>
+          {issue.Tracker?.name ?? "Unknown"}
+        </Badge>
+      }
+    </>
+
   );
 }

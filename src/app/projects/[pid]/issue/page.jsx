@@ -28,8 +28,12 @@ import { allPriorities } from "../../../../services/API/priorityAPI";
 import { allProjectMembers } from "../../../../services/API/permissionAPI";
 import { ExternalLink } from "lucide-react";
 import { allIssuesQuery2 } from "../../../../services/API/issueAPI";
-
 import FilterDrawer from "../../../../Components/project/Filter";
+import { updateAssignee } from "../../../../services/API/issueAPI";
+import useAuthStore from "../../../../store/authStore";
+import permissionsCode from "../../../../store/permissionsCode";
+import permissionsStore from "../../../../store/permissionsStore";
+
 import moment from "moment";
 export default function IssusesPage() {
   const [issues, setIssues] = useState([]);
@@ -44,6 +48,7 @@ export default function IssusesPage() {
   const params = useParams();
   const { pid } = params;
   const [query, setQuery] = useState(`?project=${pid}`);
+  const { keys } = permissionsStore();
 
   const fetchAllIssues = async () => {
     try {
@@ -142,7 +147,11 @@ export default function IssusesPage() {
           <Heading size="md" mb={2} mr={4}>
             Manage Issue
           </Heading>
-          <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
+          {keys.includes(permissionsCode.ISSUE.CREATE) ?
+            <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
+            :
+            <></>
+          }
         </Flex>
         <FilterDrawer
           pid={pid}
