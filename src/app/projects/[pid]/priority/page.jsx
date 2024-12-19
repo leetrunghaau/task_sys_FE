@@ -155,7 +155,7 @@ export default function PrioritiesPage() {
         <Heading size="md" mb={2} mr={4}>
           Manage Priority
         </Heading>
-        <SquarePlus grow="start" onClick={addItemClick} />
+        <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
       </Flex>
 
       <Box w="100%">

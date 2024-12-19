@@ -355,26 +355,22 @@ export default function ProjectInfo({ pId }) {
             members={project.member ?? []}
           />
         </Flex> */}
-        {keys.includes(permissionsCode.PROJECT.DELETE) ?
-          <Flex
-            my="8"
-            minW="100%"
-            alignItems={"center"}
-            justifyContent={"space-between"}>
-            <Flex gap="2" flexDir={"column"}>
-              <Text fontWeight={"bold"} fontSize={"xl"}>
-                Delete this project.
-              </Text>
-              <Text fontSize={"sm"} color={"gray.500"}>
-                Once you delete a project, there is no going back. Please be
-                certain.
-              </Text>
-            </Flex>
-            <DangerZone />
-          </Flex> :
-          <></>
-        }
-
+        <Flex
+          my="8"
+          minW="100%"
+          alignItems={"center"}
+          justifyContent={"space-between"}>
+          <Flex gap="2" flexDir={"column"}>
+            <Text fontWeight={"bold"} fontSize={"xl"}>
+              Delete this project.
+            </Text>
+            <Text fontSize={"sm"} color={"gray.500"}>
+              Once you delete a project, there is no going back. Please be
+              certain.
+            </Text>
+          </Flex>
+          <DangerZone id={pId} />
+        </Flex>
         <Flex
           my="8"
           minW="100%"
