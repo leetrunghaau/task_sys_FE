@@ -156,7 +156,7 @@ export default function TrackerPage() {
           <Heading size="md" mb={2} mr={4}>
             Manage Tracker
           </Heading>
-          <SquarePlus grow="start" onClick={addItemClick} />
+          <SquarePlus cursor={"pointer"} grow="start" onClick={addItemClick} />
         </Flex>
       </Flex>
       <Box w="100%">

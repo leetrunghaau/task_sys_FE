@@ -14,11 +14,13 @@ import {
 import { Trash2 } from "lucide-react";
 import { useRef } from "react";
 import { deleteProject } from "../../services/API/projectAPI";
+import { useRouter } from "next/navigation";
 
 export default function DangerZone({ id }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const toast = useToast(); // Initialize the toast hook
+  const router = useRouter();
 
   const handleDeleteProject = async (id) => {
     try {
@@ -30,6 +32,7 @@ export default function DangerZone({ id }) {
         duration: 3000,
         isClosable: true,
       });
+      router.push(`/projects/`);
     } catch (error) {
       console.error("Failed to delete project:", error);
       toast({

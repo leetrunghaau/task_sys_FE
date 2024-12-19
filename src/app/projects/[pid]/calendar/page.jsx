@@ -54,7 +54,7 @@ export default function CalendarPage() {
   const handleEventClick = (info) => {
     const eventDetails = {
       id: info.event.id,
-      name: info.event.extendedProps.name,
+      name: info.event.title,
       status: info.event.extendedProps.status || "Unknown",
       priority: info.event.extendedProps.priority || "Unknown",
       tracker: info.event.extendedProps.tracker || "Unknown",
@@ -63,6 +63,9 @@ export default function CalendarPage() {
       start: info.event.start,
       end: info.event.end,
     };
+    console.log("info");
+
+    console.log(info);
 
     setEventDetails(eventDetails);
     setIsOpen(true);

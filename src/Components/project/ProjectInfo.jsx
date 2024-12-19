@@ -267,7 +267,7 @@ export default function ProjectInfo({ pId }) {
               certain.
             </Text>
           </Flex>
-          <DangerZone />
+          <DangerZone id={pId} />
         </Flex>
         <Flex
           my="8"
